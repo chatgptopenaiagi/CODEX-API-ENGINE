@@ -1,5 +1,18 @@
 # CAE security model
 
+## Universal client verification
+
+The 0.4.0 client SDKs preserve v1 mutual Windows peer verification. .NET and native
+C++/Node clients check SID, image path and executable hash before writing any request,
+enforce response correlation/PID, reject duplicate keys and bound frames and I/O.
+PowerShell uses the .NET implementation; Python uses the existing public BrokerClient.
+All five have real named-pipe wrong-server, timeout and malformed-response tests.
+Clients do not replay provider operations. See [executed results](docs/validation/CLIENTS-0.4.0.md).
+
+Interpreter enrollment is not application isolation: Python scripts, .NET loaded
+assemblies, PowerShell scripts, Node modules and Electron main-process plugins can
+share an enrolled process identity. No stronger same-user guarantee is introduced.
+
 ## v0.3.1 independent-process boundary
 
 The independent broker verifies the client PID using Windows named-pipe APIs, opens

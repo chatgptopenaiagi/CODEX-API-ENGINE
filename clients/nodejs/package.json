@@ -1,0 +1,12 @@
+{
+  "name": "@cae/client",
+  "version": "0.4.0",
+  "description": "Authenticated Windows named-pipe SDK for CAE protocol v1",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "license": "MIT",
+  "os": ["win32"],
+  "cpu": ["x64"],
+  "engines": {"node": ">=22"},
+  "files": ["index.js", "index.d.ts", "worker.js", "cae_native.node", "LICENSE", "THIRD-PARTY.txt"]
+}

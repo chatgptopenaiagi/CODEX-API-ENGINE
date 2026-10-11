@@ -1,5 +1,15 @@
 # CAE architecture
 
+## Universal client development
+
+`clients/` contains public Python, .NET, C++, Node.js and PowerShell SDKs. All use
+the existing protocol v1 and kernel-authenticated named pipes; the broker is not
+duplicated. Python composes the exported BrokerClient. C# and C++ implement native
+client transport; PowerShell loads the .NET SDK and Node uses an in-process Node-API
+binding to the C++ SDK. No helper process masks the calling application's identity.
+External applications in `integration-lab/` import only these public interfaces.
+See [client contracts and recovery](docs/CLIENT_SDKS.md).
+
 ## v0.3.1 independent broker
 
 ```mermaid

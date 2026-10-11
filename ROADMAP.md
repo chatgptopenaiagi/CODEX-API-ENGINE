@@ -1,5 +1,20 @@
 # Roadmap
 
+## v0.4.0 — universal clients (locally validated)
+
+- [x] Python compatibility facade, C#/.NET, C++, Node.js and PowerShell SDKs
+- [x] Six real applications including Electron on one unchanged broker
+- [x] Authenticated access, policy denial, no credential disclosure, crash/restart recovery
+- [x] 60 hostile-server cases; isolated client distributions and checksums
+- [x] Preserve original broker, interfaces and historical release artifacts
+- [ ] Authorized public publication and Windows 11 acceptance
+
+See [measured validation](docs/validation/CLIENTS-0.4.0.md). Client packages use 0.4.0;
+the preserved broker/runtime package remains 0.3.1. Next: persistent administrative
+application registry, revocation and policy resource limits (v0.5). Routing/local-model
+acceptance (v0.6), administrative UI (v0.7), installation (v0.8), long-running reliability
+(v0.9) and Windows 11/stable distribution acceptance (v1.0) remain unfinished.
+
 ## v0.3.1 — independent Windows broker (local development)
 
 - [x] Separate CAE-Broker.exe with local named pipes and explicit DACL

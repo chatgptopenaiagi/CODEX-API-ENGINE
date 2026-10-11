@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=80", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cae-client"
+version = "0.4.0"
+description = "Public Windows IPC client for CODEX ACCESS ENGINE"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = ["codex-api-engine>=0.3.1,<1"]
+license = "MIT"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+cae_client = ["py.typed"]

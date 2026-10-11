@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 client SDKs — local development
+
+- Python facade, native C# and C++ clients, asynchronous Node-API SDK and PowerShell module.
+- Explicit descriptor discovery, mutual Windows peer checks, protocol v1 responses,
+  capability discovery, bounded I/O and fresh-connection recovery without request replay.
+- Independent cross-language applications, hostile-server acceptance tests and isolated packages.
+- Existing engine/broker 0.3.1 binary and published releases retained; no new public release.
+
 ## 0.3.1 — local development, 2026-10-11
 
 - Independent Windows named-pipe broker with kernel-derived peer identity, executable

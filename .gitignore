@@ -25,3 +25,7 @@ htmlcov/
 release/
 /New Text Document.txt
 .cae/
+**/bin/
+**/obj/
+node_modules/
+clients/python/build/

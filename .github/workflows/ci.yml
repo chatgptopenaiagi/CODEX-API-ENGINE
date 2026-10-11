@@ -31,6 +31,22 @@ jobs:
       - name: Installed wheel and independent client validation (no live API)
         shell: pwsh
         run: ./scripts/test_broker_apps.ps1
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.401'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '26.8.1'
+      - name: Build universal clients
+        shell: pwsh
+        run: ./scripts/build_clients.ps1
+      - name: Cross-language acceptance and hostile-server tests (mock provider)
+        shell: pwsh
+        run: |
+          ./.venv/Scripts/python.exe scripts/validate_clients.py
+          if ($LASTEXITCODE) { throw 'Cross-language validation failed' }
+          ./.venv/Scripts/python.exe scripts/validate_client_security.py
+          if ($LASTEXITCODE) { throw 'Client security validation failed' }
       - uses: actions/upload-artifact@v4
         with:
           name: cae-windows
@@ -39,4 +55,5 @@ jobs:
             dist/*/*.tar.gz
             dist/*/*.exe
             dist/*/SHA256SUMS.json
+            dist/0.4.0-clients/**
           if-no-files-found: error

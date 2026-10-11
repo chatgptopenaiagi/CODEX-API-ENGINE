@@ -1,5 +1,17 @@
 # CODEX ACCESS ENGINE (CAE) 0.3.1
 
+## Universal clients: 0.4.0 development
+
+Python, C#/.NET, C++, Node.js and PowerShell clients now connect to the existing
+independent broker through protocol v1. Client packages are versioned 0.4.0;
+the preserved engine/broker baseline remains 0.3.1. No new release is published.
+See [SDK installation and examples](docs/CLIENT_SDKS.md) and
+[executed cross-language validation](docs/validation/CLIENTS-0.4.0.md).
+
+Build with `scripts/build_clients.ps1`; test with `scripts/validate_clients.py`
+and `scripts/validate_client_security.py`. New artifacts are isolated in
+`dist/0.4.0-clients/`. Existing broker, credentials and historical releases are retained.
+
 CAE is a capability-based AI connectivity, protected credential and policy platform.
 It is **not an AI agent**. Windows x64 and Python 3.14 are the supported build platform.
 The repository and distribution names remain `CODEX-API-ENGINE` and `codex-api-engine`
