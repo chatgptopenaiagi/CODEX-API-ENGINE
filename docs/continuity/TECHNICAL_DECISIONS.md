@@ -17,7 +17,11 @@
 - Keep development versions/artifacts separate. Preserve history and historical
   releases; source checkpoint publication does not authorize a downloadable release.
 - Keep the security increment in a draft PR/development branch until unfinished work
-  and required checks support promotion. No feature changes during this checkpoint.
+  and required checks support promotion. The original checkpoint introduced no
+  features; subsequent development is explicitly recorded in milestone reports.
+- Audit IDs are broker-generated ContextVar metadata, not wire IDs or authorization
+  proofs. Preserve legacy JSONL reads and protocol v1 framing. Retention is separate
+  unfinished work; do not silently migrate or rotate production audit data.
 
 Authoritative details: [architecture](../../ARCHITECTURE.md),
 [protocol](../BROKER_PROTOCOL.md), [registry](../APPLICATION_REGISTRY.md),

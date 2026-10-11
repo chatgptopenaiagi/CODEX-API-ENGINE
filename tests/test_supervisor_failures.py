@@ -46,3 +46,40 @@ def test_supervisor_failure_is_bounded_without_killing_processes(tmp_path, monke
         assert launched[0][1]["creationflags"] == subprocess.CREATE_NO_WINDOW
     else:
         assert not launched
+
+
+@pytest.mark.parametrize("opened,error,result,raises", [
+    (10, 0, 0, False), (10, 0, 258, True), (10, 0, 0xFFFFFFFF, True),
+    (None, 87, 0, False), (None, 5, 0, True),
+])
+def test_shutdown_requires_process_exit_and_closes_handle(monkeypatch, opened, error, result, raises):
+    from cae.broker_control import _wait_for_exit
+
+    closed = []
+
+    def open_process(rights, inherit, pid):
+        assert rights == 0x00100000 and not inherit and pid == 123
+        return opened
+
+    def wait(handle, timeout):
+        assert handle == 10 and timeout == 40_000
+        return result
+
+    kernel = SimpleNamespace(OpenProcess=open_process, WaitForSingleObject=wait,
+                             CloseHandle=lambda handle: closed.append(handle))
+    monkeypatch.setattr("cae.broker_control.ctypes.WinDLL", lambda *a, **k: kernel)
+    monkeypatch.setattr("cae.broker_control.ctypes.get_last_error", lambda: error)
+    if raises:
+        with pytest.raises(IPCError):
+            _wait_for_exit(123)
+    else:
+        _wait_for_exit(123)
+    assert closed == ([10] if opened else [])
+
+
+@pytest.mark.parametrize("pid", [0, -1, True, "123"])
+def test_shutdown_rejects_invalid_process_identity(pid):
+    from cae.broker_control import _wait_for_exit
+
+    with pytest.raises(IPCError):
+        _wait_for_exit(pid)

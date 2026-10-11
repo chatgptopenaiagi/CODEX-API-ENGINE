@@ -1,5 +1,17 @@
 # Verified milestone history
 
+## Latest verified increment (M1 remains partial)
+
+0.5.0.dev2 implements audit request correlation and fixed audit-failure responses,
+plus process-exit confirmation and lab-report sharing-error recovery. **247 tests,
+95.36% coverage, six real clients and 60 hostile-server cases passed**. See
+[M1 results, including corrected failures](../validation/AUDIT-M1.md).
+Artifacts: `dist/0.5.0.dev2/`; original client SDKs remain version 0.4.0.
+Resolve the implementation revision with `git log -1 --format=%H -- src/cae`.
+Bounded retention/rotation remain unfinished; this is not completion of M1 or v0.5.
+
+## Preserved earlier milestones
+
 | Milestone | Commit and evidence | Scope / limitation |
 |---|---|---|
 | v0.2.0 | `a62f33baef7e05412ebc959182b385803790fa2a`, published tag/release v0.2.0 | Original API, vault, in-process SDK and console foundation |

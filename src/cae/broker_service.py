@@ -8,8 +8,9 @@ from pathlib import Path
 from typing import Any
 
 from .access import AccessRuntime
+from .audit import correlated
 from .config import load_runtime
-from .errors import AccessDenied, CAEError
+from .errors import AccessDenied, AuditError, CAEError
 from .ipc_protocol import BrokerSettings, Enrollment, encode, request
 from .pipe_transport import Pipe, ProtocolError, process_peer
 from .security import identifier
@@ -84,6 +85,7 @@ class BrokerServer:
         return self.runtime.execute(app, name, profile, operation, model=model,
                                     text=text, max_tokens=args.get("max_tokens", 256))
 
+    @correlated
     def _session(self, pipe: Pipe) -> None:
         correlation = "0" * 32
         app = "unknown"
@@ -110,7 +112,13 @@ class BrokerServer:
         if error:
             with self._lock:
                 self._rejected += 1
-            self.runtime.audit_log.emit("ipc_denied", app=app)
+        try:
+            self.runtime.audit_log.emit("ipc_denied" if error else "ipc_result",
+                                        app=app, error_code=error or "none")
+        except AuditError:
+            # Return a fixed failure even if the sink cannot record that failure.
+            # A completed provider call is not replayed when its audit write failed.
+            error, result = "audit_unavailable", {}
         envelope = {"v": 1, "id": correlation, "ok": error is None, "result": result,
                     "error": error, "broker_pid": os.getpid()}
         try:

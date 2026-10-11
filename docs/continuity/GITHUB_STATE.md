@@ -1,5 +1,14 @@
 # GitHub checkpoint state
 
+## Post-checkpoint development
+
+0.5.0.dev2 is a partial M1 increment on the same development branch. Do not merge
+draft PR #2 or publish a release. Latest implementation is obtained from Git history;
+the dated original checkpoint below remains preserved. One checkpoint push CI run
+38176898988 failed shutdown confirmation despite a passing PR run; the lifecycle
+race is fixed and locally tested in this increment. See [M1 report](../validation/AUDIT-M1.md).
+Query current PR checks rather than treating older CI results as current evidence.
+
 Canonical public source: https://github.com/chatgptopenaiagi/CODEX-API-ENGINE
 
 Authenticated account verified with `gh auth status` / `gh api user`: chatgptopenaiagi.

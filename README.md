@@ -1,7 +1,13 @@
 # CODEX ACCESS ENGINE (CAE)
 
-Current source: **0.5.0.dev1**, an unpublished security development increment.
+Current source: **0.5.0.dev2**, a development audit-correlation increment.
 The published foundation remains **v0.3.1**. This is not a v1.0 release.
+
+Broker-local audit request IDs now link authentication, policy and result metadata;
+legacy audit records remain readable. Audit storage failures return fixed errors.
+M1 remains partial: bounded disk retention and crash-safe rotation are unfinished.
+See [M1 validation](docs/validation/AUDIT-M1.md) and
+[continuation instructions](docs/continuity/NEXT_SESSION.md).
 
 ## Application administration and limits
 
@@ -16,7 +22,7 @@ requests. Limits are checked before credential access and provider communication
 See [application administration](docs/APPLICATION_REGISTRY.md) and
 [executed security validation](docs/validation/SECURITY-0.5.0-dev1.md).
 
-Development engine artifacts are in `dist/0.5.0.dev1/`; client SDKs are in
+Development engine artifacts are in `dist/0.5.0.dev2/`; client SDKs are in
 `dist/0.4.0-clients/`. Full local validation requires building both before running
 `scripts/test.ps1`. Historical release artifacts are not overwritten.
 

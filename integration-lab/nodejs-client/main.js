@@ -21,7 +21,7 @@ async function run() {
       fs.writeFileSync(output + '.new', JSON.stringify({status, models, capabilities, denied, malformed, restricted,
         client_pid: process.pid}));
       fs.renameSync(output + '.new', output);
-    } catch (e) { if (!(e instanceof CAEError)) throw e; }
+    } catch (e) { if (!(e instanceof CAEError) && !['EPERM', 'EACCES', 'EBUSY'].includes(e.code)) throw e; }
     await new Promise(resolve => setTimeout(resolve, 500));
   }
 }

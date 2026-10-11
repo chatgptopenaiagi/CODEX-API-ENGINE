@@ -18,7 +18,7 @@ git ls-remote origin refs/heads/feat/security-registry
 ```
 
 Compare local HEAD to the remote branch, inspect later commits if different, and
-read all ten continuity documents. Latest verified implementation is b379795;
+read all ten continuity documents. The mission started at checkpoint cfc04f6;
 checkpoint-only changes may follow it. Do not automatically reset to old hashes.
 Existing checkout updates use reviewed fetch/fast-forward operations after inspecting
 working state. Preserve development branches and release tags.
@@ -37,7 +37,7 @@ $env:DOTNET_GENERATE_ASPNET_CERTIFICATE = 'false'
 ./scripts/build.ps1 -Executable
 ./scripts/build_clients.ps1
 ./scripts/test.ps1
-./.venv/Scripts/python.exe scripts/check_release.py --directory dist/0.5.0.dev1
+./.venv/Scripts/python.exe scripts/check_release.py --directory dist/0.5.0.dev2
 ```
 
 Setup creates `.venv` and installs editable engine/dev dependencies; client build
@@ -55,7 +55,7 @@ from routine acceptance and requires specifically justified validation.
 
 ## Continue and preserve
 
-Select the audit increment in NEXT_SESSION.md. Implement, test, document actual
+Select M1 retention/rotation in NEXT_SESSION.md; correlation is already implemented. Implement, test, document actual
 results and commit only reviewed source. Run redacted Gitleaks source/history scans
 and inspect staged paths before any public synchronization. Never commit dist,
 environment files, private enrollment or protected input. No destructive Git

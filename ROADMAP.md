@@ -1,5 +1,13 @@
 # Roadmap
 
+## 0.5.0.dev2 — M1 partial
+
+- [x] Request correlation, validated metadata, legacy audit compatibility and tests
+- [x] Fixed audit-failure responses and process-exit shutdown confirmation
+- [ ] Bounded audit retention, safe rotation and crash/disk/concurrent-writer acceptance
+
+Complete M1 before M2 routing. See [current continuation](docs/continuity/NEXT_SESSION.md).
+
 ## 0.5.0.dev1 — security increment (unpublished)
 
 - [x] Authenticated administrative application registry and persistent enrollment metadata

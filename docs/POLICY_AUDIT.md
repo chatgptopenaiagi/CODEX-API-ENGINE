@@ -25,8 +25,10 @@ beside an explicit config file. These are local administrative data, not secrets
 must be protected against untrusted modification. There is no tamper-proof or
 cross-account quota claim.
 
-Audit events contain only UUID, UTC timestamp, fixed event type, app, provider,
-profile and operation. They do not contain prompt text, response text, credentials,
+Audit events contain UUID, UTC timestamp, fixed event type, app, provider, profile
+and operation, plus optional broker-generated request ID, decision/status,
+allowlisted error code and elapsed milliseconds. Legacy rows without the added
+fields remain readable. They do not contain prompt text, response text, credentials,
 authorization headers, endpoints or arbitrary exception messages. Credential events
 distinguish change requests from verified completion. A failed audit write before
 execution prevents the request. An audit failure after a completed operation can

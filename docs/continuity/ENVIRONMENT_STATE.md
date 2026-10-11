@@ -31,3 +31,8 @@ confined back to the repository; its installer uses lowercase `electron_config_c
 The read-only resume script does not initialize runtimes, install dependencies,
 modify PATH, change credentials or start a broker. Rebuilding is an explicit
 separate action. Production broker/config/vault are not part of fresh recovery.
+
+The 0.5.0.dev2 increment used this existing toolchain, repository-local build/cache
+directories and `.tmp/m1-*` validation state. No global dependency installation,
+persistent PATH change, Windows service or production configuration change occurred.
+The .NET lab rebuild set both first-run prevention flags and local caches explicitly.

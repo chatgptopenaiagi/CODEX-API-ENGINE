@@ -33,6 +33,7 @@ try {
             File.WriteAllText(output + ".new", result);
             File.Move(output + ".new", output, true);
         } catch (CaeException) { /* A later independent read reconnects after broker restart. */ }
+        catch (IOException) { /* Report reader may briefly block replacement on Windows. */ }
         await Task.Delay(500);
     }
     return 0;

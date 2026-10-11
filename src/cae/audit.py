@@ -1,16 +1,54 @@
 """Schema-constrained metadata audit; no prompts, results, headers or exception strings."""
 
 import json
+import math
+import time
 from collections import deque
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
+from functools import wraps
 from pathlib import Path
 from threading import RLock
-from typing import Any
+from typing import Any, ParamSpec, TypeVar
 from uuid import uuid4
 
 from .errors import AuditError, ConfigurationError
 from .security import identifier, redact
+
+_REQUEST: ContextVar[tuple[str, float] | None] = ContextVar("cae_audit_request", default=None)
+_P = ParamSpec("_P")
+_T = TypeVar("_T")
+ERROR_CODES = frozenset({"none", "engine_error", "invalid_configuration",
+    "credential_operation_failed", "credential_missing", "credential_already_exists",
+    "access_denied", "unsupported_operation", "daily_request_limit", "request_rate_limit",
+    "concurrent_request_limit", "audit_unavailable", "api_request_failed",
+    "invalid_protocol", "broker_unavailable", "ipc_timeout"})
+
+
+@contextmanager
+def request_scope() -> Iterator[str]:
+    """Broker-generated identity; nested runtime calls share it, threads do not."""
+    existing = _REQUEST.get()
+    token = None
+    if existing is None:
+        existing = (uuid4().hex, time.monotonic())
+        token = _REQUEST.set(existing)
+    try:
+        yield existing[0]
+    finally:
+        if token is not None:
+            _REQUEST.reset(token)
+
+
+def correlated(function: Callable[_P, _T]) -> Callable[_P, _T]:
+    @wraps(function)
+    def wrapped(*args: _P.args, **kwargs: _P.kwargs) -> _T:
+        with request_scope():
+            return function(*args, **kwargs)
+    return wrapped
 
 EVENTS = frozenset(
     {
@@ -43,6 +81,7 @@ EVENTS = frozenset(
         "application_change_requested",
         "application_authorized",
         "application_revoked",
+        "ipc_result",
     }
 )
 
@@ -56,6 +95,32 @@ class AuditEvent:
     provider: str
     profile: str
     operation: str
+    request_id: str = ""
+    decision: str = "none"
+    status: str = "none"
+    error_code: str = "none"
+    latency_ms: float | None = None
+
+    def validate(self) -> None:
+        if self.event not in EVENTS:
+            raise ValueError()
+        for value in (self.app, self.provider, self.profile, self.operation):
+            identifier(value)
+        if not isinstance(self.request_id, str):
+            raise ValueError()
+        for value in (self.event_id, self.request_id or self.event_id):
+            if not isinstance(value, str) or len(value) != 32 or any(
+                c not in "0123456789abcdef" for c in value
+            ):
+                raise ValueError()
+        datetime.fromisoformat(self.timestamp)
+        if (self.decision not in {"none", "allow", "deny"}
+                or self.status not in {"none", "ok", "error"}
+                or self.error_code not in ERROR_CODES
+                or (self.latency_ms is not None and (
+                    type(self.latency_ms) not in {int, float}
+                    or not math.isfinite(self.latency_ms) or self.latency_ms < 0))):
+            raise ValueError()
 
     def to_dict(self) -> dict[str, Any]:
         result: dict[str, Any] = redact(asdict(self))
@@ -80,13 +145,25 @@ class AuditLog:
         provider: str = "none",
         profile: str = "default",
         operation: str = "none",
+        error_code: str = "none",
     ) -> AuditEvent:
         if event not in EVENTS:
             raise ConfigurationError()
         for value in (app, provider, profile, operation):
             identifier(value)
+        if error_code not in ERROR_CODES:
+            error_code = "engine_error"
+        context = _REQUEST.get()
+        denied = event in {"policy_denied", "ipc_denied"}
+        failed_event = denied or event.endswith("failed") or error_code != "none"
         entry = AuditEvent(
-            uuid4().hex, datetime.now(UTC).isoformat(), event, app, provider, profile, operation
+            uuid4().hex, datetime.now(UTC).isoformat(), event, app, provider, profile, operation,
+            request_id=context[0] if context else "",
+            decision="deny" if denied else "allow" if event == "policy_granted" else "none",
+            status="error" if failed_event else "ok",
+            error_code=error_code,
+            latency_ms=round(max(0, time.monotonic() - context[1]) * 1000, 3)
+            if context else None,
         )
         failed = False
         with self._lock:
@@ -124,15 +201,7 @@ class AuditLog:
                     lines = stream.read().decode("utf-8").splitlines()
                 for line in lines[-self._events.maxlen :] if self._events.maxlen else lines:
                     event = AuditEvent(**json.loads(line))
-                    if event.event not in EVENTS:
-                        raise ValueError()
-                    for field in (event.app, event.provider, event.profile, event.operation):
-                        identifier(field)
-                    if len(event.event_id) != 32 or not all(
-                        c in "0123456789abcdef" for c in event.event_id
-                    ):
-                        raise ValueError()
-                    datetime.fromisoformat(event.timestamp)
+                    event.validate()
                     if app is None or event.app == app:
                         rows.append(event.to_dict())
             except Exception:

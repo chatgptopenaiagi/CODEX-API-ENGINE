@@ -1,12 +1,13 @@
 # Six unfinished milestones toward v1.0
 
-Next milestone: audit logging improvements.
+Next milestone: finish M1 retention and rotation; correlation is implemented.
 
 ## 1. Audit correlation and bounded retention
 
 Current: `src/cae/audit.py` provides allowlisted metadata events and bounded memory;
-the optional JSONL file is unbounded. Missing: shared request correlation, decision,
-status, latency, error metadata and safe disk rotation. Dependencies: broker request
+the optional JSONL file is unbounded. Request correlation, decision/status/error
+metadata and elapsed time are tested in 0.5.0.dev2. Missing: bounded disk retention,
+safe rotation and their failure/restart acceptance. Dependencies: broker request
 lifecycle (`broker_service.py`, `access.py`) and backward-compatible event schema.
 Implement metadata-only enrichment and explicit retention configuration. Acceptance:
 one request trace spans authorization/result; no prompts, results or secrets logged;

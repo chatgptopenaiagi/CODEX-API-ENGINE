@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 from threading import RLock
 from typing import Any
 
-from .audit import AuditLog
+from .audit import AuditLog, correlated
 from .credential import CredentialStore, WindowsCredentialStore
 from .errors import (
     AccessDenied,
@@ -74,7 +74,7 @@ class AccessRuntime:
             identifier(value)
         try:
             self.policy.authorize(app, name, profile, operation, model, consume=consume)
-        except AccessDenied:
+        except AccessDenied as exc:
             self.audit_log.emit(
                 "policy_denied",
                 app=app,
@@ -83,6 +83,7 @@ class AccessRuntime:
                 operation=operation
                 if operation in {"models", "health", "chat", "embeddings", "diagnostics", "usage"}
                 else "unknown",
+                error_code=exc.code,
             )
             raise
         provider = self._providers.get(name)
@@ -91,6 +92,7 @@ class AccessRuntime:
             raise AccessDenied()
         return provider
 
+    @correlated
     def execute(
         self, app: str, name: str, profile: str, operation: str, *,
         model: str | None = None, text: str | None = None, max_tokens: int = 256,
@@ -102,7 +104,8 @@ class AccessRuntime:
                                      text=text, max_tokens=max_tokens)
         except ConcurrentLimitExceeded:
             self.audit_log.emit("policy_denied", app=app, provider=name,
-                                profile=profile, operation=operation)
+                                profile=profile, operation=operation,
+                                error_code=ConcurrentLimitExceeded.code)
             raise
 
     def _execute(
@@ -176,6 +179,7 @@ class AccessRuntime:
                 provider=name,
                 profile=profile,
                 operation=operation,
+                error_code=failure.code,
             )
             self.audit_log.emit(
                 "provider_disconnected",

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0.dev2 — partial M1 audit increment
+
+- Broker-generated request correlation shared by nested runtime events; allowlisted
+  decision/status/error metadata and monotonic elapsed time; legacy JSONL compatible.
+- Fixed audit-unavailable response when broker audit recording fails.
+- Supervisor waits for authenticated broker process exit rather than mistaking a
+  transient pipe failure for completed shutdown (observed prior CI failure).
+- POK source-based compatibility analysis; no external application changes.
+- Disk retention/rotation remain unfinished. No stable release or main merge.
+
 ## 0.5.0.dev1 — unpublished security development
 
 - Operator-only application list/register/inspect/authorize/revoke commands.

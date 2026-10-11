@@ -8,7 +8,7 @@
 - Fixed UTC-minute limits trust the system clock; concurrency limits are per runtime.
 - Old native 0.4 clients may report new rate/concurrency errors as generic broker
   request failure. There is no generation replay on transport errors.
-- Audit disk retention/correlation, capability routing, installer, central registry
+- Audit disk retention/rotation, capability routing, installer, central registry
   GUI, cancellation, soak/upgrade recovery and separate service identity are unfinished.
 - Seven adapters are implemented, but all-provider live validation is not claimed.
   Local inference has not been validated. Current acceptance uses a mock HTTP provider.
@@ -22,3 +22,6 @@
 
 See [remaining acceptance criteria](UNFINISHED_MILESTONES.md) and
 [remote status](GITHUB_STATE.md). Historical validation is retained as dated evidence.
+
+M1 correlation is broker-local, not an end-to-end caller provenance token. ipc_result
+records response preparation, not delivery acknowledgement. See [M1 evidence](../validation/AUDIT-M1.md).

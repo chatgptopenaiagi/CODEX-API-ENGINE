@@ -1,5 +1,11 @@
 # CAE security model
 
+Audit correlation adds no identity authority: its broker-generated ID is metadata,
+not a capability. New audit fields reject invalid values on read and do not accept
+arbitrary exception text. Audit write failure returns a fixed error and may follow
+an already completed provider request; never blindly retry generation. Retention,
+rotation and hostile same-account filesystem race protection remain unfinished.
+
 ## 0.5.0.dev1 development controls
 
 Administrative registry commands require an existing OS-verified admin executable.

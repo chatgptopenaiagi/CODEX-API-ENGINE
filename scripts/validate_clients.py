@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SYNTHETIC = "sk-" + "synthetic-leak-canary-" * 4
 
 
+
 class MockProvider(BaseHTTPRequestHandler):
     calls = 0
     posts = 0
@@ -182,7 +183,9 @@ def main() -> None:
         recovered = wait_reports(survivors, after=restarted_at)
         new_pid = recovered["python"]["status"]["broker_pid"]
         assert new_pid != pid
-        assert all(processes[name].poll() is None for name in survivors)
+        exited = {name: processes[name].returncode for name in survivors
+                  if processes[name].poll() is not None}
+        assert not exited, {"exited_clients": exited}
         for name in survivors:
             Path(str(reports[name]) + ".stop").touch()
         for name in survivors:

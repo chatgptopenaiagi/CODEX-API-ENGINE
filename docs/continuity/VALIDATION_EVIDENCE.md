@@ -1,5 +1,16 @@
 # Continuity mission validation
 
+## Latest development evidence — 0.5.0.dev2
+
+See [M1 validation](../validation/AUDIT-M1.md): **247 passed**, **95.36% coverage**,
+Ruff and strict mypy passed; all 16 critical-module gates passed. Six actual clients
+passed against the updated broker, followed by 60 hostile-server cases. Package,
+runtime-source and executable self-tests passed. Providers are mocked. The report
+records the failed CI shutdown assertion and local report-sharing race, their fixes
+and retests. Retention/rotation and real local/cloud inference remain unvalidated.
+
+## Preserved checkpoint evidence
+
 Executed 2026-10-11 on Windows 10 build 19045 x64 against implementation
 `b379795d109dbdfa62b079805d8db9aef3368457`; no feature changes or artifact rebuilds.
 

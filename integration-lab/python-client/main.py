@@ -42,7 +42,7 @@ def main() -> None:
                 "capabilities": capabilities, "denied": denied, "malformed": malformed,
                 "restricted": restricted, "client_pid": os.getpid()}), encoding="utf-8")
             temporary.replace(output)
-        except CAEError:
+        except (CAEError, PermissionError):
             pass  # No replay; the next loop is a new read-only request.
         time.sleep(0.5)
 
