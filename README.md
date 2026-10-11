@@ -1,9 +1,39 @@
 # CODEX ACCESS ENGINE (CAE) 0.3.1
 
 CAE is a capability-based AI connectivity, protected credential and policy platform.
-It is **not an AI agent**. Windows 11 x64 and Python 3.14 are the primary platform.
+It is **not an AI agent**. Windows x64 and Python 3.14 are the supported build platform.
 The repository and distribution names remain `CODEX-API-ENGINE` and `codex-api-engine`
-for compatibility. v0.3.1 is a local development build; the public release remains v0.2.0.
+for compatibility. v0.3.1 is the initial independent Windows broker release.
+Windows build 19045 was validated locally; Windows 11 is a target, not a certification.
+All current executables are unsigned. The v0.2.0 release remains available unchanged.
+
+## Download v0.3.1
+
+Get the [official release](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases/tag/v0.3.1).
+The seven release assets are:
+
+| Artifact | Download |
+|---|---|
+| Independent broker | [CAE-Broker.exe](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases/download/v0.3.1/CAE-Broker.exe) |
+| Console application | [CAE-Console-Client.exe](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases/download/v0.3.1/CAE-Console-Client.exe) |
+| Desktop application | [CAE-Desktop-Client.exe](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases/download/v0.3.1/CAE-Desktop-Client.exe) |
+| Human administration UI | [CAE-Control-Center.exe](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases/download/v0.3.1/CAE-Control-Center.exe) |
+| Python SDK | [Python wheel](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases/download/v0.3.1/codex_api_engine-0.3.1-py3-none-any.whl) |
+| Python source distribution | [Source archive](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases/download/v0.3.1/codex_api_engine-0.3.1.tar.gz) |
+| SHA-256 manifest | [SHA256SUMS.json](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases/download/v0.3.1/SHA256SUMS.json) |
+
+Install the SDK with Python 3.14:
+
+```powershell
+python -m pip install https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases/download/v0.3.1/codex_api_engine-0.3.1-py3-none-any.whl
+```
+
+For the following enrollment commands, clone or download the tagged repository and
+place the downloaded assets in its `dist/0.3.1/` directory. Compare each software
+file's `Get-FileHash -Algorithm SHA256` value with the manifest before launching it.
+The existing binaries are used directly; rebuilding is optional. The source
+distribution contains the Python package; the repository provides the complete
+tests, enrollment utility and build scripts.
 
 ## Independent Windows broker
 
@@ -25,6 +55,11 @@ cae broker restart --config .cae/broker/broker.json
 cae broker stop --config .cae/broker/broker.json
 ```
 
+Run the two client commands in separate terminals, or launch the desktop EXE directly
+with its connection argument. Launch `CAE-Control-Center.exe` for human credential and
+provider administration; it retains its trusted in-process mode and is not the broker.
+Keep the broker running independently of either client.
+
 Enrollment authorizes the two exact client executables and the enrollment command's
 underlying Python interpreter as administrator. **All code run by that interpreter
 has the same administrative identity**; it is not script isolation. Run enrollment
@@ -37,6 +72,34 @@ non-secret `client.json` connection descriptor. See [protocol and SDK examples](
 The existing `CAE()` SDK and Control Center remain available as trusted in-process
 interfaces; they do not silently switch to IPC. Same-account hostile programs remain
 outside the security boundary. This is not a separate-identity Windows service.
+
+### Connecting an application
+
+```python
+import json
+from pathlib import Path
+from cae import BrokerClient
+
+client = BrokerClient(**json.loads(Path(".cae/broker/client.json").read_text()))
+print(client.get_status())
+print(client.diagnostics())  # Offline; no generation or provider key returned
+```
+
+Enroll an application's exact executable path and SHA-256 in `broker.json`, assign its
+application label appropriate rules in `runtime.toml`, then restart the broker.
+The client cannot choose that label. Enrolling a Python interpreter authorizes every
+script it runs; use separate frozen executables when applications need distinct rules.
+
+### Providers and credentials
+
+Enrollment creates an OpenAI/default read-only configuration. Existing CAE credentials
+are reused without replacement. For a new installation only, `cae add` provisions a
+key through a hidden prompt. No key belongs in the JSON/TOML files or command line.
+Edit the administrator-owned `.cae/broker/runtime.toml` to configure provider names,
+kinds, profiles and policy grants, using [provider configuration](docs/PROVIDERS.md)
+and [examples/access.toml](examples/access.toml). Restart after configuration changes.
+Cloud endpoints are restricted; local provider endpoints must use literal loopback
+addresses. Applications cannot modify provider configuration through IPC.
 
 ## Access Engine SDK
 
@@ -67,7 +130,7 @@ Use `cae-control-center` for human oversight or `cae --config examples/access.to
 for machine-readable, offline Codex/application inspection. Diagnostic results are
 observations, not proof of identity or authority.
 
-See [validation evidence](docs/VALIDATION_0.3.md), [Access Engine guide](docs/ACCESS_ENGINE.md), [provider contracts](docs/PROVIDERS.md),
+See [broker validation](docs/BROKER_VALIDATION.md), [Access Engine guide](docs/ACCESS_ENGINE.md), [provider contracts](docs/PROVIDERS.md),
 [policy and audit design](docs/POLICY_AUDIT.md), and [migration](docs/MIGRATION_0.3.md).
 
 ## Features
@@ -134,7 +197,7 @@ models = engine.list_models()
 status = engine.get_status()  # JSON-compatible metadata; no network request
 ```
 
-The default console grant permits model listing only. See
+The default console grant permits read-only models, health, diagnostics and usage. See
 [SDK usage](docs/SDK.md) for trusted-host composition and Responses API access.
 No environment-key fallback, custom API host, proxy forwarding, credential export,
 or Codex login integration is enabled.
