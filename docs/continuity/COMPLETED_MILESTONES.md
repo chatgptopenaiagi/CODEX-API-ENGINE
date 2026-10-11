@@ -1,6 +1,14 @@
 # Verified milestone history
 
-## Latest verified increment (M1 remains partial)
+## 0.5.0.dev3 M1 — COMPLETE within documented contract
+
+The retention/rotation implementation supplements, rather than replaces, the
+correlation work below. See [final acceptance](../validation/AUDIT-M1-RETENTION-ROTATION.md)
+for current counts and limits. Resolve implementation SHA with
+`git log -1 --format=%H -- src/cae/audit_storage.py`; artifacts: `dist/0.5.0.dev3/`.
+Earlier entries below retain historical partial-milestone evidence.
+
+## Historical 0.5.0.dev2 increment (then partial)
 
 0.5.0.dev2 implements audit request correlation and fixed audit-failure responses,
 plus process-exit confirmation and lab-report sharing-error recovery. **247 tests,

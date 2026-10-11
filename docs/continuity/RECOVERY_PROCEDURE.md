@@ -37,7 +37,7 @@ $env:DOTNET_GENERATE_ASPNET_CERTIFICATE = 'false'
 ./scripts/build.ps1 -Executable
 ./scripts/build_clients.ps1
 ./scripts/test.ps1
-./.venv/Scripts/python.exe scripts/check_release.py --directory dist/0.5.0.dev2
+./.venv/Scripts/python.exe scripts/check_release.py --directory dist/0.5.0.dev3
 ```
 
 Setup creates `.venv` and installs editable engine/dev dependencies; client build
@@ -79,3 +79,7 @@ resolved. The resume script reported 0.5.0.dev1 and the expected branch/commit,
 identified the audit milestone, and left the checkout clean. No `.venv`, `.cae`
 or protected credential file existed there. No production state was required.
 This is verified source/checkpoint recovery, not a new clean-room executable build.
+
+M1 managed-storage acceptance is reproduced with the commands in
+[the storage report](../validation/AUDIT-M1-RETENTION-ROTATION.md). No production
+credentials or running production broker are needed. Retain historical artifacts.

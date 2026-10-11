@@ -3,28 +3,27 @@
 - Project root on the original workstation: `I:\CODEX-API-ENGINE`.
 - Canonical repository: https://github.com/chatgptopenaiagi/CODEX-API-ENGINE
 - Development branch: `feat/security-registry`.
-- Development version: **0.5.0.dev2**; client SDKs: **0.4.0**.
-- Starting verified checkpoint: `cfc04f6724d82ca7e3a63fa9daab436ea38e7bad`.
+- Development version: **0.5.0.dev3**; client SDKs: **0.4.0**.
+- Starting verified checkpoint: `02153a7c5a8374c4e438fd7fd43e96c8778d9d03`.
 - Current implementation revision: `git log -1 --format=%H -- src/cae`.
 - Checkpoint revision: resolve `git log -1 --format=%H -- docs/continuity`.
   A document cannot contain its own commit hash. Later checkpoint-only commits do
   not replace the implementation evidence above. Verify actual HEAD before editing.
-- Last completed increment: audit request correlation and fail-closed audit error
-  responses; process-exit confirmation fixes a previously observed shutdown race.
-  M1 as a whole remains PARTIAL.
-- Next milestone: **M1 bounded retention and crash-safe rotation**.
+- Last completed milestone: **M1**, under the documented opt-in/process-crash contract.
+  Final evidence: 299 tests, 95.64%, 17 critical gates, six real applications and
+  60 hostile-server cases; see the storage report for commands and NOT_RUN limits.
+- Next milestone: **M2 capability-based routing**. Do not repeat completed M1.
 
 ## First implementation task
 
-Request correlation is implemented and tested; do not repeat it. Read
-[the M1 report](../validation/AUDIT-M1.md), then inspect `src/cae/audit.py` and
-existing producers/consumers. Define explicit retention configuration and a
-crash-durability contract before implementing bounded file/byte retention, safe
-rotation, cross-process serialization and reparse-point defenses. Preserve file
-DACLs, legacy records and fail-closed errors. Test interrupted writes/rotation,
-process termination, restart, disk/access failures and concurrent writers using
-isolated synthetic state. Audit evidence must never share deletion scope with
-quota, policy or enrollment state. M2 remains blocked on completing M1 acceptance.
+Read [the M1 storage report](../validation/AUDIT-M1-RETENTION-ROTATION.md) and its
+final acceptance results. Verify current Git HEAD, quality gates and artifact
+integrity; do not repeat the implemented correlation/retention components.
+Inspect existing provider capability declarations and authorization
+boundaries, then define a bounded M2 routing increment. No routing implementation
+was authorized during the M1 storage mission. Preserve offline-only behavior and
+provider/model authorization. Never migrate or rotate the operator's legacy logs
+automatically; managed mode requires explicit configuration and restart.
 
 ## Read and verify first
 

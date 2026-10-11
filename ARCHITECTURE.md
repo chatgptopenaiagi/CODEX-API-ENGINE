@@ -1,5 +1,14 @@
 # CAE architecture
 
+## 0.5.0.dev3 managed audit storage
+
+The existing AuditLog delegates opt-in disk retention to `audit_storage.py`. Broker
+and administrative logs use separate private manifest-owned roots; quotas and
+enrollment never share deletion scope. JSONL fields and protocol v1 are unchanged.
+Managed writes serialize across threads/processes and flush before returning.
+See [the retention contract](docs/validation/AUDIT-M1-RETENTION-ROTATION.md) for
+resource bounds, recovery states and deliberately limited durability guarantees.
+
 ## 0.5.0.dev2 audit correlation
 
 The broker establishes a fresh ContextVar request scope before parsing/authentication.

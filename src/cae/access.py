@@ -233,6 +233,9 @@ class AccessRuntime:
                 self.execute(app, name, profile, "health")
             except CAEError as exc:
                 error = exc.code
+        self.audit_log.emit(
+            "health_read", app=app, provider=name, profile=profile, operation=operation
+        )
         credential = "not_required"
         if provider.config.authenticated:
             try:
@@ -241,9 +244,6 @@ class AccessRuntime:
                 )
             except Exception:
                 credential = "unavailable"
-        self.audit_log.emit(
-            "health_read", app=app, provider=name, profile=profile, operation=operation
-        )
         with self._lock:
             health = dict(
                 self._health.get(
@@ -262,6 +262,7 @@ class AccessRuntime:
             "provider": name,
             "credential": credential,
             "broker": "ready",
+            "audit_storage": self.audit_log.storage_status(),
             "broker_mode": "in_process",
             "policy": "ready",
             "error": error,
@@ -298,7 +299,7 @@ class AccessRuntime:
 
     def audit(self, app: str) -> list[dict[str, Any]]:
         self.audit_log.emit("audit_read", app=app)
-        return self.audit_log.events(app=app)
+        return self.audit_log.events(app=app, include_archives=True)
 
     def close(self) -> None:
         self.policy.ledger.close()

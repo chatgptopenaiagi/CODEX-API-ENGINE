@@ -1,7 +1,8 @@
 # M1 audit increment — implementation and acceptance record
 
-Status: **PARTIAL**. This increment implements request correlation and safe metadata
-extensions. It does not complete bounded retention or crash-safe rotation.
+Historical 0.5.0.dev2 status: **PARTIAL**. The correlation increment below did not
+include retention. M1 is now complete under the opt-in/process-crash contract; final acceptance is in
+[AUDIT-M1-RETENTION-ROTATION](AUDIT-M1-RETENTION-ROTATION.md).
 Mission CAE-CONTINUATION-2026-10-11 continued across local midnight to 2026-10-12.
 
 Starting checkpoint: `cfc04f6724d82ca7e3a63fa9daab436ea38e7bad`, branch

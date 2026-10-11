@@ -39,3 +39,11 @@ tail of the JSONL file. Invalid records fail with a fixed error. SDK audit views
 to the current app; the human Control Center can inspect administrative records.
 The log is append-only by CAE convention, not cryptographically tamper-evident and
 not an OS-secured append-only filesystem. Hosts should rotate/archive it as needed.
+
+## Managed disk retention (0.5.0.dev3)
+
+See [configuration, durability and archive reading](validation/AUDIT-M1-RETENTION-ROTATION.md).
+The optional top-level `[audit]` table applies separate limits to broker and registry
+audit stores. Missing configuration preserves legacy logs. `AuditLog.events(include_archives=True)`
+reads retained generations and active records; `storage_status()` reports fixed
+non-secret health metadata. Storage is never the policy or quota database.

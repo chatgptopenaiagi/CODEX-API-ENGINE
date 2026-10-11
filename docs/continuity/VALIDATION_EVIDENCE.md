@@ -1,5 +1,14 @@
 # Continuity mission validation
 
+## 0.5.0.dev3 M1 retention evidence
+
+Final run: 299 tests, 95.64%, Ruff/strict mypy and 17 module gates passed.
+Six real applications, 60 hostile-server cases, frozen legacy clients and artifact
+integrity passed. Baseline rerun: 247 tests, 95.36%, 16 module gates. Current final
+commands/counts and native/package/security evidence are in
+[the retention report](../validation/AUDIT-M1-RETENTION-ROTATION.md). Temporary detailed
+logs use `.tmp/retention-*.log`; raw machine-local reports are not published.
+
 ## Latest development evidence — 0.5.0.dev2
 
 See [M1 validation](../validation/AUDIT-M1.md): **247 passed**, **95.36% coverage**,

@@ -1,5 +1,14 @@
 # CAE security model
 
+## Managed audit storage boundary
+
+Explicit `[audit] mode = "managed"` enables bounded stores; no production migration
+is automatic. Reparse/hard-linked files are rejected, archive ownership is checked
+against a bounded manifest, and failures remain fail-closed before vault/provider
+access. Same-user hostile tampering, power-loss durability and Windows 11 acceptance
+are not established. Legacy opt-out logs remain unbounded. See
+[storage security and failure evidence](docs/validation/AUDIT-M1-RETENTION-ROTATION.md).
+
 Audit correlation adds no identity authority: its broker-generated ID is metadata,
 not a capability. New audit fields reject invalid values on read and do not accept
 arbitrary exception text. Audit write failure returns a fixed error and may follow

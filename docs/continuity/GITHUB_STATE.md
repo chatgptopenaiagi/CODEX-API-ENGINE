@@ -1,5 +1,13 @@
 # GitHub checkpoint state
 
+## 0.5.0.dev3 synchronization
+
+Authorized destination remains `chatgptopenaiagi/CODEX-API-ENGINE`, branch
+`feat/security-registry`, draft PR #2. Final commit/remote verification is recorded
+after validation; use `git ls-remote origin refs/heads/feat/security-registry` and
+compare local HEAD. Do not merge, force-push or publish release binaries.
+Historical v0.2.0/v0.3.1 releases and tags remain protected.
+
 ## Post-checkpoint development
 
 0.5.0.dev2 is a partial M1 increment on the same development branch. Do not merge

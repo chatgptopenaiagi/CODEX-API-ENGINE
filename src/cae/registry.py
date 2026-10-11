@@ -16,7 +16,7 @@ from uuid import uuid4
 
 from .audit import AuditLog
 from .broker_client import BrokerClient
-from .config import parse_config
+from .config import audit_retention, parse_config
 from .errors import AccessDenied, ConfigurationError
 from .ipc_protocol import BrokerSettings, Enrollment, decode
 from .pipe_transport import digest, process_peer
@@ -76,6 +76,7 @@ class ApplicationRegistry:
         self.path = configuration.resolve()
         self.metadata = self.path.with_name(self.path.stem + ".apps.json")
         self.audit = AuditLog(self.path.parent / ".cae" / "administration.jsonl")
+        self._audit_configured = False
         if configuration.is_symlink() or self.path.suffix != ".json":
             raise ConfigurationError()
 
@@ -110,6 +111,11 @@ class ApplicationRegistry:
                 settings = BrokerSettings.load(self.path)
                 if not settings.authenticate(peer, peer.sid).admin:
                     raise AccessDenied()
+                if not self._audit_configured:
+                    retention = audit_retention(settings.runtime.read_text(encoding="utf-8"))
+                    if retention is not None:
+                        self.audit = AuditLog(self.path.parent / ".cae" / "administration-managed" / "active.jsonl", retention=retention)
+                    self._audit_configured = True
                 yield settings, peer.sid
             finally:
                 stream.seek(0)
@@ -247,7 +253,11 @@ class ApplicationRegistry:
             # Replace this app's rule for the same provider/profile/effect; preserve other apps.
             kept = tuple(r for r in rules if (r.app, r.provider, r.profile, r.effect) !=
                          (app, provider, profile, rule.effect))
+            retention = audit_retention(settings.runtime.read_text(encoding="utf-8"))
             text = "schema_version = 1\n"
+            if retention is not None:
+                text += '\n[audit]\nmode = "managed"\n'
+                text += "".join(key + " = " + str(value) + "\n" for key, value in asdict(retention).items())
             for name, values in (("providers", [asdict(p) for p in providers]),
                                  ("rules", [r.to_dict() for r in (*kept, rule)])):
                 for row in values:

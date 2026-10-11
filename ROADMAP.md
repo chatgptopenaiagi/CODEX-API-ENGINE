@@ -1,5 +1,12 @@
 # Roadmap
 
+## 0.5.0.dev3 — M1 complete within documented contract
+
+Bounded managed retention, rotation and process-crash recovery are implemented.
+Final acceptance is recorded in [the M1 storage report](docs/validation/AUDIT-M1-RETENTION-ROTATION.md).
+M2 capability routing remains the next planned milestone; no M2 implementation is
+part of this mission. The older roadmap entries below describe historical states.
+
 ## 0.5.0.dev2 — M1 partial
 
 - [x] Request correlation, validated metadata, legacy audit compatibility and tests

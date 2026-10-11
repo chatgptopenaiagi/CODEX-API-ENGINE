@@ -1,5 +1,12 @@
 # Environment and hygiene
 
+## 0.5.0.dev3 environment
+
+Reused existing Windows 10 build 19045/Python 3.14.7/PowerShell 7.6.6 toolchain.
+No global installation, persistent PATH, service or production broker change.
+New build output: `dist/0.5.0.dev3`; isolated test/benchmark output: `.tmp/retention-*`.
+Keep `DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=false`. Windows 11 remains NOT_RUN.
+
 Observed 2026-10-11; no personal tokens or full PATH values are recorded.
 
 | Tool | Actual local version |

@@ -1,4 +1,4 @@
-"""Real cross-language processes against one unchanged v0.3.1 broker; mock HTTP only."""
+"""Real cross-language processes against one independent CAE broker; mock HTTP only."""
 
 import argparse
 import hashlib
@@ -52,7 +52,7 @@ def run(command: list[str], env: dict[str, str], *, cwd: Path = ROOT) -> None:
 
 
 def wait_reports(paths: dict[str, Path], *, expected_pid: int | None = None,
-                 after: float = 0) -> dict[str, Any]:
+                 after: float = 0, previous_pid: int | None = None) -> dict[str, Any]:
     deadline = time.monotonic() + 60
     while time.monotonic() < deadline:
         values = {}
@@ -67,6 +67,7 @@ def wait_reports(paths: dict[str, Path], *, expected_pid: int | None = None,
                 assert "lab-model" in str(value["models"])
                 assert path.stat().st_mtime > after
                 assert expected_pid is None or value["status"]["broker_pid"] == expected_pid
+                assert value["status"]["broker_pid"] != previous_pid
                 values[name] = value
             assert len({v["status"]["broker_pid"] for v in values.values()}) == 1
             return values
@@ -78,6 +79,7 @@ def wait_reports(paths: dict[str, Path], *, expected_pid: int | None = None,
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--artifacts", type=Path, default=ROOT / "dist/0.4.0-clients")
+    parser.add_argument("--managed-audit", action="store_true", help="Exercise opt-in retention in isolated state")
     parser.add_argument("--electron", type=Path, help="Optional installed Electron executable")
     parser.add_argument("--broker-directory", type=Path, default=ROOT / "dist/0.3.1")
     parser.add_argument("--results-directory", type=Path)
@@ -126,6 +128,9 @@ def main() -> None:
             f'\n[[rules]]\nid = "{name}"\napp = "{name}"\nprovider = "lab"\n'
             'profile = "default"\noperations = ["models", "health", "diagnostics"]\n'
             for name in names), encoding="utf-8")
+    if args.managed_audit:
+        text = runtime.read_text(encoding="utf-8")
+        runtime.write_text(text.replace("schema_version = 1\n", 'schema_version = 1\n[audit]\nmode = "managed"\nactive_bytes = 16384\ntotal_bytes = 131072\narchive_count = 7\nlock_timeout_ms = 10000\n', 1), encoding="utf-8")
     pipe = "cae-lab-" + uuid4().hex
     record = enrollment("broker", broker)
     config = {"version": 1, "pipe": pipe, "runtime": str(runtime), "server": record,
@@ -180,7 +185,7 @@ def main() -> None:
         assert host.returncode == 0
         restarted_at = time.time()
         host = start()
-        recovered = wait_reports(survivors, after=restarted_at)
+        recovered = wait_reports(survivors, after=restarted_at, previous_pid=pid)
         new_pid = recovered["python"]["status"]["broker_pid"]
         assert new_pid != pid
         exited = {name: processes[name].returncode for name in survivors
@@ -202,6 +207,19 @@ def main() -> None:
             "initial": initial, "survived_client_termination": surviving, "recovered": recovered,
             "mock_provider_calls": MockProvider.calls, "production_credentials_accessed": False,
             "clean_shutdown": True, "work": str(work)}
+        if args.managed_audit:
+            from cae.audit import AuditLog
+            from cae.config import audit_retention
+            audit = AuditLog(work / ".cae/audit-managed/active.jsonl",
+                             retention=audit_retention(runtime.read_text(encoding="utf-8")))
+            status = audit.storage_status()
+            assert status["health"] == "ready" and status["rotation_ns"] > 0
+            assert status["record_bytes"] <= 131072 and status["archive_count"] <= 7
+            events = audit.events(include_archives=True)
+            assert any(row["request_id"] for row in events)
+            assert SYNTHETIC not in json.dumps(events)
+            result["audit_storage"] = status
+            result["retained_correlated_events"] = len(events)
         output = results_directory / "CROSS-LANGUAGE-RESULTS.json"
         output.write_text(json.dumps(result, indent=2), encoding="utf-8")
         print(json.dumps({"result": "passed", "report": str(output), "broker_pid": pid,

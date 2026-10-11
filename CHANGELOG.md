@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0.dev3 — managed audit retention
+
+- Opt-in validated audit limits, private store ownership and bounded Windows locks.
+- Persisted rotation/deletion intents, partial-tail recovery and fail-closed errors.
+- Archive-aware audit reads and additive non-secret storage diagnostics.
+- Required audit before credential-presence diagnostics; registry retains audit configuration.
+- Isolated Windows concurrency/process-exit/failure tests and benchmark.
+- Cross-language restart harness rejects fresh files containing stale broker identity.
+- Separate development artifacts; historical releases/configurations preserved.
+
 ## 0.5.0.dev2 — partial M1 audit increment
 
 - Broker-generated request correlation shared by nested runtime events; allowlisted

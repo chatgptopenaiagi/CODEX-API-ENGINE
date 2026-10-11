@@ -64,3 +64,25 @@ def test_original_windows_reader_blocks_atomic_report_replacement(tmp_path):
         replacement.replace(report)
     replacement.replace(report)
     assert report.read_bytes() == b'"new"'
+
+
+def test_restart_acceptance_waits_for_new_broker_not_only_new_file(tmp_path, monkeypatch):
+    spec = importlib.util.spec_from_file_location("client_validation", "scripts/validate_clients.py")
+    assert spec and spec.loader
+    lab = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(lab)
+    report = tmp_path / "report.json"
+    value = {"status":{"app":"sample","broker_mode":"named_pipe","broker_pid":123},
+             "models":["lab-model"],"denied":True,"malformed":True,"restricted":True}
+    report.write_text(json.dumps(value))
+    iterations = []
+
+    def step(_):
+        iterations.append(1)
+        value["status"]["broker_pid"] = 456
+        report.write_text(json.dumps(value))
+
+    monkeypatch.setattr(lab.time,"sleep",step)
+    result = lab.wait_reports({"sample":report},previous_pid=123)
+    assert len(iterations) == 1
+    assert result["sample"]["status"]["broker_pid"] == 456

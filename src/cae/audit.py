@@ -15,6 +15,7 @@ from threading import RLock
 from typing import Any, ParamSpec, TypeVar
 from uuid import uuid4
 
+from .audit_storage import JSONLStorage, Retention
 from .errors import AuditError, ConfigurationError
 from .security import identifier, redact
 
@@ -130,12 +131,30 @@ class AuditEvent:
 class AuditLog:
     """Optional append-only JSONL sink. Sink failure blocks subsequent execution."""
 
-    def __init__(self, path: Path | None = None, capacity: int = 1000) -> None:
+    def __init__(self, path: Path | None = None, capacity: int = 1000,
+                 *, retention: Retention | None = None) -> None:
         if not 1 <= capacity <= 100_000:
             raise ConfigurationError()
+        if retention is not None and (path is None or path.name != "active.jsonl"):
+            raise ConfigurationError()
+        self._storage = (JSONLStorage(path.parent, retention, self._validate_record)
+                         if retention is not None and path is not None else None)
         self._path = path
         self._events: deque[AuditEvent] = deque(maxlen=capacity)
         self._lock = RLock()
+
+    @contextmanager
+    def _guard(self) -> Iterator[None]:
+        timeout = self._storage.retention.lock_timeout_ms / 1000 if self._storage else -1
+        if not self._lock.acquire(timeout=timeout):
+            if self._storage is not None:
+                self._storage.health, self._storage.failure = "degraded", "lock_timeout"
+                self._storage.rejected += 1
+            raise AuditError()
+        try:
+            yield
+        finally:
+            self._lock.release()
 
     def emit(
         self,
@@ -166,8 +185,10 @@ class AuditLog:
             if context else None,
         )
         failed = False
-        with self._lock:
-            if self._path is not None:
+        with self._guard():
+            if self._storage is not None:
+                self._storage.append((json.dumps(entry.to_dict(), allow_nan=False) + "\n").encode())
+            elif self._path is not None:
                 try:
                     if self._path.is_symlink():
                         raise OSError()
@@ -183,8 +204,23 @@ class AuditLog:
             raise AuditError()
         return entry
 
-    def events(self, *, app: str | None = None) -> list[dict[str, Any]]:
-        with self._lock:
+    @staticmethod
+    def _validate_record(data: bytes) -> None:
+        AuditEvent(**json.loads(data)).validate()
+
+    def storage_status(self) -> dict[str, Any]:
+        """Trusted local inspection; managed status remains readable when degraded."""
+        if self._storage is not None:
+            return self._storage.status()
+        return {"mode": "legacy_jsonl" if self._path else "memory", "health": "unmonitored"}
+
+    def events(self, *, app: str | None = None,
+               include_archives: bool = False) -> list[dict[str, Any]]:
+        with self._guard():
+            if self._storage is not None:
+                records = self._storage.records(self._events.maxlen or 1000, archives=include_archives)
+                events = [AuditEvent(**json.loads(record)) for record in records]
+                return [event.to_dict() for event in events if app is None or event.app == app]
             if self._path is None:
                 return [
                     event.to_dict() for event in self._events if app is None or event.app == app

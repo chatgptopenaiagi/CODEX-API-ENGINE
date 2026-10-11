@@ -8,8 +8,11 @@
 - Fixed UTC-minute limits trust the system clock; concurrency limits are per runtime.
 - Old native 0.4 clients may report new rate/concurrency errors as generic broker
   request failure. There is no generation replay on transport errors.
-- Audit disk retention/rotation, capability routing, installer, central registry
-  GUI, cancellation, soak/upgrade recovery and separate service identity are unfinished.
+- Capability routing, installer, central registry GUI, cancellation, soak/upgrade
+  recovery and separate service identity are unfinished. Managed audit retention is
+  opt-in; legacy stores remain unbounded. Age pruning is event-driven, not a timer.
+  Complete corruption fails closed; process-crash recovery is not power-loss proof.
+  Filesystem I/O itself has no hard deadline; lock waits are bounded.
 - Seven adapters are implemented, but all-provider live validation is not claimed.
   Local inference has not been validated. Current acceptance uses a mock HTTP provider.
 - Actual host is Windows 10 build 19045; Windows 11 acceptance remains unverified.

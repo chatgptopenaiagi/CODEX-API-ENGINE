@@ -1,5 +1,13 @@
 # Decisions to preserve
 
+## Managed audit storage decisions
+
+Opt in explicitly to a fresh private store; never automatically migrate legacy
+production logs. Use JSONL plus bounded ownership/intent metadata, existing Windows
+file locking and non-overwriting rename; no database/service/cloud dependency.
+Manifest ownership limits deletion scope. Successful writes flush; no power-loss
+or hostile same-user guarantees. See [the full contract](../validation/AUDIT-M1-RETENTION-ROTATION.md).
+
 - Extend the independent named-pipe broker, not a second service or replacement IPC
   protocol. Protocol v1 and existing Python SDK remain compatibility contracts.
 - Kernel-derived peer SID/PID/image and enrollment authenticate executable identity;

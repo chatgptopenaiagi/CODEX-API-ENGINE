@@ -1,18 +1,15 @@
-# Six unfinished milestones toward v1.0
+# Milestone status toward v1.0
 
-Next milestone: finish M1 retention and rotation; correlation is implemented.
+Next planned milestone: M2. M1 acceptance passed within its documented contract.
 
-## 1. Audit correlation and bounded retention
+## 1. Audit correlation and bounded retention — COMPLETE
 
-Current: `src/cae/audit.py` provides allowlisted metadata events and bounded memory;
-the optional JSONL file is unbounded. Request correlation, decision/status/error
-metadata and elapsed time are tested in 0.5.0.dev2. Missing: bounded disk retention,
-safe rotation and their failure/restart acceptance. Dependencies: broker request
-lifecycle (`broker_service.py`, `access.py`) and backward-compatible event schema.
-Implement metadata-only enrichment and explicit retention configuration. Acceptance:
-one request trace spans authorization/result; no prompts, results or secrets logged;
-concurrent writes, restart, full disk and rotation failure preserve fail-closed
-behavior and bounded storage. Extend audit/security and real-process tests.
+Correlation, explicit managed byte/count/age limits, Windows writer locks,
+recoverable rotation/deletion intents and partial-tail recovery are implemented.
+See [the current report](../validation/AUDIT-M1-RETENTION-ROTATION.md) for PASS/NOT_RUN
+boundaries. Legacy opt-out stores remain unchanged and unbounded. Power-loss,
+hostile same-user isolation and long-soak/Windows 11 validation are not claimed.
+Do not reimplement M1. Windows 11 and long-running acceptance remain part of M6.
 
 ## 2. Capability-based provider routing
 
