@@ -1,17 +1,84 @@
-# CODEX API ENGINE (CAE) 0.2.0
+# CODEX ACCESS ENGINE (CAE) 0.3.1
 
-CAE is a reusable OpenAI authentication, credential management and connection engine.
+CAE is a capability-based AI connectivity, protected credential and policy platform.
 It is **not an AI agent**. Windows 11 x64 and Python 3.14 are the primary platform.
+The repository and distribution names remain `CODEX-API-ENGINE` and `codex-api-engine`
+for compatibility. v0.3.1 is a local development build; the public release remains v0.2.0.
+
+## Independent Windows broker
+
+`CAE-Broker.exe` is a separate process with local Windows named pipes, an explicit
+account-scoped DACL, OS peer-process verification, executable SHA-256 enrollment,
+centralized policy/credential access, eight concurrent connections and bounded IPC.
+Clients cannot select their application identity or retrieve provider keys.
+
+```powershell
+python -m pip install .\dist\0.3.1\codex_api_engine-0.3.1-py3-none-any.whl
+python scripts/enroll_broker.py --artifacts dist/0.3.1 --directory .cae/broker
+cae broker start --config .cae/broker/broker.json
+cae broker status --config .cae/broker/broker.json
+cae broker health --config .cae/broker/broker.json
+cae broker diagnostics --config .cae/broker/broker.json
+.\dist\0.3.1\CAE-Console-Client.exe --connection .cae/broker/client.json
+.\dist\0.3.1\CAE-Desktop-Client.exe --connection .cae/broker/client.json
+cae broker restart --config .cae/broker/broker.json
+cae broker stop --config .cae/broker/broker.json
+```
+
+Enrollment authorizes the two exact client executables and the enrollment command's
+underlying Python interpreter as administrator. **All code run by that interpreter
+has the same administrative identity**; it is not script isolation. Run enrollment
+with the same Python installation used by `cae`. Protect configuration/build files.
+Rebuilt executables must be explicitly re-enrolled. Never enroll untrusted images.
+
+For external applications, use the installed `BrokerClient` SDK and the supplied
+non-secret `client.json` connection descriptor. See [protocol and SDK examples](docs/BROKER_PROTOCOL.md),
+[broker validation](docs/BROKER_VALIDATION.md), and [two-client results](docs/INTEGRATION_RESULTS.md).
+The existing `CAE()` SDK and Control Center remain available as trusted in-process
+interfaces; they do not silently switch to IPC. Same-account hostile programs remain
+outside the security boundary. This is not a separate-identity Windows service.
+
+## Access Engine SDK
+
+```python
+from pathlib import Path
+from cae import CAE
+
+engine = CAE(config=Path("examples/access.toml"))
+print(engine.health())       # Offline snapshot, not a network probe
+print(engine.diagnostics())
+print(engine.providers())
+print(engine.connect())      # Explicit single model-list request
+print(engine.models())
+engine.close()
+```
+
+Apps receive broker-bound provider sessions through `engine.provider(name)`.
+Sessions support `list_models()`, `chat()`, `embeddings()`, `health()`,
+`diagnostics()` and `usage()`. Policies control provider, profile, operation, model
+and daily request limits. Credentials never enter an application's SDK calls.
+
+Built-in adapters: OpenAI, Azure OpenAI, Anthropic, Gemini, Ollama, vLLM and
+LM Studio. Unsupported capabilities are explicit; Anthropic embeddings are not
+implemented. Adapter contracts are tested with mocks; new cloud providers have
+not been live-certified.
+
+Use `cae-control-center` for human oversight or `cae --config examples/access.toml diagnostics`
+for machine-readable, offline Codex/application inspection. Diagnostic results are
+observations, not proof of identity or authority.
+
+See [validation evidence](docs/VALIDATION_0.3.md), [Access Engine guide](docs/ACCESS_ENGINE.md), [provider contracts](docs/PROVIDERS.md),
+[policy and audit design](docs/POLICY_AUDIT.md), and [migration](docs/MIGRATION_0.3.md).
 
 ## Features
 
-- Windows Credential Manager integration and credential profiles
-- OpenAI API connectivity, diagnostics and connection testing
-- Python SDK with an in-process authorization broker
-- Windows graphical test console
+- Windows Credential Manager integration and provider-isolated credential profiles
+- Seven cloud/local provider adapters, diagnostics and connection testing
+- Python SDK, model-scoped policy, atomic daily quotas and metadata audit
+- Windows Control Center for credentials, providers, health, audit and policy
 - Python wheel, Windows executable and source distributions
 
-## Official release
+## Existing published v0.2.0 release
 
 Download the existing v0.2.0 artifacts from
 [GitHub Releases](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases).
@@ -39,7 +106,7 @@ From the source repository in PowerShell:
 ./scripts/setup.ps1
 ./.venv/Scripts/cae.exe add
 ./.venv/Scripts/cae.exe test
-./.venv/Scripts/cae-console.exe
+./.venv/Scripts/cae-control-center.exe
 ```
 
 `add` uses a hidden terminal prompt. The console GUI masks and clears the key entry.
@@ -47,7 +114,7 @@ Do not pass secrets on command lines. `cae import <path>` imports an existing UT
 key file without deleting it. Keep such files outside version control.
 
 The package is distributed through GitHub Releases; no PyPI publication is claimed.
-For local development, install the wheel in `dist/` or use `pip install .`.
+For v0.3.1 development, use `pip install .` or the wheel in `dist/0.3.1/` after building.
 
 ## Application SDK
 
@@ -82,7 +149,7 @@ or Codex login integration is enabled.
 ```
 
 Wheel/source packaging uses an explicit package allowlist and checks archives for
-forbidden files. Executable builds include only the GUI launcher and its imports.
+forbidden files. Executable builds include explicit broker/UI/client entry points and imports.
 The release script never uploads, tags, signs or publishes anything.
 
 ## Documentation
@@ -100,7 +167,8 @@ The release script never uploads, tags, signs or publishes anything.
 The Windows account is the storage boundary. Other programs running as that same
 account may use Windows credential APIs. Python in-process grants coordinate trusted
 applications; they cannot isolate hostile code in the same interpreter or Windows
-account. No IPC listener is installed. See the roadmap for a separate-identity broker.
+account. The independent IPC listener is explicitly started by the operator; no
+Windows service is installed. A separate-identity service remains roadmap work.
 
 API authentication, billing, and permissions are independent of ChatGPT subscriptions
 and Codex CLI login. CAE never reads or writes Codex authentication state.

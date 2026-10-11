@@ -1,6 +1,7 @@
 # Repository maintenance instructions
 
-This repository implements CODEX API ENGINE v0.2.0. Read ARCHITECTURE.md and SECURITY.md
+This repository develops CODEX ACCESS ENGINE v0.3.1 and preserves published v0.2.0.
+Read ARCHITECTURE.md, docs/ACCESS_ENGINE.md and SECURITY.md
 before changing trust boundaries. Runtime code belongs in src/cae; root component
 folders document ownership rather than duplicate implementations.
 
@@ -24,6 +25,7 @@ temporary files and caches in the repository. Do not use real credentials in tes
 Do not log arbitrary exception messages or enable HTTP wire debugging. Error codes
 and metadata are sufficient. Preserve the default-deny, fixed-origin design.
 
-No network broker/service, authenticated application identity, package publication,
-code signing or Windows 11 certification is implied by an in-process smoke test.
+The independent broker has a local named-pipe process boundary and executable
+enrollment. This does not imply separate-account isolation, code signing, public
+publication or Windows 11 certification. See docs/BROKER_PROTOCOL.md.
 Record the platform and exact checks actually performed in docs/VALIDATION.md.

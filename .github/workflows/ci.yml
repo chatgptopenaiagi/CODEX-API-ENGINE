@@ -25,13 +25,18 @@ jobs:
         run: ./scripts/build.ps1 -Executable
       - name: Artifact checksums
         shell: pwsh
-        run: ./.venv/Scripts/python.exe scripts/checksums.py
+        run: |
+          ./.venv/Scripts/python.exe scripts/checksums.py
+          ./.venv/Scripts/python.exe scripts/check_release.py
+      - name: Installed wheel and independent client validation (no live API)
+        shell: pwsh
+        run: ./scripts/test_broker_apps.ps1
       - uses: actions/upload-artifact@v4
         with:
           name: cae-windows
           path: |
-            dist/*.whl
-            dist/*.tar.gz
-            dist/*.exe
-            dist/SHA256SUMS.json
+            dist/*/*.whl
+            dist/*/*.tar.gz
+            dist/*/*.exe
+            dist/*/SHA256SUMS.json
           if-no-files-found: error

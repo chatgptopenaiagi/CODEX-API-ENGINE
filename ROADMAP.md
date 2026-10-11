@@ -1,5 +1,33 @@
 # Roadmap
 
+## v0.3.1 — independent Windows broker (local development)
+
+- [x] Separate CAE-Broker.exe with local named pipes and explicit DACL
+- [x] OS peer SID/image checks, executable enrollment and client-side server pinning
+- [x] Central policy, vault access, provider routing and audit
+- [x] Bounded concurrent connections, lifecycle CLI and crash recovery validation
+- [x] Two independent client EXEs; one survives termination of the other
+- [x] Installed-wheel integration and executable smoke tests
+- [ ] Separate least-privilege Windows service identity and installer-managed ACLs
+- [ ] Signing, independent penetration review and Windows 11 acceptance
+
+The completed IPC work below is superseded by v0.3.1; separate-identity isolation
+remains pending. No new provider or unrelated feature is introduced.
+
+## v0.3.0 — CODEX ACCESS ENGINE development
+
+- [x] Seven provider adapters and secret-free capability sessions
+- [x] Human-readable model/operation policy with deny precedence
+- [x] Atomic UTC-day quota ledger with restart persistence
+- [x] Durable metadata audit, health/latency and observed usage
+- [x] Control Center and extended CLI
+- [x] ARX/CGC evidence/continuity interfaces
+- [x] Isolated build artifacts and manual tag release workflow
+- [ ] Separate service identity and authenticated IPC
+- [ ] Live certification of all providers; signed Windows 11 acceptance build
+
+The earlier phase list below records the v0.2 foundation and longer-term direction.
+
 ## v0.2.0 — Phases 1 and 2 foundation
 
 - [x] Windows Credential Manager and lifecycle administration

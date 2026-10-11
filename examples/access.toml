@@ -1,0 +1,46 @@
+# Human-owned provider and capability policy. Never put credentials in this file.
+schema_version = 1
+
+[[providers]]
+name = "openai"
+kind = "openai"
+profile = "default"
+
+[[providers]]
+name = "ollama"
+kind = "ollama"
+profile = "default"
+authenticated = false
+
+[[rules]]
+id = "console-openai"
+app = "cae-console"
+provider = "openai"
+profile = "default"
+operations = ["models", "health", "diagnostics", "usage"]
+max_requests_per_day = 1000
+
+[[rules]]
+id = "console-ollama"
+app = "cae-console"
+provider = "ollama"
+profile = "default"
+operations = ["models", "health", "diagnostics", "usage"]
+max_requests_per_day = 1000
+
+[[rules]]
+id = "arx-openai"
+app = "arx"
+provider = "openai"
+profile = "default"
+operations = ["chat", "diagnostics", "health", "models", "usage"]
+models = ["gpt-5"]
+max_requests_per_day = 1000
+
+[[rules]]
+id = "cgc-read-only"
+app = "cgc"
+provider = "openai"
+profile = "default"
+operations = ["diagnostics", "usage"]
+max_requests_per_day = 100

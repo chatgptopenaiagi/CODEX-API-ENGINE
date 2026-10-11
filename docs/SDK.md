@@ -1,5 +1,8 @@
 # Public SDK v0.2
 
+This page describes the retained v0.2 compatibility surface. For the current v0.3
+capability SDK, see [Access Engine](ACCESS_ENGINE.md) and [migration](MIGRATION_0.3.md).
+
 ```python
 from cae import CAE, CAEError
 

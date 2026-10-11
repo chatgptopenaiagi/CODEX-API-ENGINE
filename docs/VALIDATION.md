@@ -1,5 +1,9 @@
 # v0.2.0 validation record
 
+This is the historical v0.2.0 record. Current development evidence is in
+[v0.3.1 broker validation](BROKER_VALIDATION.md); the
+[v0.3.0 baseline](VALIDATION_0.3.md) is retained separately.
+
 Date: 2026-10-11. Execution platform: Windows x64 build 19045 (Windows 10),
 Python 3.14.7. The requested primary target remains Windows 11 x64; a separate
 Windows 11 acceptance run has not been performed in this environment.

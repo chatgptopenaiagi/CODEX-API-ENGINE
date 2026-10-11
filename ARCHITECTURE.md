@@ -1,5 +1,36 @@
 # CAE architecture
 
+## v0.3.1 independent broker
+
+```mermaid
+flowchart LR
+    A[Console client process] --> SDK[BrokerClient / local named pipe]
+    B[Desktop client process] --> SDK
+    SDK --> IPC[CAE-Broker.exe: SID + executable enrollment]
+    IPC --> Runtime[Existing AccessRuntime: policy / quota / audit]
+    Runtime --> Vault[Windows Credential Manager]
+    Runtime --> Providers[Existing seven provider adapters]
+```
+
+`pipe_transport.py` provides native overlapped I/O and kernel peer identity;
+`ipc_protocol.py` validates framed JSON and explicit enrollment; `broker_client.py`
+is the public client SDK; `broker_service.py` owns the runtime and eight connection
+workers; `broker_control.py` supervises startup/shutdown without system installation.
+`examples/broker_console.py` and `examples/broker_desktop.py` import only the public
+SDK and build into separate application EXEs. The service does not import either UI.
+
+No broker code relies on Codex CLI, Control Center, a calling application lifecycle,
+environment API keys or changes to Windows authentication. The existing `CAE()`
+composition remains backward compatible and explicitly in-process. This broker runs
+under the current Windows account; separate service-account isolation is not implemented.
+See [protocol](docs/BROKER_PROTOCOL.md) for trust boundaries and failure behavior.
+
+## Previous architecture and compatibility
+
+For the current CODEX ACCESS ENGINE v0.3.0 architecture, see
+[Access Engine](docs/ACCESS_ENGINE.md) and [policy/audit design](docs/POLICY_AUDIT.md).
+The v0.2.0 architecture below documents the retained compatibility interfaces.
+
 Version 0.2.0 provides a synchronous SDK, native Windows credential backend,
 in-process policy broker, bounded HTTPS connector, diagnostic snapshots, explicit
 health monitoring, CLI and a separate human-operated test console.

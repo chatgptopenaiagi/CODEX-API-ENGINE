@@ -24,3 +24,4 @@ htmlcov/
 *.spec
 release/
 /New Text Document.txt
+.cae/

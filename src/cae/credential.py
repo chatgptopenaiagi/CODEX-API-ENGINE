@@ -3,11 +3,13 @@
 import ctypes
 import hmac
 import os
+from collections.abc import Callable
 from ctypes import wintypes
 from pathlib import Path
 from threading import RLock
 from typing import Protocol
 
+from .audit import AuditLog
 from .errors import CredentialError, CredentialExists, CredentialMissing
 from .security import identifier, validate_key
 
@@ -41,7 +43,8 @@ class _Credential(ctypes.Structure):
 class WindowsCredentialStore:
     """OS user scoped generic credentials; no plaintext fallback or environment lookup."""
 
-    def __init__(self) -> None:
+    def __init__(self, provider: str = "openai") -> None:
+        self._provider = identifier(provider)
         if os.name != "nt":
             raise CredentialError()
         self._dll = ctypes.WinDLL("Advapi32.dll", use_last_error=True)
@@ -60,9 +63,8 @@ class WindowsCredentialStore:
         self._dll.CredFree.argtypes = [ctypes.c_void_p]
         self._dll.CredFree.restype = None
 
-    @staticmethod
-    def _target(profile: str) -> str:
-        return "CAE/openai/" + identifier(profile)
+    def _target(self, profile: str) -> str:
+        return "CAE/" + self._provider + "/" + identifier(profile)
 
     def read(self, profile: str) -> str:
         ptr = ctypes.POINTER(_Credential)()
@@ -88,7 +90,7 @@ class WindowsCredentialStore:
 
     def write(self, profile: str, secret: str) -> None:
         target = self._target(profile)
-        validate_key(secret)
+        validate_key(secret, self._provider)
         data = bytearray(secret, "utf-8")
         buffer = (wintypes.BYTE * len(data)).from_buffer(data)
         credential = _Credential()
@@ -121,28 +123,35 @@ class WindowsCredentialStore:
 class CredentialManager:
     """Human/admin API. No export or raw-key retrieval method."""
 
-    def __init__(self, store: CredentialStore | None = None) -> None:
-        self._store = store if store is not None else WindowsCredentialStore()
+    def __init__(
+        self,
+        store: CredentialStore | None = None,
+        *,
+        provider: str = "openai",
+        audit: AuditLog | None = None,
+    ) -> None:
+        self._provider = identifier(provider)
+        self._audit_log = audit if audit is not None else AuditLog()
+        self._store = store if store is not None else WindowsCredentialStore(provider)
         self._lock = RLock()
 
     def exists(self, profile: str = "default") -> bool:
+        self._audit_log.emit("credential_checked", provider=self._provider, profile=profile)
         return self._store.exists(identifier(profile))
 
     def add(self, secret: str, profile: str = "default") -> None:
-        validate_key(secret)
+        validate_key(secret, self._provider)
         with self._lock:
             if self.exists(profile):
                 raise CredentialExists()
-            self._store.write(profile, secret)
-            self._verify(profile, secret)
+            self._change(profile, "credential_added", lambda: self._write(profile, secret))
 
     def replace(self, secret: str, profile: str = "default") -> None:
-        validate_key(secret)
+        validate_key(secret, self._provider)
         with self._lock:
             if not self.exists(profile):
                 raise CredentialMissing()
-            self._store.write(profile, secret)
-            self._verify(profile, secret)
+            self._change(profile, "credential_replaced", lambda: self._write(profile, secret))
 
     def rotate(self, secret: str, profile: str = "default") -> None:
         """Replace locally. Provider-side creation/revocation remains a human operation."""
@@ -150,7 +159,27 @@ class CredentialManager:
 
     def remove(self, profile: str = "default") -> None:
         with self._lock:
-            self._store.delete(identifier(profile))
+            self._change(
+                identifier(profile), "credential_removed", lambda: self._store.delete(profile)
+            )
+
+    def _write(self, profile: str, secret: str) -> None:
+        self._store.write(profile, secret)
+        self._verify(profile, secret)
+
+    def _change(self, profile: str, event: str, action: Callable[[], None]) -> None:
+        self._audit_log.emit(
+            "credential_change_requested", provider=self._provider, profile=profile
+        )
+        failed = False
+        try:
+            action()
+        except Exception:
+            failed = True
+        if failed:
+            self._audit_log.emit("credential_failed", provider=self._provider, profile=profile)
+            raise CredentialError()
+        self._audit_log.emit(event, provider=self._provider, profile=profile)
 
     def _verify(self, profile: str, secret: str) -> None:
         if not hmac.compare_digest(self._store.read(profile), secret):
@@ -164,7 +193,7 @@ class CredentialManager:
             if path.is_symlink() or path.stat().st_size > 4096:
                 raise CredentialError()
             secret = path.read_text(encoding="utf-8-sig").strip()
-            validate_key(secret)
+            validate_key(secret, self._provider)
         except Exception:
             failed = True
         if failed:

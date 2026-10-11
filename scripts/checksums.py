@@ -2,13 +2,15 @@
 
 import hashlib
 import json
+import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> None:
-    dist = ROOT / "dist"
+    version = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
+    dist = ROOT / "dist" / version
     rows = [
         {"File": path.name, "Hash": hashlib.sha256(path.read_bytes()).hexdigest().upper()}
         for path in sorted(dist.iterdir())

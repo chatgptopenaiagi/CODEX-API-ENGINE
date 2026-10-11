@@ -1,5 +1,9 @@
 # Installation
 
+For the current development build, run `scripts/setup.ps1` and `cae-control-center`.
+After `scripts/release.ps1`, install `dist/0.3.0/codex_api_engine-0.3.0-py3-none-any.whl`
+or launch `dist/0.3.0/CAE-Control-Center.exe`. Published v0.2.0 instructions follow.
+
 Requirements: Windows 11 x64, Python 3.14 with Tcl/Tk, and network access to
 `api.openai.com:443`. Administrator privileges are not required for credential storage.
 Run CAE as the Windows account that will own the API key.

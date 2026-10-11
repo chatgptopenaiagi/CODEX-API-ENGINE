@@ -42,3 +42,8 @@ def test_gui_mask_clear_and_worker():
         assert "valid" in console.activity.get("1.0", "end")
     finally:
         root.destroy()
+        import gc
+
+        console = None
+        root = None
+        gc.collect()

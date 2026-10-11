@@ -3,16 +3,21 @@
 import hashlib
 import json
 import tarfile
+import tomllib
 import types
 import zipfile
 from email.parser import BytesParser
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+VERSION = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
 ASSETS = (
-    "CAE-Test-Console.exe",
-    "codex_api_engine-0.2.0-py3-none-any.whl",
-    "codex_api_engine-0.2.0.tar.gz",
+    "CAE-Control-Center.exe",
+    f"codex_api_engine-{VERSION}-py3-none-any.whl",
+    f"codex_api_engine-{VERSION}.tar.gz",
+    "CAE-Broker.exe",
+    "CAE-Console-Client.exe",
+    "CAE-Desktop-Client.exe",
 )
 
 
@@ -34,7 +39,7 @@ def code_identity(code: types.CodeType) -> tuple:
 
 
 def main() -> None:
-    dist = ROOT / "dist"
+    dist = ROOT / "dist" / VERSION
     checksums = json.loads((dist / "SHA256SUMS.json").read_text(encoding="utf-8-sig"))
     expected = {row["File"]: row["Hash"].lower() for row in checksums}
     assert set(expected) == set(ASSETS)
@@ -43,29 +48,32 @@ def main() -> None:
         assert data and hashlib.sha256(data).hexdigest() == expected[name]
     with zipfile.ZipFile(dist / ASSETS[1]) as archive:
         metadata = BytesParser().parsebytes(
-            archive.read("codex_api_engine-0.2.0.dist-info/METADATA")
+            archive.read(f"codex_api_engine-{VERSION}.dist-info/METADATA")
         )
-        assert metadata["Version"] == "0.2.0"
+        assert metadata["Version"] == VERSION
         assert metadata["Name"] == "codex-api-engine"
         for path in (ROOT / "src/cae").glob("*.py"):
             assert archive.read("cae/" + path.name) == path.read_bytes()
     with tarfile.open(dist / ASSETS[2]) as archive:
         for path in (ROOT / "src/cae").glob("*.py"):
-            stream = archive.extractfile("codex_api_engine-0.2.0/src/cae/" + path.name)
+            stream = archive.extractfile(f"codex_api_engine-{VERSION}/src/cae/" + path.name)
             assert stream is not None and stream.read() == path.read_bytes()
     from PyInstaller.archive.readers import CArchiveReader
 
-    executable = CArchiveReader(str(dist / ASSETS[0]))
-    embedded = executable.open_embedded_archive("PYZ.pyz")
-    for name in embedded.toc:
-        if name == "cae" or name.startswith("cae."):
-            relative = name.replace(".", "/")
-            path = ROOT / "src" / (relative + ".py")
-            if not path.is_file():
-                path = ROOT / "src" / relative / "__init__.py"
-            packaged = embedded.extract(name)
-            source = compile(path.read_bytes(), str(path), "exec", dont_inherit=True)
-            assert code_identity(packaged) == code_identity(source)
+    for asset in ASSETS:
+        if not asset.endswith(".exe"):
+            continue
+        executable = CArchiveReader(str(dist / asset))
+        embedded = executable.open_embedded_archive("PYZ.pyz")
+        for name in embedded.toc:
+            if name == "cae" or name.startswith("cae."):
+                relative = name.replace(".", "/")
+                path = ROOT / "src" / (relative + ".py")
+                if not path.is_file():
+                    path = ROOT / "src" / relative / "__init__.py"
+                packaged = embedded.extract(name)
+                source = compile(path.read_bytes(), str(path), "exec", dont_inherit=True)
+                assert code_identity(packaged) == code_identity(source)
     print("Existing release integrity and runtime-source match: SUCCESS")
 
 
