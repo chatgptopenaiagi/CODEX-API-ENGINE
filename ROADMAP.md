@@ -1,5 +1,19 @@
 # Roadmap
 
+## 0.5.0.dev1 — security increment (unpublished)
+
+- [x] Authenticated administrative application registry and persistent enrollment metadata
+- [x] Next-connection revocation in the development broker; old-broker restart warning
+- [x] Daily/minute quotas, concurrency limits and model/provider policy restrictions
+- [x] Configuration failure recovery, native identity failures and strict response validation
+- [x] 90% overall / 95% critical-module Python coverage gates
+- [x] Frozen broker, legacy clients and six-application compatibility acceptance
+- [ ] Complete v0.5 audit enrichment/retention and independent security review
+
+The source uses a development version deliberately. v0.6 routing and real local-model
+acceptance, v0.7 central administration UI, v0.8 installer/uninstaller, v0.9 soak and
+recovery hardening, and v1.0 Windows 11/release acceptance remain unfinished.
+
 ## v0.4.0 — universal clients (locally validated)
 
 - [x] Python compatibility facade, C#/.NET, C++, Node.js and PowerShell SDKs

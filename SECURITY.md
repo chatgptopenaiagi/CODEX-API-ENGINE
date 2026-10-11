@@ -1,5 +1,23 @@
 # CAE security model
 
+## 0.5.0.dev1 development controls
+
+Administrative registry commands require an existing OS-verified admin executable.
+They are not client protocol capabilities. The broker revalidates enrollment per
+connection and fails closed if the configuration is invalid or changes pinned
+listener/runtime identity. Registration cannot reuse revoked IDs or inherit an
+existing unregistered ID's provider grants. Revocation does not cancel in-flight work.
+
+Atomic file replacement preserves existing DACLs; recovery copies are retained if
+the filesystem cannot restore a failed edit. Private registry metadata/locks and
+recovery files are ignored by Git. Daily and minute quota reservations are atomic;
+concurrency and rate denials precede vault/provider access. Same-account configuration
+tampering and interpreter-wide enrollment remain explicit limitations.
+
+Full validation gates overall Python statement coverage at 90% and 16 runtime trust
+boundary modules at 95%; native SDK coverage percentages are not inferred from this.
+See [executed results](docs/validation/SECURITY-0.5.0-dev1.md).
+
 ## Universal client verification
 
 The 0.4.0 client SDKs preserve v1 mutual Windows peer verification. .NET and native

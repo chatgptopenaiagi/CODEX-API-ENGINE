@@ -78,8 +78,15 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--artifacts", type=Path, default=ROOT / "dist/0.4.0-clients")
     parser.add_argument("--electron", type=Path, help="Optional installed Electron executable")
+    parser.add_argument("--broker-directory", type=Path, default=ROOT / "dist/0.3.1")
+    parser.add_argument("--results-directory", type=Path)
     args = parser.parse_args()
     artifacts = args.artifacts.resolve()
+    broker_directory = args.broker_directory.resolve()
+    results_directory = (args.results_directory or artifacts).resolve()
+    results_directory.mkdir(parents=True, exist_ok=True)
+    wheels = list(broker_directory.glob("codex_api_engine-*-py3-none-any.whl"))
+    assert len(wheels) == 1, "expected_one_engine_wheel"
     work = ROOT / ".tmp" / ("clients040-" + uuid4().hex)
     work.mkdir()
     env = dict(os.environ, TEMP=str(ROOT / ".tmp"), TMP=str(ROOT / ".tmp"),
@@ -88,7 +95,7 @@ def main() -> None:
     python = work / "venv/Scripts/python.exe"
     run([sys.executable, "-m", "venv", str(work / "venv")], env)
     run([str(python), "-m", "pip", "install", "--no-index", "--no-deps",
-         str(ROOT / "dist/0.3.1/codex_api_engine-0.3.1-py3-none-any.whl"),
+         str(wheels[0]),
          str(artifacts / "python/cae_client-0.4.0-py3-none-any.whl")], env)
     run([shutil.which("npm.cmd") or "npm.cmd", "install", "--prefix", str(work / "node"),
          "--ignore-scripts", "--offline", "--no-audit", "--no-fund",
@@ -97,7 +104,7 @@ def main() -> None:
     env["PSModulePath"] = str(artifacts / "powershell") + os.pathsep + env.get("PSModulePath", "")
     node = Path(shutil.which("node") or "node")
     powershell = Path(shutil.which("pwsh") or "pwsh")
-    broker = ROOT / "dist/0.3.1/CAE-Broker.exe"
+    broker = broker_directory / "CAE-Broker.exe"
     dotnet = artifacts / "dotnet-client/Lab.Client.exe"
     admin = artifacts / "admin-client/Lab.Client.exe"
     cpp = artifacts / "CAE-Cpp-Client.exe"
@@ -187,11 +194,12 @@ def main() -> None:
         assert MockProvider.calls >= 9
         assert MockProvider.posts == 0, "denied_generation_reached_provider"
         result = {"result": "passed", "provider": "mock loopback HTTP; no real model or cloud validation",
-            "broker": str(broker), "broker_sha256": record["sha256"], "broker_version": "0.3.1",
+            "broker": str(broker), "broker_sha256": record["sha256"],
+            "broker_version": initial["python"]["status"]["version"],
             "initial": initial, "survived_client_termination": surviving, "recovered": recovered,
             "mock_provider_calls": MockProvider.calls, "production_credentials_accessed": False,
             "clean_shutdown": True, "work": str(work)}
-        output = artifacts / "CROSS-LANGUAGE-RESULTS.json"
+        output = results_directory / "CROSS-LANGUAGE-RESULTS.json"
         output.write_text(json.dumps(result, indent=2), encoding="utf-8")
         print(json.dumps({"result": "passed", "report": str(output), "broker_pid": pid,
                           "restarted_pid": new_pid, "languages": 5, "applications": len(names)}))

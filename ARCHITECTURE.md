@@ -1,5 +1,19 @@
 # CAE architecture
 
+## 0.5.0.dev1 administrative increment
+
+`registry.py` administers the existing enrollment JSON and policy TOML; it does not
+create another broker or expose administrative IPC endpoints. Commands authenticate
+the operator's actual executable against an existing admin enrollment, serialize
+edits with a Windows file lock, and preserve destination file DACLs on replacement.
+The broker reloads enrollment before each request while pinning its server identity,
+pipe and runtime path until restart. Already accepted requests are not cancelled.
+
+The existing SQLite quota transaction now reserves daily and UTC-minute counters
+atomically. Per-rule concurrent provider slots are acquired and released by the
+runtime around each provider operation, including failure paths. Older rules remain
+valid; minute/concurrency limits are opt-in. See [administration](docs/APPLICATION_REGISTRY.md).
+
 ## Universal client development
 
 `clients/` contains public Python, .NET, C++, Node.js and PowerShell SDKs. All use

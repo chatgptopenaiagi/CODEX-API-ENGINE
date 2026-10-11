@@ -1,6 +1,8 @@
 # Universal clients — executed validation
 
-Date: 2026-10-11. Local development only; nothing pushed or published.
+Date: 2026-10-11. Milestone snapshot: local commit `d969373`.
+Local development only; nothing pushed or published. Later security development is
+recorded separately in [0.5.0.dev1 validation](SECURITY-0.5.0-dev1.md).
 Windows build 19045 x64, Python 3.14.7, .NET SDK 10.0.401, Node 26.8.1,
 LLVM 22.1.8/MSVC 14.51, PowerShell 7.6.6, Electron 44.7.0.
 

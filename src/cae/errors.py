@@ -36,6 +36,14 @@ class QuotaExceeded(AccessDenied):
     code = "daily_request_limit"
 
 
+class RateLimitExceeded(AccessDenied):
+    code = "request_rate_limit"
+
+
+class ConcurrentLimitExceeded(AccessDenied):
+    code = "concurrent_request_limit"
+
+
 class AuditError(CAEError):
     code = "audit_unavailable"
 

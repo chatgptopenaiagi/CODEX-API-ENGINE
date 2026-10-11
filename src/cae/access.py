@@ -12,6 +12,7 @@ from .errors import (
     AccessDenied,
     APIError,
     CAEError,
+    ConcurrentLimitExceeded,
     ConfigurationError,
     CredentialError,
     UnsupportedOperation,
@@ -91,6 +92,20 @@ class AccessRuntime:
         return provider
 
     def execute(
+        self, app: str, name: str, profile: str, operation: str, *,
+        model: str | None = None, text: str | None = None, max_tokens: int = 256,
+    ) -> dict[str, Any]:
+        self._provider(app, name, profile, operation, model)
+        try:
+            with self.policy.request_slot(app, name, profile, operation, model):
+                return self._execute(app, name, profile, operation, model=model,
+                                     text=text, max_tokens=max_tokens)
+        except ConcurrentLimitExceeded:
+            self.audit_log.emit("policy_denied", app=app, provider=name,
+                                profile=profile, operation=operation)
+            raise
+
+    def _execute(
         self,
         app: str,
         name: str,

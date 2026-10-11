@@ -16,6 +16,7 @@ class BrokerRemoteError(CAEError):
             "access_denied", "invalid_protocol", "invalid_configuration", "daily_request_limit",
             "credential_operation_failed", "credential_missing", "api_request_failed",
             "unsupported_operation", "audit_unavailable", "broker_unavailable",
+            "request_rate_limit", "concurrent_request_limit",
         } else "broker_request_failed"
         super().__init__()
 
@@ -44,13 +45,14 @@ class BrokerClient:
             value = decode(pipe.receive(self.timeout))
             pipe.send(b"OK")  # Drain handshake: server never uses blocking FlushFileBuffers.
             if (set(value) != {"v", "id", "ok", "result", "error", "broker_pid"}
-                    or value["v"] != 1 or value["id"] != identity
-                    or type(value["ok"]) is not bool or value["broker_pid"] != peer.pid):
+                    or type(value["v"]) is not int or value["v"] != 1 or value["id"] != identity
+                    or type(value["ok"]) is not bool or type(value["broker_pid"]) is not int
+                    or value["broker_pid"] != peer.pid or not isinstance(value["result"], dict)
+                    or (value["ok"] and value["error"] is not None)
+                    or (not value["ok"] and not isinstance(value["error"], str))):
                 raise ProtocolError()
             if not value["ok"]:
                 raise BrokerRemoteError(value["error"])
-            if not isinstance(value["result"], dict):
-                raise ProtocolError()
             return dict(value["result"])
         finally:
             pipe.close()

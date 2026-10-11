@@ -29,3 +29,6 @@ release/
 **/obj/
 node_modules/
 clients/python/build/
+*.apps.json
+*.apps.lock
+.cae-edit-*

@@ -1,5 +1,6 @@
 """Adversarial real-pipe responses to all five compiled/installed clients."""
 
+import argparse
 import ctypes
 import json
 import os
@@ -17,8 +18,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--integration-report", type=Path,
+                        default=ROOT / "dist/0.4.0-clients/CROSS-LANGUAGE-RESULTS.json")
+    args = parser.parse_args()
     artifacts = ROOT / "dist/0.4.0-clients"
-    integration = json.loads((artifacts / "CROSS-LANGUAGE-RESULTS.json").read_text())
+    integration = json.loads(args.integration_report.read_text())
     work = Path(integration["work"])
     testdir = work / "security"
     testdir.mkdir(exist_ok=True)
@@ -113,7 +118,7 @@ def main() -> None:
                 stop.set()
                 thread.join(timeout=5)
                 assert not thread.is_alive()
-    (artifacts / "CLIENT-SECURITY-RESULTS.json").write_text(json.dumps(results, indent=2))
+    (args.integration_report.parent / "CLIENT-SECURITY-RESULTS.json").write_text(json.dumps(results, indent=2))
     print(json.dumps({"security_cases_passed": len(results), "languages": 5}))
 
 

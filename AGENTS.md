@@ -1,6 +1,7 @@
 # Repository maintenance instructions
 
-This repository develops CODEX ACCESS ENGINE v0.3.1 and preserves published v0.2.0.
+This repository develops CODEX ACCESS ENGINE v0.5.0.dev1, with validated 0.4.0 client
+SDKs, and preserves published v0.2.0/v0.3.1.
 Read ARCHITECTURE.md, docs/ACCESS_ENGINE.md and SECURITY.md
 before changing trust boundaries. Runtime code belongs in src/cae; root component
 folders document ownership rather than duplicate implementations.
@@ -20,7 +21,8 @@ Tests use unique synthetic targets and clean up only those targets.
 
 ## Validation
 
-Use scripts/setup.ps1, scripts/test.ps1 and scripts/build.ps1 -Executable. Keep
+Use scripts/setup.ps1, scripts/build.ps1 -Executable, scripts/build_clients.ps1,
+then scripts/test.ps1 (full validation includes native executable tests). Keep
 temporary files and caches in the repository. Do not use real credentials in tests.
 Do not log arbitrary exception messages or enable HTTP wire debugging. Error codes
 and metadata are sufficient. Preserve the default-deny, fixed-origin design.

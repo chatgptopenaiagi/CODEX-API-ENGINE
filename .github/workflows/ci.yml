@@ -14,9 +14,6 @@ jobs:
       - name: Setup
         shell: pwsh
         run: ./scripts/setup.ps1
-      - name: Test
-        shell: pwsh
-        run: ./scripts/test.ps1
       - name: Python syntax
         shell: pwsh
         run: ./.venv/Scripts/python.exe -m compileall -q src tests scripts examples gui
@@ -40,13 +37,19 @@ jobs:
       - name: Build universal clients
         shell: pwsh
         run: ./scripts/build_clients.ps1
+      - name: Test including native acceptance and security coverage gates
+        shell: pwsh
+        run: ./scripts/test.ps1
       - name: Cross-language acceptance and hostile-server tests (mock provider)
         shell: pwsh
         run: |
-          ./.venv/Scripts/python.exe scripts/validate_clients.py
+          $version = & ./.venv/Scripts/python.exe -c "import cae; print(cae.__version__)"
+          ./.venv/Scripts/python.exe scripts/validate_clients.py --broker-directory "dist/$version"
           if ($LASTEXITCODE) { throw 'Cross-language validation failed' }
           ./.venv/Scripts/python.exe scripts/validate_client_security.py
           if ($LASTEXITCODE) { throw 'Client security validation failed' }
+          ./.venv/Scripts/python.exe -m pytest tests/test_application_registry.py
+          if ($LASTEXITCODE) { throw 'Native client revocation validation failed' }
       - uses: actions/upload-artifact@v4
         with:
           name: cae-windows

@@ -1,7 +1,8 @@
 # Universal client SDKs — 0.4.0 development
 
-These clients use the **existing broker protocol v1**. The engine and preserved
-broker binary remain 0.3.1; client distributions have their own version 0.4.0.
+These clients use the **existing broker protocol v1**. Their initial acceptance used
+the preserved 0.3.1 broker; they also pass against the 0.5.0.dev1 development broker.
+Client distributions have their own version 0.4.0.
 No new public release or package-registry publication is implied.
 
 ## Discover, enroll, connect
@@ -116,6 +117,10 @@ There is **no automatic replay**, especially for potentially billable operations
 After failure, a subsequent caller-initiated request opens a fresh connection and
 revalidates the server. A rebuilt broker needs an operator-approved new pin.
 The integration lab polls fresh read-only requests to demonstrate restart recovery.
+
+The 0.5 development broker adds rate/concurrency error codes. The 0.4 native/.NET SDKs
+map unfamiliar server error codes to `broker_request_failed`; they still deny the call.
+The updated Python engine SDK recognizes the new codes. Protocol v1 framing is unchanged.
 
 Windows SID/image enrollment does not isolate scripts, plugins or hostile programs
 running under the same user. Enrolling Python, Node, PowerShell or Electron grants

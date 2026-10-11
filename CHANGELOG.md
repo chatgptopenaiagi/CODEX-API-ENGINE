@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0.dev1 — unpublished security development
+
+- Operator-only application list/register/inspect/authorize/revoke commands.
+- Persistent registration metadata, Windows-locked edits, DACL-preserving replacement
+  and fail-closed enrollment reload on each new broker connection.
+- Persistent per-minute quotas and provider concurrency limits; policy edits retain
+  quota identity, and old rules keep their previous behavior by default.
+- Strict Python response field typing and additional native failure/recovery tests.
+- Separate development packages; no production credential migration or public release.
+
 ## 0.4.0 client SDKs — local development
 
 - Python facade, native C# and C++ clients, asynchronous Node-API SDK and PowerShell module.

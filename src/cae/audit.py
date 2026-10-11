@@ -39,6 +39,10 @@ EVENTS = frozenset(
         "broker_status",
         "ipc_authenticated",
         "ipc_denied",
+        "application_registered",
+        "application_change_requested",
+        "application_authorized",
+        "application_revoked",
     }
 )
 

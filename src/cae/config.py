@@ -50,6 +50,8 @@ def parse_config(text: str) -> tuple[tuple[ProviderConfig, ...], tuple[Rule, ...
                     "effect",
                     "models",
                     "max_requests_per_day",
+                    "max_requests_per_minute",
+                    "max_concurrent_requests",
                 },
             )
             if not isinstance(item.get("operations"), list) or not isinstance(
