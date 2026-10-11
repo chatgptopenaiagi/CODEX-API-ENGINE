@@ -1,6 +1,6 @@
 # CODEX ACCESS ENGINE (CAE)
 
-Current source: **0.5.0.dev3**, a development audit-storage increment.
+Current source: **0.5.0.dev4**, a development capability-routing increment.
 The published foundation remains **v0.3.1**. This is not a v1.0 release.
 
 Broker-local audit request IDs now link authentication, policy and result metadata;
@@ -10,6 +10,16 @@ Windows writer serialization. Enable `[audit] mode = "managed"` explicitly; lega
 logs are not migrated automatically.
 See [M1 validation](docs/validation/AUDIT-M1-RETENTION-ROTATION.md) and
 [continuation instructions](docs/continuity/NEXT_SESSION.md).
+
+## Capability routing (development)
+
+Authorized applications can request versioned chat or embedding capabilities using
+explicit-provider, local-only, local-first or cloud-only selection. Cloud permission
+and pre-dispatch fallback require operator grants; uncertain requests are never
+replayed. Legacy APIs remain available. See [configuration, SDK examples and limits](docs/CAPABILITY_ROUTING.md)
+and [executed M2 evidence](docs/validation/ROUTING-M2.md). No real-model or POK
+integration claim is implied. New client-lab builds use `.tmp/m2-clients` to preserve
+historical packages.
 
 ## Application administration and limits
 
@@ -24,7 +34,7 @@ requests. Limits are checked before credential access and provider communication
 See [application administration](docs/APPLICATION_REGISTRY.md) and
 [executed security validation](docs/validation/SECURITY-0.5.0-dev1.md).
 
-Development engine artifacts are in `dist/0.5.0.dev3/`; client SDKs are in
+Development engine artifacts are in `dist/0.5.0.dev4/`; client SDKs are in
 `dist/0.4.0-clients/`. Full local validation requires building both before running
 `scripts/test.ps1`. Historical release artifacts are not overwritten.
 

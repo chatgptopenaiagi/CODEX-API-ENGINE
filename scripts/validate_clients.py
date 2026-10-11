@@ -25,10 +25,24 @@ SYNTHETIC = "sk-" + "synthetic-leak-canary-" * 4
 class MockProvider(BaseHTTPRequestHandler):
     calls = 0
     posts = 0
+    routing = False
+    denied_posts = 0
 
     def do_POST(self) -> None:
         type(self).posts += 1
-        self.send_error(403)
+        payload = json.loads(self.rfile.read(int(self.headers.get("Content-Length", "0"))))
+        if not self.routing or payload.get("model") != "route-model":
+            type(self).denied_posts += 1
+            self.send_error(403)
+            return
+        assert self.path == "/v1/chat/completions"
+        assert "Authorization" not in self.headers
+        body = json.dumps({"choices": [{"message": {"content": "routing mock " + SYNTHETIC}}],
+                           "usage": {"prompt_tokens": 1, "completion_tokens": 2}}).encode()
+        self.send_response(200)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
     def do_GET(self) -> None:
         assert self.path == "/v1/models"
@@ -52,7 +66,7 @@ def run(command: list[str], env: dict[str, str], *, cwd: Path = ROOT) -> None:
 
 
 def wait_reports(paths: dict[str, Path], *, expected_pid: int | None = None,
-                 after: float = 0, previous_pid: int | None = None) -> dict[str, Any]:
+                 after: float = 0, previous_pid: int | None = None, routing: bool = False) -> dict[str, Any]:
     deadline = time.monotonic() + 60
     while time.monotonic() < deadline:
         values = {}
@@ -68,6 +82,11 @@ def wait_reports(paths: dict[str, Path], *, expected_pid: int | None = None,
                 assert path.stat().st_mtime > after
                 assert expected_pid is None or value["status"]["broker_pid"] == expected_pid
                 assert value["status"]["broker_pid"] != previous_pid
+                if routing:
+                    assert value["routing"]["provider_id"] == "lab"
+                    assert value["routing"]["model_id"] == "route-model"
+                    assert value["routing"]["usage"]["state"] == "CONFIRMED_USAGE"
+                    assert value["routing"]["result"]["text"].startswith("routing mock")
                 values[name] = value
             assert len({v["status"]["broker_pid"] for v in values.values()}) == 1
             return values
@@ -79,6 +98,7 @@ def wait_reports(paths: dict[str, Path], *, expected_pid: int | None = None,
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--artifacts", type=Path, default=ROOT / "dist/0.4.0-clients")
+    parser.add_argument("--routing", action="store_true", help="Exercise capability routing using synthetic POSTs")
     parser.add_argument("--managed-audit", action="store_true", help="Exercise opt-in retention in isolated state")
     parser.add_argument("--electron", type=Path, help="Optional installed Electron executable")
     parser.add_argument("--broker-directory", type=Path, default=ROOT / "dist/0.3.1")
@@ -95,6 +115,11 @@ def main() -> None:
     env = dict(os.environ, TEMP=str(ROOT / ".tmp"), TMP=str(ROOT / ".tmp"),
                npm_config_cache=str(ROOT / ".cache/npm"))
     env.pop("PYTHONPATH", None)
+    if args.routing:
+        env["CAE_LAB_ROUTING"] = "1"
+    else:
+        env.pop("CAE_LAB_ROUTING", None)
+    MockProvider.routing = args.routing
     python = work / "venv/Scripts/python.exe"
     run([sys.executable, "-m", "venv", str(work / "venv")], env)
     run([str(python), "-m", "pip", "install", "--no-index", "--no-deps",
@@ -128,6 +153,12 @@ def main() -> None:
             f'\n[[rules]]\nid = "{name}"\napp = "{name}"\nprovider = "lab"\n'
             'profile = "default"\noperations = ["models", "health", "diagnostics"]\n'
             for name in names), encoding="utf-8")
+    if args.routing:
+        text = runtime.read_text(encoding="utf-8")
+        text = text.replace('authenticated = false', 'authenticated = false\nrouting_models = ["route-model"]')
+        text = text.replace('operations = ["models", "health", "diagnostics"]',
+            'operations = ["models", "health", "diagnostics", "chat"]\nmodels = ["route-model"]\nrouting_modes = ["LOCAL_ONLY"]')
+        runtime.write_text(text, encoding="utf-8")
     if args.managed_audit:
         text = runtime.read_text(encoding="utf-8")
         runtime.write_text(text.replace("schema_version = 1\n", 'schema_version = 1\n[audit]\nmode = "managed"\nactive_bytes = 16384\ntotal_bytes = 131072\narchive_count = 7\nlock_timeout_ms = 10000\n', 1), encoding="utf-8")
@@ -172,20 +203,20 @@ def main() -> None:
             processes[name] = subprocess.Popen([*command, str(reports[name])], env=env, cwd=work,
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                 creationflags=subprocess.CREATE_NO_WINDOW)
-        initial = wait_reports(reports)
+        initial = wait_reports(reports, routing=args.routing)
         pid = initial["python"]["status"]["broker_pid"]
         # Unexpected termination of one application must not affect the other four.
         processes["cpp"].kill()
         processes["cpp"].wait(timeout=10)
         survivors = {name: path for name, path in reports.items() if name != "cpp"}
-        surviving = wait_reports(survivors, expected_pid=pid, after=time.time())
+        surviving = wait_reports(survivors, expected_pid=pid, after=time.time(), routing=args.routing)
         assert monitor.get_status()["broker_pid"] == pid
         run([str(admin), "stop"], env)
         host.wait(timeout=40)
         assert host.returncode == 0
         restarted_at = time.time()
         host = start()
-        recovered = wait_reports(survivors, after=restarted_at, previous_pid=pid)
+        recovered = wait_reports(survivors, after=restarted_at, previous_pid=pid, routing=args.routing)
         new_pid = recovered["python"]["status"]["broker_pid"]
         assert new_pid != pid
         exited = {name: processes[name].returncode for name in survivors
@@ -200,11 +231,13 @@ def main() -> None:
         host.wait(timeout=40)
         assert host.returncode == 0
         assert MockProvider.calls >= 9
-        assert MockProvider.posts == 0, "denied_generation_reached_provider"
+        assert MockProvider.denied_posts == 0, "denied_generation_reached_provider"
+        assert (MockProvider.posts >= len(names)) if args.routing else (MockProvider.posts == 0)
         result = {"result": "passed", "provider": "mock loopback HTTP; no real model or cloud validation",
             "broker": str(broker), "broker_sha256": record["sha256"],
             "broker_version": initial["python"]["status"]["version"],
             "initial": initial, "survived_client_termination": surviving, "recovered": recovered,
+            "routing": args.routing, "mock_generation_calls": MockProvider.posts,
             "mock_provider_calls": MockProvider.calls, "production_credentials_accessed": False,
             "clean_shutdown": True, "work": str(work)}
         if args.managed_audit:

@@ -1,74 +1,60 @@
 # Resume CAE development
 
-Verified M1 source commit: `9768e4aa40f1242895c4bfa320703375b8716a63`. The final documentation
-checkpoint may be newer; inspect actual HEAD and preserve later changes. Fresh
-remote recovery and independent installed-wheel storage smoke passed. GitHub CI
-was still running at checkpoint time; verify current PR checks before proceeding.
+Project root: `I:\CODEX-API-ENGINE`.
+GitHub: https://github.com/chatgptopenaiagi/CODEX-API-ENGINE
+Branch: `feat/security-registry`; keep PR #2 open/draft, never merge automatically.
+Development version: **0.5.0.dev4**; existing client SDK contracts: **0.4.0**.
+Starting checkpoint: `ac55a2fc29ed3d6e3b55e9afea7eea1e7f1440a1`.
+Implementation SHA: resolve `git log -1 --format=%H -- src/cae/routing.py`.
+Checkpoint SHA: resolve `git log -1 --format=%H -- docs/continuity`.
+Verify actual HEAD; a document cannot embed its own resulting commit hash.
 
+- Last completed milestone: M1 audit correlation/storage; M2 implementation is validated locally.
+- Next milestone: finish M2 gates/publication/recovery, then M3 real local-model validation.
+- Actual gate results: [ROUTING-M2](../validation/ROUTING-M2.md).
 
-- Project root on the original workstation: `I:\CODEX-API-ENGINE`.
-- Canonical repository: https://github.com/chatgptopenaiagi/CODEX-API-ENGINE
-- Development branch: `feat/security-registry`.
-- Development version: **0.5.0.dev3**; client SDKs: **0.4.0**.
-- Starting verified checkpoint: `02153a7c5a8374c4e438fd7fd43e96c8778d9d03`.
-- Current implementation revision: `git log -1 --format=%H -- src/cae`.
-- Checkpoint revision: resolve `git log -1 --format=%H -- docs/continuity`.
-  A document cannot contain its own commit hash. Later checkpoint-only commits do
-  not replace the implementation evidence above. Verify actual HEAD before editing.
-- Last completed milestone: **M1**, under the documented opt-in/process-crash contract.
-  Final evidence: 299 tests, 95.64%, 17 critical gates, six real applications and
-  60 hostile-server cases; see the storage report for commands and NOT_RUN limits.
-- Next milestone: **M2 capability-based routing**. Do not repeat completed M1.
+## First task
 
-## First implementation task
-
-Read [the M1 storage report](../validation/AUDIT-M1-RETENTION-ROTATION.md) and its
-final acceptance results. Verify current Git HEAD, quality gates and artifact
-integrity; do not repeat the implemented correlation/retention components.
-Inspect existing provider capability declarations and authorization
-boundaries, then define a bounded M2 routing increment. No routing implementation
-was authorized during the M1 storage mission. Preserve offline-only behavior and
-provider/model authorization. Never migrate or rotate the operator's legacy logs
-automatically; managed mode requires explicit configuration and restart.
-
-## Read and verify first
-
-Read [current state](CURRENT_STATE.md), [unfinished milestones](UNFINISHED_MILESTONES.md),
-[limitations](KNOWN_LIMITATIONS.md), [recovery](RECOVERY_PROCEDURE.md), root AGENTS.md,
-ARCHITECTURE.md and SECURITY.md. Protocol and SDK contracts live in
-[BROKER_PROTOCOL](../BROKER_PROTOCOL.md) and [CLIENT_SDKS](../CLIENT_SDKS.md).
+Read AGENTS.md, CURRENT_STATE.md, UNFINISHED_MILESTONES.md, KNOWN_LIMITATIONS.md,
+[capability routing](../CAPABILITY_ROUTING.md) and the M2 report. Verify Git status,
+branch, HEAD, package version and current remote checks. Do not repeat implemented
+M1 storage or M2 routing. Complete any unfinished acceptance/checkpoint step recorded
+in the M2 report before advancing. M3 must use an explicitly available, operator-approved
+local model; never download weights or claim real inference from mock tests.
 
 ```powershell
 ./scripts/resume-development.ps1
 git status --short
 git log -5 --oneline
 git ls-remote origin refs/heads/feat/security-registry
+./scripts/test.ps1
 ```
 
-On the original workstation, validated artifacts already exist. Run
-`./scripts/test.ps1`; do not rebuild them without cause. For a fresh checkout, follow
-the dependency/build sequence in RECOVERY_PROCEDURE.md before the full test gate.
-Cross-language and hostile-server commands are in VALIDATION_EVIDENCE.md.
+Rebuild only when source/artifacts differ or artifacts are absent:
 
-## Restrictions and blockers
+```powershell
+./scripts/build.ps1 -Executable
+./scripts/build_clients.ps1 -OutputDirectory .tmp/m2-clients
+./.venv/Scripts/python.exe scripts/checksums.py
+./.venv/Scripts/python.exe scripts/check_release.py
+```
 
-Never read during ordinary exploration, modify, delete, rename, move, commit,
-publish or package `apy_key.txt`. Do not change production Windows credentials,
-Codex authentication, or the operator's existing broker. Tests require unique
-synthetic state and pipes. Preserve v0.2.0/v0.3.1 tags/assets and existing history.
-Do not force-push. Do not stage unrelated untracked user files.
+Six-client/hostile/benchmark commands are in ROUTING-M2. Recovery prerequisites and
+installation sequence are in RECOVERY_PROCEDURE.md. Routine tests need only mock
+providers and synthetic credentials, never production keys or the production broker.
 
-No real local model or Windows 11 acceptance has been validated. Same-user hostile
-process isolation, signing and independent security review remain open. GitHub CI
-status is a separate check; see GITHUB_STATE.md and the current PR checks. The exact
-five-repository requirement is explicitly deferred by the operator; do not modify,
-push or publish other repositories until separately authorized. Keep PR #2 a draft;
-do not merge it or publish a stable release during this mission.
+Never read during ordinary exploration, modify, delete, rename, move, publish or
+package `apy_key.txt`; never change its ACL. Preserve production credentials,
+enrollments, policy/log state, running operator broker and historical artifacts/tags.
+Keep synthetic brokers isolated. No paid cloud calls, M3 model downloads, global PATH
+changes, Codex changes, other-repository changes, force push, main merge or stable
+release without the relevant explicit authorization. POK remains independent and
+NOT_INTEGRATED. Windows 11, signing and strong same-user isolation are not established.
 
-## Continuation directive
+## Executable continuation directive
 
-Read AGENTS.md and this file. Verify Git status, actual HEAD, package version and
-available tests. Do not repeat completed work. Select the next unfinished milestone
-above, implement a bounded increment, execute its tests and compatibility/security
-gates, document measured results and commit locally. Preserve production credentials
-and the operator broker. Do not publish a release without explicit authorization.
+Read AGENTS.md and this checkpoint. Verify Git status/version/tests and current
+acceptance evidence. Preserve unknown files and later commits. Select the first
+unfinished authorized milestone; implement a bounded increment, test, record actual
+results, update continuity and commit reviewed files. Do not repeat completed work,
+modify production credentials or publish a release without authorization.

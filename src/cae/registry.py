@@ -246,6 +246,8 @@ class ApplicationRegistry:
                              (app, provider, profile, rule.effect)), None)
             if previous is not None:
                 rule = replace(rule, id=previous.id,
+                    routing_modes=previous.routing_modes, allow_cloud=previous.allow_cloud,
+                    allow_fallback=previous.allow_fallback,
                     max_requests_per_minute=per_minute if per_minute is not None
                     else previous.max_requests_per_minute,
                     max_concurrent_requests=concurrent if concurrent is not None

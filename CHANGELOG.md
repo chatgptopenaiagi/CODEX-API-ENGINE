@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0.dev4 — development
+
+- Add versioned capability discovery and execution through existing broker protocol.
+- Add exact configured routing models, deterministic local/cloud selection and
+  explicit routing/cloud/fallback grants; reuse quotas, concurrency and audit.
+- Never replay ambiguous dispatches; bound output and report missing usage as unknown.
+- Extend six-client mock acceptance while preserving legacy SDK requests/artifacts.
+- Validate returned provider model/completion metadata when supplied; mismatches and
+  incomplete status fail closed. Provider aliases require explicit compatible IDs.
+- No live paid calls, production migration, stable release or main merge.
+
 ## 0.5.0.dev3 — managed audit retention
 
 - Opt-in validated audit limits, private store ownership and bounded Windows locks.

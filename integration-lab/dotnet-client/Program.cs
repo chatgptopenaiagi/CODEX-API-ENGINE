@@ -28,7 +28,13 @@ try {
             var restricted = false;
             try { await client.RequestAsync("chat", new { provider = "lab", model = "lab-model", text = "test" }); }
             catch (CaeException ex) when (ex.Code == "access_denied") { restricted = true; }
-            var result = JsonSerializer.Serialize(new { status, models, capabilities, denied, malformed, restricted,
+            JsonElement? routing = null;
+            if (Environment.GetEnvironmentVariable("CAE_LAB_ROUTING") == "1") {
+                routing = await client.RequestAsync("route", new { contract_version=1,
+                    capability="chat_generation", model="route-model", input="synthetic", routing_mode="LOCAL_ONLY" });
+                await client.RequestAsync("capabilities");
+            }
+            var result = JsonSerializer.Serialize(new { status, models, capabilities, routing, denied, malformed, restricted,
                 client_pid = Environment.ProcessId });
             File.WriteAllText(output + ".new", result);
             File.Move(output + ".new", output, true);

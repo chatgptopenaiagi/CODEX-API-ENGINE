@@ -23,7 +23,14 @@ int wmain(int argc, wchar_t** argv) {
                 catch (const cae::Error& e) { malformed = std::string(e.what()) == "invalid_protocol"; }
                 try { client.request("chat", {{"provider", "lab"}, {"model", "lab-model"}, {"text", "test"}}); }
                 catch (const cae::Error& e) { restricted = std::string(e.what()) == "access_denied"; }
-                cae::json result = {{"status", status}, {"models", models}, {"capabilities", capabilities},
+                cae::json routing = nullptr;
+                wchar_t routingFlag[2] = {};
+                if (GetEnvironmentVariableW(L"CAE_LAB_ROUTING", routingFlag, 2) == 1 && routingFlag[0] == L'1') {
+                    routing = client.request("route", {{"contract_version", 1}, {"capability", "chat_generation"},
+                        {"model", "route-model"}, {"input", "synthetic"}, {"routing_mode", "LOCAL_ONLY"}});
+                    client.request("capabilities");
+                }
+                cae::json result = {{"status", status}, {"models", models}, {"capabilities", capabilities}, {"routing", routing},
                     {"denied", denied}, {"malformed", malformed}, {"restricted", restricted},
                     {"client_pid", GetCurrentProcessId()}};
                 auto temp = output.wstring() + L".new";

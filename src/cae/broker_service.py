@@ -49,6 +49,12 @@ class BrokerServer:
                     "version": __version__, "app": app, "max_connections": 8,
                     "enrollment_reload": self.configuration is not None,
                     "active_connections": self._active, "rejected_connections": self._rejected}
+        if operation == "capabilities":
+            if args:
+                raise ProtocolError()
+            return self.runtime.router.discover(app)
+        if operation == "route":
+            return self.runtime.router.execute(app, args)
         if operation not in {"health", "diagnostics", "models", "chat", "embeddings",
                              "providers", "usage", "audit", "policies"}:
             raise AccessDenied()

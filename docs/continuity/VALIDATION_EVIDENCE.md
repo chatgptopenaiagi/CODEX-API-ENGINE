@@ -1,5 +1,12 @@
 # Continuity mission validation
 
+## Current M2 increment
+
+See [ROUTING-M2](../validation/ROUTING-M2.md) for current commands, exact counts,
+coverage, six-client routed mock acceptance, hostile-server cases, packaging,
+security scans, performance and publication/recovery status. Earlier results below
+remain historical evidence; do not mistake them for the new checkpoint.
+
 ## Independent recovery — PASS
 
 Fresh remote checkout of `9768e4aa40f1242895c4bfa320703375b8716a63` matched the implementation,

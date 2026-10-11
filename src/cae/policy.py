@@ -20,6 +20,7 @@ from .errors import (
 from .security import identifier
 
 OPERATIONS = frozenset({"models", "chat", "embeddings", "health", "diagnostics", "usage"})
+ROUTING_MODES = frozenset({"EXPLICIT_PROVIDER", "LOCAL_ONLY", "LOCAL_FIRST", "CLOUD_ONLY"})
 MODEL = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}\Z")
 
 
@@ -36,7 +37,17 @@ class Rule:
     max_requests_per_minute: int | None = None
     max_concurrent_requests: int | None = None
 
+    routing_modes: frozenset[str] = frozenset()
+    allow_cloud: bool = False
+    allow_fallback: bool = False
+
     def __post_init__(self) -> None:
+        if (not isinstance(self.routing_modes, (frozenset, set, list, tuple))
+                or any(not isinstance(v, str) for v in self.routing_modes)
+                or not set(self.routing_modes) <= ROUTING_MODES
+                or type(self.allow_cloud) is not bool or type(self.allow_fallback) is not bool):
+            raise ConfigurationError()
+        object.__setattr__(self, "routing_modes", frozenset(self.routing_modes))
         for value in (self.id, self.app, self.provider, self.profile):
             identifier(value)
         object.__setattr__(self, "operations", frozenset(self.operations))
@@ -81,6 +92,7 @@ class Rule:
         result = asdict(self)
         result["operations"] = sorted(self.operations)
         result["models"] = sorted(self.models)
+        result["routing_modes"] = sorted(self.routing_modes)
         return result
 
 

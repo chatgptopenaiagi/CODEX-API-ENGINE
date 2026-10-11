@@ -1,5 +1,14 @@
 # Verified milestone history
 
+## 0.5.0.dev4 routing increment
+
+Versioned capability registry, explicit routing grants, local/cloud selection and
+conservative no-replay execution are implemented. Six actual applications passed
+new routed mock requests and legacy operations; 60 hostile-server cases passed.
+Final milestone status is authoritative in [ROUTING-M2](../validation/ROUTING-M2.md).
+Engine artifacts: `dist/0.5.0.dev4/`; current lab builds: `.tmp/m2-clients/`.
+Existing client SDK contracts remain 0.4.0; no release was created.
+
 ## 0.5.0.dev3 M1 — COMPLETE within documented contract
 
 The retention/rotation implementation supplements, rather than replaces, the

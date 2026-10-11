@@ -47,7 +47,7 @@ def parse_config(text: str) -> tuple[tuple[ProviderConfig, ...], tuple[Rule, ...
         audit_retention(text)
         specs = []
         for item in value.get("providers", []):
-            _keys(item, {"name", "kind", "endpoint", "profile", "authenticated"})
+            _keys(item, {"name", "kind", "endpoint", "profile", "authenticated", "routing_models", "routing_priority", "routing_enabled"})
             if "authenticated" in item and type(item["authenticated"]) is not bool:
                 raise ValueError()
             specs.append(ProviderConfig(**item))
@@ -65,6 +65,9 @@ def parse_config(text: str) -> tuple[tuple[ProviderConfig, ...], tuple[Rule, ...
                     "profile",
                     "operations",
                     "effect",
+                    "routing_modes",
+                    "allow_cloud",
+                    "allow_fallback",
                     "models",
                     "max_requests_per_day",
                     "max_requests_per_minute",

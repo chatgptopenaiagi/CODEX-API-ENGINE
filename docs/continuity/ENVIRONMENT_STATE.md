@@ -43,3 +43,11 @@ The 0.5.0.dev2 increment used this existing toolchain, repository-local build/ca
 directories and `.tmp/m1-*` validation state. No global dependency installation,
 persistent PATH change, Windows service or production configuration change occurred.
 The .NET lab rebuild set both first-run prevention flags and local caches explicitly.
+
+
+## M2 environment
+
+0.5.0.dev4 reuses the same toolchains. Engine output: `dist/0.5.0.dev4`; client lab
+output: `.tmp/m2-clients`; reports and synthetic state: `.tmp/m2-*` and unique
+clients040 directories created by the established harness. No global installation,
+persistent PATH modification, production broker action or credential change.

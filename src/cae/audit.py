@@ -26,6 +26,8 @@ ERROR_CODES = frozenset({"none", "engine_error", "invalid_configuration",
     "credential_operation_failed", "credential_missing", "credential_already_exists",
     "access_denied", "unsupported_operation", "daily_request_limit", "request_rate_limit",
     "concurrent_request_limit", "audit_unavailable", "api_request_failed",
+    "capability_unknown", "routing_policy_denied", "provider_unavailable",
+    "request_outcome_unknown", "provider_response_invalid",
     "invalid_protocol", "broker_unavailable", "ipc_timeout"})
 
 
@@ -82,7 +84,8 @@ EVENTS = frozenset(
         "application_change_requested",
         "application_authorized",
         "application_revoked",
-        "ipc_result",
+        "ipc_result", "capabilities_read", "routing_denied", "route_selected",
+        "route_failed", "route_completed",
     }
 )
 
@@ -102,7 +105,22 @@ class AuditEvent:
     error_code: str = "none"
     latency_ms: float | None = None
 
+    capability: str = "none"
+    routing_mode: str = "none"
+    model: str = "none"
+    outcome: str = "none"
+    fallback: bool = False
+
     def validate(self) -> None:
+        from .policy import MODEL, ROUTING_MODES
+
+        if (self.capability not in {"none", "chat_generation", "embeddings"}
+                or self.routing_mode not in ROUTING_MODES | {"none"}
+                or not isinstance(self.model, str) or not MODEL.fullmatch(self.model)
+                or self.outcome not in {"none", "NOT_DISPATCHED", "COMPLETED", "DISPATCHED_OUTCOME_UNKNOWN"}
+                or type(self.fallback) is not bool):
+            raise ValueError()
+
         if self.event not in EVENTS:
             raise ValueError()
         for value in (self.app, self.provider, self.profile, self.operation):
@@ -165,6 +183,11 @@ class AuditLog:
         profile: str = "default",
         operation: str = "none",
         error_code: str = "none",
+        capability: str = "none",
+        routing_mode: str = "none",
+        model: str = "none",
+        outcome: str = "none",
+        fallback: bool = False,
     ) -> AuditEvent:
         if event not in EVENTS:
             raise ConfigurationError()
@@ -173,7 +196,7 @@ class AuditLog:
         if error_code not in ERROR_CODES:
             error_code = "engine_error"
         context = _REQUEST.get()
-        denied = event in {"policy_denied", "ipc_denied"}
+        denied = event in {"policy_denied", "ipc_denied", "routing_denied"}
         failed_event = denied or event.endswith("failed") or error_code != "none"
         entry = AuditEvent(
             uuid4().hex, datetime.now(UTC).isoformat(), event, app, provider, profile, operation,
@@ -183,7 +206,10 @@ class AuditLog:
             error_code=error_code,
             latency_ms=round(max(0, time.monotonic() - context[1]) * 1000, 3)
             if context else None,
+            capability=capability, routing_mode=routing_mode, model=model,
+            outcome=outcome, fallback=fallback,
         )
+        entry.validate()
         failed = False
         with self._guard():
             if self._storage is not None:

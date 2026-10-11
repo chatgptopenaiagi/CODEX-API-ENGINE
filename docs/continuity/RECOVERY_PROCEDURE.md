@@ -37,7 +37,7 @@ $env:DOTNET_GENERATE_ASPNET_CERTIFICATE = 'false'
 ./scripts/build.ps1 -Executable
 ./scripts/build_clients.ps1
 ./scripts/test.ps1
-./.venv/Scripts/python.exe scripts/check_release.py --directory dist/0.5.0.dev3
+./.venv/Scripts/python.exe scripts/check_release.py --directory dist/0.5.0.dev4
 ```
 
 Setup creates `.venv` and installs editable engine/dev dependencies; client build
@@ -55,7 +55,7 @@ from routine acceptance and requires specifically justified validation.
 
 ## Continue and preserve
 
-Select M1 retention/rotation in NEXT_SESSION.md; correlation is already implemented. Implement, test, document actual
+Select the next unfinished task in NEXT_SESSION.md; M1 and the M2 routing implementation must not be repeated. Implement, test, document actual
 results and commit only reviewed source. Run redacted Gitleaks source/history scans
 and inspect staged paths before any public synchronization. Never commit dist,
 environment files, private enrollment or protected input. No destructive Git
@@ -83,3 +83,6 @@ This is verified source/checkpoint recovery, not a new clean-room executable bui
 M1 managed-storage acceptance is reproduced with the commands in
 [the storage report](../validation/AUDIT-M1-RETENTION-ROTATION.md). No production
 credentials or running production broker are needed. Retain historical artifacts.
+
+Current routed six-client acceptance uses `--routing --managed-audit`; see ROUTING-M2.md
+under docs/validation for the complete command and isolated artifact paths.

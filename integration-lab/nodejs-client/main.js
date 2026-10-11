@@ -18,7 +18,13 @@ async function run() {
       try { await client.request('status', {app:'admin'}); } catch (e) { malformed = e.code === 'invalid_protocol'; }
       try { await client.request('chat', {provider:'lab', model:'lab-model', text:'test'}); }
       catch (e) { restricted = e.code === 'access_denied'; }
-      fs.writeFileSync(output + '.new', JSON.stringify({status, models, capabilities, denied, malformed, restricted,
+      let routing = null;
+      if (process.env.CAE_LAB_ROUTING === '1') {
+        routing = await client.request('route', {contract_version:1, capability:'chat_generation',
+          model:'route-model', input:'synthetic', routing_mode:'LOCAL_ONLY'});
+        await client.request('capabilities');
+      }
+      fs.writeFileSync(output + '.new', JSON.stringify({status, models, capabilities, routing, denied, malformed, restricted,
         client_pid: process.pid}));
       fs.renameSync(output + '.new', output);
     } catch (e) { if (!(e instanceof CAEError) && !['EPERM', 'EACCES', 'EBUSY'].includes(e.code)) throw e; }

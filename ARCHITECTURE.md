@@ -1,5 +1,13 @@
 # CAE architecture
 
+## 0.5.0.dev4 capability routing
+
+`routing.py` provides a versioned registry and deterministic selector over existing
+provider adapters and policy rules. Broker operations `capabilities`/`route` are
+additive to protocol v1. Selected calls enter the existing AccessRuntime, quota,
+concurrency, audit and vault path. Configuration opt-in is mandatory; no production
+migration or new service. See [routing contract](docs/CAPABILITY_ROUTING.md).
+
 ## 0.5.0.dev3 managed audit storage
 
 The existing AuditLog delegates opt-in disk retention to `audit_storage.py`. Broker

@@ -44,7 +44,7 @@ jobs:
         shell: pwsh
         run: |
           $version = & ./.venv/Scripts/python.exe -c "import cae; print(cae.__version__)"
-          ./.venv/Scripts/python.exe scripts/validate_clients.py --broker-directory "dist/$version" --managed-audit
+          ./.venv/Scripts/python.exe scripts/validate_clients.py --broker-directory "dist/$version" --managed-audit --routing
           if ($LASTEXITCODE) { throw 'Cross-language validation failed' }
           ./.venv/Scripts/python.exe scripts/validate_client_security.py
           if ($LASTEXITCODE) { throw 'Client security validation failed' }

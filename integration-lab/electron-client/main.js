@@ -27,8 +27,14 @@ app.whenReady().then(async () => {
         try { await client.request('status', {app:'admin'}); } catch (e) { malformed = e.code === 'invalid_protocol'; }
         try { await client.request('chat', {provider:'lab', model:'lab-model', text:'test'}); }
         catch (e) { restricted = e.code === 'access_denied'; }
+      let routing = null;
+      if (process.env.CAE_LAB_ROUTING === '1') {
+        routing = await client.request('route', {contract_version:1, capability:'chat_generation',
+          model:'route-model', input:'synthetic', routing_mode:'LOCAL_ONLY'});
+        await client.request('capabilities');
+      }
         await window.loadURL('data:text/plain,' + encodeURIComponent(`CAE broker ${status.broker_pid}`));
-        fs.writeFileSync(report + '.new', JSON.stringify({status, models, capabilities, denied,
+        fs.writeFileSync(report + '.new', JSON.stringify({status, models, capabilities, routing, denied,
           malformed, restricted, client_pid:process.pid}));
         fs.renameSync(report + '.new', report);
       } catch (error) {

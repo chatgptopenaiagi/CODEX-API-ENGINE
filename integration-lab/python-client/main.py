@@ -37,9 +37,14 @@ def main() -> None:
                 client.request("chat", provider="lab", model="lab-model", text="test")
             except CAEError as exc:
                 restricted = exc.code == "access_denied"
+            routing = None
+            if os.environ.get("CAE_LAB_ROUTING") == "1":
+                routing = client.request("route", contract_version=1, capability="chat_generation",
+                    model="route-model", input="synthetic", routing_mode="LOCAL_ONLY")
+                assert client.request("capabilities")["capabilities"]
             temporary = Path(str(output) + ".new")
             temporary.write_text(json.dumps({"status": status, "models": models,
-                "capabilities": capabilities, "denied": denied, "malformed": malformed,
+                "capabilities": capabilities, "routing": routing, "denied": denied, "malformed": malformed,
                 "restricted": restricted, "client_pid": os.getpid()}), encoding="utf-8")
             temporary.replace(output)
         except (CAEError, PermissionError):

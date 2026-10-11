@@ -1,5 +1,13 @@
 # GitHub checkpoint state
 
+## M2 synchronization target
+
+0.5.0.dev4 is locally validated: 393 tests, 95.92%, 18 critical gates, six routed
+mock clients, 60 hostile-server cases and package/legacy acceptance. Approved
+destination: feat/security-registry, existing draft PR #2. Starting remote checkpoint
+ac55a2fc29ed3d6e3b55e9afea7eea1e7f1440a1. No main merge or release. Concrete
+implementation SHA and independent recovery evidence follow after synchronization.
+
 ## Verified M1 implementation synchronization — 2026-10-12
 
 Implementation commit `9768e4aa40f1242895c4bfa320703375b8716a63` was pushed normally to

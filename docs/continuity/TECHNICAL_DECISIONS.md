@@ -28,9 +28,23 @@ or hostile same-user guarantees. See [the full contract](../validation/AUDIT-M1-
   and required checks support promotion. The original checkpoint introduced no
   features; subsequent development is explicitly recorded in milestone reports.
 - Audit IDs are broker-generated ContextVar metadata, not wire IDs or authorization
-  proofs. Preserve legacy JSONL reads and protocol v1 framing. Retention is separate
-  unfinished work; do not silently migrate or rotate production audit data.
+  proofs. Preserve legacy JSONL reads and protocol v1 framing. Retention is opt-in and implemented by M1; do not silently migrate or rotate
+  production audit data.
 
 Authoritative details: [architecture](../../ARCHITECTURE.md),
 [protocol](../BROKER_PROTOCOL.md), [registry](../APPLICATION_REGISTRY.md),
 [SDK contracts](../CLIENT_SDKS.md), [security](../../SECURITY.md).
+
+
+## M2 decisions
+
+- Extend AccessRuntime and the existing protocol, not a parallel execution/quota engine.
+- Route only exact operator-declared model IDs and implemented chat/embedding adapters.
+- Keep legacy explicit-provider grants compatible; new routing is separately opt-in.
+- Cloud/fallback require operator permission. Never substitute after dispatch.
+- Availability is bounded, application-scoped, recent observation, not a paid probe.
+- Unknown usage remains null; provider reporting is not final billing confirmation.
+- Preserve generic SDK requests; add engine BrokerClient helpers without changing
+  existing client-package convenience method meanings or requiring upgrades.
+- No trusted instruction hierarchy, moderation or cancellation is fabricated for POK.
+See [the contract](../CAPABILITY_ROUTING.md).

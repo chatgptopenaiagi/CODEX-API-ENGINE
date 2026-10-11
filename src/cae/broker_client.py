@@ -16,6 +16,8 @@ class BrokerRemoteError(CAEError):
             "access_denied", "invalid_protocol", "invalid_configuration", "daily_request_limit",
             "credential_operation_failed", "credential_missing", "api_request_failed",
             "unsupported_operation", "audit_unavailable", "broker_unavailable",
+            "capability_unknown", "routing_policy_denied", "provider_unavailable",
+            "request_outcome_unknown", "provider_response_invalid",
             "request_rate_limit", "concurrent_request_limit",
         } else "broker_request_failed"
         super().__init__()
@@ -79,6 +81,16 @@ class BrokerClient:
                    profile: str = "default") -> dict[str, Any]:
         return self.request("embeddings", provider=provider, profile=profile,
                             model=model, text=text)
+
+    def capabilities(self) -> dict[str, Any]:
+        return self.request("capabilities")
+
+    def route(self, capability: str, model: str, text: str, *,
+              routing_mode: str = "LOCAL_ONLY", provider: str | None = None,
+              allow_fallback: bool = False, max_tokens: int = 256) -> dict[str, Any]:
+        return self.request("route", contract_version=1, capability=capability,
+                            model=model, input=text, routing_mode=routing_mode,
+                            provider=provider, allow_fallback=allow_fallback, max_tokens=max_tokens)
 
     def stop(self) -> dict[str, Any]:
         """Denied unless this executable is separately enrolled as administrator."""

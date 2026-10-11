@@ -26,7 +26,13 @@ while (-not (Test-Path -LiteralPath ($OutputFile + '.stop'))) {
         $restricted = $false
         try { $null = Invoke-CAERequest chat @{provider='lab'; model='lab-model'; text='test'} }
         catch { $restricted = $_.Exception.ToString().Contains('access_denied') }
-        @{status=$status; models=$models; capabilities=$capabilities; denied=$denied; malformed=$malformed;
+        $routing = $null
+        if ($env:CAE_LAB_ROUTING -eq '1') {
+            $routing = Invoke-CAERequest route @{contract_version=1; capability='chat_generation';
+                model='route-model'; input='synthetic'; routing_mode='LOCAL_ONLY'}
+            $null = Invoke-CAERequest capabilities
+        }
+        @{routing=$routing; status=$status; models=$models; capabilities=$capabilities; denied=$denied; malformed=$malformed;
           client_pid=$PID; restricted=$restricted} | ConvertTo-Json -Depth 64 -Compress |
             Set-Content -LiteralPath ($OutputFile + '.new') -Encoding utf8NoBOM
         Move-Item -LiteralPath ($OutputFile + '.new') -Destination $OutputFile -Force

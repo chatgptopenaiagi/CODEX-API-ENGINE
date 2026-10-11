@@ -56,3 +56,22 @@ coaching, live-money play and external live-table assistance are not integration
 
 No adapter is implemented or advertised as compatible. This is source-backed gap
 analysis, not end-to-end acceptance or a replacement for POK's existing safeguards.
+
+
+## M2 incremental compatibility — adapter still NOT_IMPLEMENTED / NOT_TESTED
+
+0.5.0.dev4 supplies exact authorized provider/model routing, local-only enforcement,
+explicit cloud permission, no ambiguous-dispatch replay and UNKNOWN_USAGE/null
+counts when confirmation is missing. Existing Windows Node Request can invoke the
+new versioned contract. Mock six-client acceptance is CAE evidence, not a POK test.
+The optional adapter must remain server-side and outside POK mathematics/offline UI.
+
+Still missing: input/output moderation, privileged instruction separation,
+AbortSignal/provider cancellation and end-to-end application request provenance.
+CAE request quotas remain independent per-provider allocations, not POK's monetary
+reservation/reconciliation ledger. Provider-reported usage is not a billing invoice.
+Retain POK consent, context validation, moderation withholding, unknown-cost handling
+and its own budget limits. Do not concatenate trusted educational instructions into
+CAE's single user-text field. Proposed POK acceptance above remains NOT_RUN; no
+POK source was modified or a working integration advertised. No new live POK source
+inspection is claimed beyond the pinned evidence above.

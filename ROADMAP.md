@@ -1,5 +1,13 @@
 # Roadmap
 
+## 0.5.0.dev4 — M2 development acceptance
+
+Versioned chat/embedding registry, opt-in authorization-aware deterministic routing,
+local/cloud restrictions, conservative fallback, bounded responses and additive
+protocol operations are implemented. Current acceptance is recorded in
+[ROUTING-M2](docs/validation/ROUTING-M2.md). M3 real local-model validation remains
+separate and must not be inferred from mock-provider tests.
+
 ## 0.5.0.dev3 — M1 complete within documented contract
 
 Bounded managed retention, rotation and process-crash recovery are implemented.

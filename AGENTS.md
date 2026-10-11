@@ -9,7 +9,7 @@ for current validation. `scripts/resume-development.ps1` is read-only inspection
 Preserve the operator's running broker and use isolated synthetic test state.
 Source synchronization does not authorize new GitHub releases.
 
-This repository develops CODEX ACCESS ENGINE v0.5.0.dev3, with validated 0.4.0 client
+This repository develops CODEX ACCESS ENGINE v0.5.0.dev4, with validated 0.4.0 client
 SDKs, and preserves published v0.2.0/v0.3.1.
 Read ARCHITECTURE.md, docs/ACCESS_ENGINE.md and SECURITY.md
 before changing trust boundaries. Runtime code belongs in src/cae; root component
@@ -40,3 +40,6 @@ The independent broker has a local named-pipe process boundary and executable
 enrollment. This does not imply separate-account isolation, code signing, public
 publication or Windows 11 certification. See docs/BROKER_PROTOCOL.md.
 Record the platform and exact checks actually performed in docs/VALIDATION.md.
+
+M2 routing contracts: read docs/CAPABILITY_ROUTING.md before changing provider selection.
+Preserve explicit cloud permission, exact model allowlists and no post-dispatch replay.

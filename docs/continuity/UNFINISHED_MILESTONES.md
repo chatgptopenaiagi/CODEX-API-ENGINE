@@ -1,6 +1,7 @@
 # Milestone status toward v1.0
 
-Next planned milestone: M2. M1 acceptance passed within its documented contract.
+Current: finalize M2 validation/checkpoint; M3 real local-model validation follows
+only after the M2 acceptance report is complete. M1 remains complete.
 
 ## 1. Audit correlation and bounded retention — COMPLETE
 
@@ -13,13 +14,12 @@ Do not reimplement M1. Windows 11 and long-running acceptance remain part of M6.
 
 ## 2. Capability-based provider routing
 
-Current: `providers.py`, `access.py`, `policy.py` support explicit provider selection
-and restrictions. Missing: capability selection, preferences, local-first/offline-only
-rules and controlled fallback. Depends on truthful provider capability descriptors
-and policy checks before vault/provider access. Acceptance: routing only selects
-authorized providers/models, offline/confidential requests never reach cloud, and
-ambiguous billable failures are never automatically replayed. Test with multiple
-mock endpoints, denied routes, outages and accounting; then live authorized checks.
+Implemented: versioned chat/embedding contracts, opt-in routing policies, deterministic
+provider/model selection, local-only/local-first/cloud-only/explicit selection,
+controlled pre-dispatch fallback, unknown-outcome handling, existing quota/concurrency
+and audit integration. Six real applications and mock providers exercise the new
+protocol operations. See [M2 acceptance](../validation/ROUTING-M2.md) for final gates
+and publication/recovery status. No real inference or POK integration is implied.
 
 ## 3. Real local-model validation
 

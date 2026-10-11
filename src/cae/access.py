@@ -19,6 +19,7 @@ from .errors import (
 )
 from .policy import MODEL, PolicyEngine, Rule
 from .providers import HTTPProvider, ProviderAdapter, ProviderConfig
+from .routing import CapabilityRouter
 from .security import identifier, redact, validate_key
 
 
@@ -42,6 +43,7 @@ class AccessRuntime:
         self._health: dict[tuple[str, str, str], dict[str, Any]] = {}
         self._usage: dict[tuple[str, str, str], dict[str, int]] = {}
         self._lock = RLock()
+        self.router = CapabilityRouter(self, providers)
 
     @classmethod
     def default(cls, profile: str = "default") -> AccessRuntime:
@@ -160,6 +162,8 @@ class AccessRuntime:
         failure: CAEError | None = None
         try:
             safe = redact(provider.request(actual, secret, model, text, max_tokens), secret)
+            if not isinstance(safe, dict):
+                raise APIError("protocol")
         except APIError as exc:
             failure = APIError(exc.kind, exc.status)
         except UnsupportedOperation:

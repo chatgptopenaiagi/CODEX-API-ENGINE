@@ -1,5 +1,15 @@
 # CAE security model
 
+## M2 routing boundary
+
+Routing requires explicit mode grants intersected with existing provider/model
+allowlists and deny rules. Cloud and local-first cloud fallback require affirmative
+operator permission. LOCAL_ONLY selects only validated loopback adapters. No
+post-dispatch replay; provider failure and incomplete output are conservative
+unknown outcomes. Loopback servers can forward traffic and same-user processes
+remain outside strong isolation. Legacy explicitly granted cloud operations keep
+their permissions. See [threat model and limits](docs/CAPABILITY_ROUTING.md).
+
 ## Managed audit storage boundary
 
 Explicit `[audit] mode = "managed"` enables bounded stores; no production migration
