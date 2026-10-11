@@ -1,7 +1,7 @@
 # Milestone status toward v1.0
 
-Current: finalize M2 validation/checkpoint; M3 real local-model validation follows
-only after the M2 acceptance report is complete. M1 remains complete.
+M1 and M2 are COMPLETE within their documented contracts. Next: M3 real
+local-model validation. No live inference is implied by the mock-tested milestones.
 
 ## 1. Audit correlation and bounded retention — COMPLETE
 
@@ -12,7 +12,7 @@ boundaries. Legacy opt-out stores remain unchanged and unbounded. Power-loss,
 hostile same-user isolation and long-soak/Windows 11 validation are not claimed.
 Do not reimplement M1. Windows 11 and long-running acceptance remain part of M6.
 
-## 2. Capability-based provider routing
+## 2. Capability-based provider routing — COMPLETE
 
 Implemented: versioned chat/embedding contracts, opt-in routing policies, deterministic
 provider/model selection, local-only/local-first/cloud-only/explicit selection,

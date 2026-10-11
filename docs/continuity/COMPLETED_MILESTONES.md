@@ -1,7 +1,9 @@
 # Verified milestone history
 
-## 0.5.0.dev4 routing increment
+## 0.5.0.dev4 M2 — COMPLETE within documented contract
 
+Implementation `ee1947e7c467ee8de46e9acee7ba0e2176c51688`; 393 tests, 95.92%,
+18 critical gates, package integrity and independent remote recovery passed.
 Versioned capability registry, explicit routing grants, local/cloud selection and
 conservative no-replay execution are implemented. Six actual applications passed
 new routed mock requests and legacy operations; 60 hostile-server cases passed.

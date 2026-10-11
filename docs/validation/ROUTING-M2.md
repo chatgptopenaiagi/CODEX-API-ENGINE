@@ -1,6 +1,6 @@
 # M2 capability routing validation
 
-Status: **LOCAL ACCEPTANCE PASS — remote checkpoint/recovery pending**.
+Status: **M2 COMPLETE under the documented mock-tested routing contract**.
 Development version: **0.5.0.dev4**. Branch: `feat/security-registry`.
 Starting checkpoint: `ac55a2fc29ed3d6e3b55e9afea7eea1e7f1440a1`.
 Implementation/final checkpoint revisions are resolved with Git; the final recovery
@@ -126,3 +126,26 @@ remain untouched. Executables are unsigned and local only. No stable release.
 Raw local evidence: `.tmp/m2-acceptance-tests.log`, `m2-native/`, `m2-hostile.log`,
 `m2-legacy-apps.log`, `m2-performance.json` and redacted scan reports. These ignored
 machine-local files are not publication inputs; commands and summaries above are.
+
+
+## GitHub and independent recovery — PASS
+
+Implementation commit: `ee1947e7c467ee8de46e9acee7ba0e2176c51688`.
+Normal push to feat/security-registry was confirmed by remote refs and a fresh GitHub
+clone. Draft PR #2 was updated and remains open/draft. No main merge or release.
+The final documentation checkpoint follows this source commit; obtain its actual SHA
+with `git log -1 --format=%H -- docs/continuity` and compare the remote branch.
+
+A fresh repository-local checkout contained all 11 instruction/checkpoint documents,
+ran the read-only resume script, reported 0.5.0.dev4 and had a clean tracked tree.
+A separate venv installed the built wheel without repository imports/dependencies;
+all runtime source files matched the clone. Ten synthetic routed calls, unauthorized
+cloud denial, contract discovery and managed audit rotation passed. No production
+credential, production configuration, operator broker or prior conversation was used.
+
+At checkpoint writing, source CI runs
+[PR 38184019815](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/actions/runs/38184019815)
+and [push 38184016461](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/actions/runs/38184016461)
+were still running. Query current head checks independently; this is not a claim
+that a then-pending run passed. Final checkpoint CI has separate run IDs.
+M3 real local-model validation is next; it was not started by this mission.

@@ -1,7 +1,10 @@
 # Continuity mission validation
 
-## Current M2 increment
+## Current M2 increment — PASS
 
+393 passed in 59.53s; 95.92%; 18 critical gates; Ruff/strict mypy; six routed
+applications; 60 hostile-server cases; package/legacy acceptance and independent
+GitHub/installed-wheel recovery passed. Implementation `ee1947e7c467ee8de46e9acee7ba0e2176c51688`.
 See [ROUTING-M2](../validation/ROUTING-M2.md) for current commands, exact counts,
 coverage, six-client routed mock acceptance, hostile-server cases, packaging,
 security scans, performance and publication/recovery status. Earlier results below

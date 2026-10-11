@@ -1,12 +1,16 @@
 # GitHub checkpoint state
 
-## M2 synchronization target
+## M2 implementation synchronized and recovery verified
 
 0.5.0.dev4 is locally validated: 393 tests, 95.92%, 18 critical gates, six routed
 mock clients, 60 hostile-server cases and package/legacy acceptance. Approved
 destination: feat/security-registry, existing draft PR #2. Starting remote checkpoint
 ac55a2fc29ed3d6e3b55e9afea7eea1e7f1440a1. No main merge or release. Concrete
-implementation SHA and independent recovery evidence follow after synchronization.
+implementation SHA: `ee1947e7c467ee8de46e9acee7ba0e2176c51688`. A fresh GitHub clone matched it,
+read all continuation records and installed/verified the wheel independently.
+Ten synthetic routed requests, cloud denial and managed audit recovery passed.
+Final checkpoint SHA is `git log -1 --format=%H -- docs/continuity`; verify remote
+HEAD and current CI separately. Source CI was pending when this record was written.
 
 ## Verified M1 implementation synchronization — 2026-10-12
 

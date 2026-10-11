@@ -3,9 +3,10 @@
 ## Current M2 development increment
 
 Version **0.5.0.dev4**, branch `feat/security-registry`, starting checkpoint
-`ac55a2fc29ed3d6e3b55e9afea7eea1e7f1440a1`. Routing is implemented and mock-tested;
+`ac55a2fc29ed3d6e3b55e9afea7eea1e7f1440a1`. M2 is COMPLETE under its documented mock-tested contract;
 final gates/synchronization are recorded in [ROUTING-M2](../validation/ROUTING-M2.md).
 Resolve current implementation with `git log -1 --format=%H -- src/cae/routing.py`.
+Verified implementation: `ee1947e7c467ee8de46e9acee7ba0e2176c51688`; independent remote/wheel recovery passed.
 No real local/cloud inference, POK adapter, installer or stable release is claimed.
 The older M1 synchronization evidence below remains historical.
 
