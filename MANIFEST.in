@@ -1,4 +1,6 @@
 include README.md LICENSE SECURITY.md ARCHITECTURE.md CHANGELOG.md
+include docs/BROKER_PROTOCOL.md docs/BROKER_VALIDATION.md docs/INTEGRATION_RESULTS.md
+include examples/broker_console.py examples/broker_desktop.py
 recursive-include src/cae *.py py.typed
 prune tests
 prune scripts

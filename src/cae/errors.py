@@ -28,6 +28,18 @@ class AccessDenied(CAEError):
     code = "access_denied"
 
 
+class UnsupportedOperation(CAEError):
+    code = "unsupported_operation"
+
+
+class QuotaExceeded(AccessDenied):
+    code = "daily_request_limit"
+
+
+class AuditError(CAEError):
+    code = "audit_unavailable"
+
+
 class APIError(CAEError):
     code = "api_request_failed"
 

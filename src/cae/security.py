@@ -26,9 +26,12 @@ def identifier(value: str) -> str:
     return value
 
 
-def validate_key(value: str) -> None:
+def validate_key(value: str, provider: str = "openai") -> None:
     # Only a local syntax check; OpenAI is the authority on credential validity.
-    if not isinstance(value, str) or not re.fullmatch(r"sk-[A-Za-z0-9_-]{16,2045}", value):
+    pattern = (
+        r"sk-[A-Za-z0-9_-]{16,2045}" if provider == "openai" else r"[A-Za-z0-9_./+=:-]{16,2048}"
+    )
+    if not isinstance(value, str) or not re.fullmatch(pattern, value):
         raise CredentialError()
 
 

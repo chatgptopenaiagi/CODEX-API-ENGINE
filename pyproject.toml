@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "codex-api-engine"
-version = "0.2.0"
-description = "Windows-protected OpenAI credentials, policy broker, diagnostics and SDK"
+version = "0.3.1"
+description = "CODEX ACCESS ENGINE: policy-controlled AI connectivity and protected credentials"
 readme = "README.md"
 requires-python = ">=3.14"
 license = "MIT"
@@ -21,6 +21,7 @@ cae = "cae.cli:main"
 
 [project.gui-scripts]
 cae-console = "cae.gui:main"
+cae-control-center = "cae.control_center:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

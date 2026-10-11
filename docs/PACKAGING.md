@@ -1,5 +1,25 @@
 # Windows builds and release process
 
+Current v0.3.1: `scripts/build.ps1 -Executable` builds the wheel, source archive,
+CAE-Broker.exe, CAE-Control-Center.exe, CAE-Console-Client.exe and CAE-Desktop-Client.exe
+into `dist/0.3.1/`. Every EXE runs `--self-test`. `scripts/checksums.py` creates the
+six-file SHA256SUMS.json; `scripts/check_release.py` checks all hashes and each
+executable's packaged CAE code against source. `scripts/test_broker_apps.ps1` installs
+the wheel into an isolated environment and executes real two-client/lifecycle checks
+without a live API call. It requires an interactive Windows desktop for the Tk client.
+`scripts/release.ps1` performs these checks locally; it never publishes.
+See [actual results](BROKER_VALIDATION.md). v0.2.0 and v0.3.0 artifacts are preserved.
+
+## Previous build conventions
+
+v0.3.0 builds use `dist/0.3.0/` and `CAE-Control-Center.exe`; existing root-level
+v0.2.0 artifacts remain unchanged. `scripts/release.ps1` runs tests, builds,
+artifact inspection, checksums and source/packaged-runtime matching. The manual
+`release.yml` workflow requires an existing matching tag and versioned release notes
+and refuses to overwrite releases. It has not been invoked for v0.3.0.
+
+The following v0.2 process details explain the retained artifact/security conventions.
+
 Run `scripts/setup.ps1` on Windows x64 with Python 3.14. All caches and scratch files
 used by project scripts live in `.tmp`, `.cache`, `.venv` and `build` in this repository.
 

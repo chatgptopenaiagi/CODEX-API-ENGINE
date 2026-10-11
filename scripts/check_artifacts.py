@@ -1,5 +1,6 @@
 """Inspect artifact contents without displaying any file data or secret matches."""
 
+import argparse
 import io
 import tarfile
 import zipfile
@@ -15,12 +16,15 @@ def allowed(name: str) -> bool:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--directory", type=Path, default=ROOT / "dist")
+    args = parser.parse_args()
     failed = False
     archives = 0
     # Compare the exact local source secret in memory when present; never echo it.
     keyfile = ROOT / "apy_key.txt"
     secret = keyfile.read_bytes().strip().removeprefix(b"\xef\xbb\xbf") if keyfile.exists() else b""
-    for file in (ROOT / "dist").glob("*"):
+    for file in args.directory.glob("*"):
         if file.suffix == ".whl":
             archives += 1
             with zipfile.ZipFile(file) as archive:

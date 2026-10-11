@@ -1,5 +1,44 @@
 # CAE security model
 
+## v0.3.1 independent-process boundary
+
+The independent broker verifies the client PID using Windows named-pipe APIs, opens
+that process to obtain its token user SID and image path, and hashes the enrolled
+image. Application names in requests are rejected. Both image path and SHA-256 must
+match an administrator enrollment; the SID must match the broker account. Clients
+also verify the server SID, image path and hash before sending a request.
+
+The pipe uses a protected DACL granting only the broker user and SYSTEM, remote-client
+rejection, non-inheritable handles and first-instance exclusivity at startup. Client
+handles use SECURITY_IDENTIFICATION so a malicious server cannot impersonate them
+at impersonation level. Provider keys never cross IPC; no credential mutation/export
+endpoint exists. Administrator shutdown requires a separate enrollment flag. Policy,
+model/profile restrictions, quota and audit execute in the broker before key retrieval.
+
+Limits: this is same-account process separation, not hostile same-account isolation.
+That account can access its Windows vault, modify writable configuration or images,
+inject/debug permitted processes, create pipe instances or deny service. Hashing the
+on-disk image is not code signing, a measurement of loaded memory, or proof of scripts
+and plugins. Enrolling Python authorizes every script using that executable. The
+enrollment helper deliberately grants the operator's interpreter admin permissions;
+do not expose that interpreter to untrusted code. There is no separate service account,
+session-ID restriction, AppContainer boundary or installer-managed file ACL.
+
+Eight workers and message/time limits bound ordinary resource use, not malicious
+same-account denial of service. Disconnecting a client does not undo an accepted
+provider request or restore quota. No automatic replay occurs. Shutdown drains
+in-flight requests; it does not kill unrelated processes. See
+[protocol](docs/BROKER_PROTOCOL.md) and [executed security checks](docs/BROKER_VALIDATION.md).
+
+## Retained v0.3.0 / v0.2.0 in-process interfaces
+
+v0.3.0 adds provider-specific credential namespaces, strict explicit TOML configuration,
+capability/model policies, durable atomic daily quotas and schema-constrained audit.
+See [policy/audit boundaries](docs/POLICY_AUDIT.md) and [provider boundaries](docs/PROVIDERS.md).
+Cloud origins remain restricted; local services accept only literal loopback addresses.
+The existing OpenAI credential target is unchanged. These controls remain within a
+trusted-host boundary; they do not authenticate hostile application processes.
+
 ## Boundaries
 
 Windows Credential Manager protects stored credentials for the current Windows
