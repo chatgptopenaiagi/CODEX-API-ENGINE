@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=80", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codex-api-engine"
+version = "0.2.0"
+description = "Windows-protected OpenAI credentials, policy broker, diagnostics and SDK"
+readme = "README.md"
+requires-python = ">=3.14"
+license = "MIT"
+authors = [{name = "CAE contributors"}]
+dependencies = []
+classifiers = ["Development Status :: 4 - Beta", "Operating System :: Microsoft :: Windows", "Programming Language :: Python :: 3.14", "Typing :: Typed"]
+
+[project.optional-dependencies]
+dev = ["build>=1.2", "wheel>=0.45", "pytest>=8.4", "pytest-cov>=6", "ruff>=0.12", "mypy>=1.16", "pyinstaller>=6.16; sys_platform == 'win32'"]
+
+[project.scripts]
+cae = "cae.cli:main"
+
+[project.gui-scripts]
+cae-console = "cae.gui:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["cae*"]
+
+[tool.setuptools.package-data]
+cae = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = ["windows: isolated Windows Credential Manager integration"]
+addopts = "--tb=short"
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+
+[tool.ruff.lint]
+# Broad exception barriers are intentional at secret-handling boundaries.
+select = ["E4", "E7", "E9", "F", "I", "B"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+files = ["src/cae"]

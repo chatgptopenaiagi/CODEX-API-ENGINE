@@ -1,0 +1,26 @@
+apy_key.txt
+.env*
+*.pem
+*.p12
+*.pfx
+*.key
+*.keystore
+credentials*.json
+credential-export*
+auth*.json
+__pycache__/
+.venv/
+dist/
+build/*
+!build/README.md
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.cache/
+.tmp/
+.ruff_cache/
+.mypy_cache/
+*.spec
+release/
+/New Text Document.txt

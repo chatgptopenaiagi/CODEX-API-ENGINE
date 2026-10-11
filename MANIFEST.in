@@ -1,0 +1,8 @@
+include README.md LICENSE SECURITY.md ARCHITECTURE.md CHANGELOG.md
+recursive-include src/cae *.py py.typed
+prune tests
+prune scripts
+prune .venv
+prune build
+prune dist
+global-exclude apy_key.txt .env .env.* *.pyc

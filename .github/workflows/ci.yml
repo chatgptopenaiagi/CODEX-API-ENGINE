@@ -1,0 +1,37 @@
+name: Validate CAE
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          architecture: x64
+      - name: Setup
+        shell: pwsh
+        run: ./scripts/setup.ps1
+      - name: Test
+        shell: pwsh
+        run: ./scripts/test.ps1
+      - name: Python syntax
+        shell: pwsh
+        run: ./.venv/Scripts/python.exe -m compileall -q src tests scripts examples gui
+      - name: Build and inspect
+        shell: pwsh
+        run: ./scripts/build.ps1 -Executable
+      - name: Artifact checksums
+        shell: pwsh
+        run: ./.venv/Scripts/python.exe scripts/checksums.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cae-windows
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
+            dist/*.exe
+            dist/SHA256SUMS.json
+          if-no-files-found: error
