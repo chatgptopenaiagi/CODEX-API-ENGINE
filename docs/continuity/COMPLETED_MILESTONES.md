@@ -1,0 +1,21 @@
+# Verified milestone history
+
+| Milestone | Commit and evidence | Scope / limitation |
+|---|---|---|
+| v0.2.0 | `a62f33baef7e05412ebc959182b385803790fa2a`, published tag/release v0.2.0 | Original API, vault, in-process SDK and console foundation |
+| v0.3.1 | `8b8bf3d4ece60a6448921381cb1755abd9b46e1e`, published tag/release v0.3.1; [baseline](../validation/CURRENT-BASELINE.md) | Independent named-pipe broker and two external clients; historical 153 tests / 92.37% |
+| v0.4.0 client increment | `d9693738342d30b76e018a16b91bc778c59bbbc2`; [client validation](../validation/CLIENTS-0.4.0.md) | Six applications, five SDK languages, 60 hostile-server cases; historical 160 tests / 92.53%; locally built, no v0.4 release |
+| v0.5.0.dev1 security increment | `327bd2fe23accf76fe3f1a63c4103d48b3201bcf`; [security validation](../validation/SECURITY-0.5.0-dev1.md) | Registry, hot revocation, quota/concurrency limits; 218 tests / 95.24%, not completion of all v0.5 work |
+| Environment cleanup record | `b379795d109dbdfa62b079805d8db9aef3368457` | Exact task-created persistent PATH entry removed; future .NET startup prevention documented |
+
+The continuity mission reran 218 tests, Ruff, strict mypy, critical-module coverage,
+six-client packaged acceptance and all 60 hostile-server cases. See
+[current evidence](VALIDATION_EVIDENCE.md); historical reports retain their original
+publication-at-the-time statements and are not assertions about today's remote state.
+
+Original artifacts: root `dist/` (v0.2.0), `dist/0.3.1/`; new artifacts:
+`dist/0.4.0-clients/` and `dist/0.5.0.dev1/`. SDK package details and install examples
+are in [CLIENT_SDKS](../CLIENT_SDKS.md). Historical release downloads remain on GitHub.
+Native coverage, same-user isolation, signing, Windows 11 certification and real
+local inference are not implied by these milestones.
+

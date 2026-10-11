@@ -1,5 +1,14 @@
 # Repository maintenance instructions
 
+## CAE DEVELOPMENT CONTINUITY
+
+Before architectural changes read `docs/continuity/NEXT_SESSION.md`,
+`CURRENT_STATE.md`, `UNFINISHED_MILESTONES.md` and `KNOWN_LIMITATIONS.md` in that
+directory. Verify actual Git HEAD and version; dated evidence is not a substitute
+for current validation. `scripts/resume-development.ps1` is read-only inspection.
+Preserve the operator's running broker and use isolated synthetic test state.
+Source synchronization does not authorize new GitHub releases.
+
 This repository develops CODEX ACCESS ENGINE v0.5.0.dev1, with validated 0.4.0 client
 SDKs, and preserves published v0.2.0/v0.3.1.
 Read ARCHITECTURE.md, docs/ACCESS_ENGINE.md and SECURITY.md
