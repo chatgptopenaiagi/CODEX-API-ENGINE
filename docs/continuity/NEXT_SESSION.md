@@ -1,5 +1,11 @@
 # Resume CAE development
 
+Verified M1 source commit: `9768e4aa40f1242895c4bfa320703375b8716a63`. The final documentation
+checkpoint may be newer; inspect actual HEAD and preserve later changes. Fresh
+remote recovery and independent installed-wheel storage smoke passed. GitHub CI
+was still running at checkpoint time; verify current PR checks before proceeding.
+
+
 - Project root on the original workstation: `I:\CODEX-API-ENGINE`.
 - Canonical repository: https://github.com/chatgptopenaiagi/CODEX-API-ENGINE
 - Development branch: `feat/security-registry`.

@@ -1,5 +1,26 @@
 # GitHub checkpoint state
 
+## Verified M1 implementation synchronization — 2026-10-12
+
+Implementation commit `9768e4aa40f1242895c4bfa320703375b8716a63` was pushed normally to
+`feat/security-registry` and independently matched through `git ls-remote` and a
+fresh single-branch GitHub clone. That checkout read all 11 instruction/checkpoint
+files, ran the read-only resume script, verified version 0.5.0.dev3 and the M2 next
+step, and matched its source to the development wheel. A fresh local virtual
+environment installed that wheel without dependencies/source imports and passed
+an isolated managed-storage smoke test. No credential file existed in the clone.
+Recovery: **PASS**. Source/runtime validation: **299 tests, 95.64%**, 17 critical
+gates, six actual applications and 60 hostile-server cases passed locally.
+
+GitHub runs for this implementation were in progress when this checkpoint was
+written: [push](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/actions/runs/38181832753)
+and [PR](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/actions/runs/38181835171).
+This documentation-only checkpoint triggers its own checks; query the latest head.
+Do not infer CI success from local validation. PR #2 remains draft/open against
+main; no merge or release was performed. Final checkpoint SHA is resolved with
+`git log -1 --format=%H -- docs/continuity` and must match the remote branch.
+
+
 ## 0.5.0.dev3 synchronization
 
 Authorized destination remains `chatgptopenaiagi/CODEX-API-ENGINE`, branch

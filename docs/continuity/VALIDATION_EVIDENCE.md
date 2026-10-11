@@ -1,5 +1,16 @@
 # Continuity mission validation
 
+## Independent recovery — PASS
+
+Fresh remote checkout of `9768e4aa40f1242895c4bfa320703375b8716a63` matched the implementation,
+contained all continuation entry points and no protected credential input. The
+resume script selected M2. A separate virtual environment installed the 0.5.0.dev3
+wheel, matched runtime source against the remote checkout and wrote/read/rotated
+40 synthetic events under 4 KiB active/8 KiB total bounds. No previous conversation,
+production credential, broker configuration or running broker was required.
+Final documentation-only checkpoint must be fetched and rechecked against remote.
+
+
 ## 0.5.0.dev3 M1 retention evidence
 
 Final run: 299 tests, 95.64%, Ruff/strict mypy and 17 module gates passed.

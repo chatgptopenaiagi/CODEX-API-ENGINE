@@ -1,5 +1,10 @@
 # Current state
 
+Verified implementation: `9768e4aa40f1242895c4bfa320703375b8716a63`. Local M1 acceptance and
+fresh remote recovery passed. Later checkpoint-only commits do not change runtime
+artifacts. Current PR #2 remains a development draft; query live CI separately.
+
+
 CODEX ACCESS ENGINE (CAE), repository/package names CODEX-API-ENGINE /
 codex-api-engine. Snapshot: 2026-10-12, branch `feat/security-registry`, implementation
 starting checkpoint `02153a7c5a8374c4e438fd7fd43e96c8778d9d03`, version **0.5.0.dev3**.
