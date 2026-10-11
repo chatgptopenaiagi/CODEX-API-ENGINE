@@ -81,6 +81,11 @@ The original operator broker remains ready at PID **10268**, version 0.3.1. Its
 configuration and production Windows credentials were not changed. `apy_key.txt`
 remains untouched and Git-ignored; artifact checks compare it only in memory.
 
+Final environment hygiene found that the first .NET invocation had appended its
+repository-local tool directory to persistent user PATH. That exact task-created
+entry was removed and all other entries preserved. The build script sets
+`DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=false` and keeps .NET/NuGet caches in the repository.
+
 ## Remaining work and limits
 
 The larger v1.0 mission remains incomplete. Remaining implementation includes audit
