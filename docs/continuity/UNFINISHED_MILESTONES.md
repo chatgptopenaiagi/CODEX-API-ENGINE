@@ -64,4 +64,3 @@ Acceptance: bounded resources under long load, controlled outage/recovery, no
 unauthorized provider calls, explicit compatibility results, reproducible artifacts
 and no critical unresolved findings. Publish stable v1.0 only after evidence and
 separate human release authorization. No completion dates are assumed.
-

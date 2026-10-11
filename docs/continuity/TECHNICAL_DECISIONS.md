@@ -22,4 +22,3 @@
 Authoritative details: [architecture](../../ARCHITECTURE.md),
 [protocol](../BROKER_PROTOCOL.md), [registry](../APPLICATION_REGISTRY.md),
 [SDK contracts](../CLIENT_SDKS.md), [security](../../SECURITY.md).
-

@@ -18,4 +18,3 @@ Original artifacts: root `dist/` (v0.2.0), `dist/0.3.1/`; new artifacts:
 are in [CLIENT_SDKS](../CLIENT_SDKS.md). Historical release downloads remain on GitHub.
 Native coverage, same-user isolation, signing, Windows 11 certification and real
 local inference are not implied by these milestones.
-

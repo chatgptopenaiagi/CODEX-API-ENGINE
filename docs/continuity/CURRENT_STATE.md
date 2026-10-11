@@ -31,4 +31,3 @@ Node package/native binding, PowerShell module and Python client wheel/source.
 These are ignored local development outputs, **not remote downloadable releases**.
 Python >=3.14 and Windows x64 are required; native SDK/build prerequisites are in
 [ENVIRONMENT_STATE](ENVIRONMENT_STATE.md). No artifact was rebuilt for this mission.
-

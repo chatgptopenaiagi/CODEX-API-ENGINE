@@ -31,4 +31,3 @@ confined back to the repository; its installer uses lowercase `electron_config_c
 The read-only resume script does not initialize runtimes, install dependencies,
 modify PATH, change credentials or start a broker. Rebuilding is an explicit
 separate action. Production broker/config/vault are not part of fresh recovery.
-

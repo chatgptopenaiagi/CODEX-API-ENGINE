@@ -45,7 +45,10 @@ gh api repos/chatgptopenaiagi/CODEX-API-ENGINE/commits/feat/security-registry --
 ```
 
 Checkpoint commit SHA is recorded by Git rather than self-embedded in that commit.
-The final mission report records the exact synchronized revision. The independent
+Initial checkpoint `117ff2198ce43ffd8fbdc437eb693f3d3c7d2b4d` was verified via
+GitHub API and a fresh remote clone; all ten documents were listed by the GitHub
+contents API. The recovery-evidence commit follows that checkpoint without changing
+runtime code. The final mission report records the exact synchronized revision. The independent
 clone procedure is in RECOVERY_PROCEDURE.md. Future changes must refresh evidence
 and compare actual HEAD; these documents are not a permanent assertion that an
 arbitrary future branch tip passed the original tests.

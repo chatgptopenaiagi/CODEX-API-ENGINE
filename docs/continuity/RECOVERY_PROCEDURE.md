@@ -70,3 +70,12 @@ check linked source/test/build paths and verify that no production credential is
 needed to understand or reconstruct the state. This checkpoint mission verifies
 source recovery without rebuilding already validated local milestones. A full
 clean-room toolchain installation/build remains a separate validation claim.
+
+Executed recovery on 2026-10-11: a fresh clone directly from GitHub recovered
+`117ff2198ce43ffd8fbdc437eb693f3d3c7d2b4d` on `feat/security-registry`.
+All ten documents, AGENTS.md and the resume script matched (normalizing Windows
+checkout line endings). Relative links and referenced build/test/source paths
+resolved. The resume script reported 0.5.0.dev1 and the expected branch/commit,
+identified the audit milestone, and left the checkout clean. No `.venv`, `.cae`
+or protected credential file existed there. No production state was required.
+This is verified source/checkpoint recovery, not a new clean-room executable build.
