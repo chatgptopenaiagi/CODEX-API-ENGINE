@@ -53,3 +53,29 @@ def test_nonzero_tokens_and_reasoning_do_not_make_empty_content_usable():
 def test_model_identifiers_remain_bounded(model):
     with pytest.raises(ConfigurationError):
         ProviderConfig("local", "vllm", authenticated=False, routing_models=(model,))
+
+
+@pytest.mark.parametrize("model", ["model.with-dots_and-hyphens", "I:drive-like", "a" * 128,
+                                  r"I:\exact\model.gguf", "model//opaque"])
+def test_opaque_model_syntax_does_not_normalize_or_grant_access(model):
+    ProviderConfig("local", "vllm", authenticated=False, routing_models=(model,))
+    rule = Rule("exact", "app", "local", "default", frozenset({"chat"}),
+                models=frozenset({model}))
+    assert rule.matches("app", "local", "default", "chat", model)
+    assert not rule.matches("app", "local", "default", "chat", model + "x")
+
+
+@pytest.mark.parametrize("model", ["", "model with spaces", "模型", "model\tbad", "/absolute",
+                                  "model?query", "model#fragment", "model\r\nbad"])
+def test_unsupported_model_syntax_remains_rejected(model):
+    with pytest.raises(ConfigurationError):
+        ProviderConfig("local", "vllm", authenticated=False, routing_models=(model,))
+
+
+def test_explicit_model_deny_overrides_allow():
+    from cae.errors import AccessDenied
+    from cae.policy import PolicyEngine
+    rules = tuple(Rule(effect, "app", "local", "default", frozenset({"chat"}),
+                       effect=effect, models=frozenset({MODEL})) for effect in ("allow", "deny"))
+    with pytest.raises(AccessDenied):
+        PolicyEngine(rules).authorize("app", "local", "default", "chat", MODEL)

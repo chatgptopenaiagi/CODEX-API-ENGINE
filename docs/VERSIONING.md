@@ -1,6 +1,6 @@
 # Versioning policy
 
-Distribution name: `codex-api-engine`. Import name: `cae`. Development version: `0.5.0.dev4`.
+Distribution name: `codex-api-engine`. Import name: `cae`. Development version: `0.5.0.dev5`.
 Published foundation: `0.3.1`; `0.2.0` remains preserved. See [migration](MIGRATION_0.3.md) for schema/API evolution.
 `pyproject.toml` and `src/cae/version.py` must match; build scripts enforce this.
 
