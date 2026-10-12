@@ -1,3 +1,18 @@
+## Experimental preservation checkpoint (2026-10-12)
+
+The explicit preservation-only mission supersedes the earlier M4 completion-dependent
+publication hold. No runtime source or existing binary was changed or rebuilt.
+Published experimental prerelease (30 assets; all download hashes PASS): `v0.5.0.dev6-preservation`, source `2a300a0d96a0e8f2ad102940e4a9775d5d256608`;
+binary build `5a0020ca674d157c1213572ac7f7910157805ed5`. See
+[the preservation evidence](../validation/PRESERVATION-0.5.0.dev6.md) for actual
+publication/download status and [artifact inventory](../validation/DEV6_ARTIFACT_INVENTORY.json).
+M0-M3 remain complete within recorded scope; M4/M6 PARTIAL, M5/M7 PLANNED.
+The first future development task remains confirmed authorization/routing/quota GUI
+forms, then safe first-run provisioning. Do not develop during preservation.
+Installer, signing, Windows 11 and POK integration remain incomplete/unverified.
+Earlier RELEASE_NOT_PUBLISHED/BLOCKED statements below describe historical M4
+candidate gates, not a prohibition on this authorized experimental preservation.
+
 # Known limitations
 
 ## M4 current checkpoint

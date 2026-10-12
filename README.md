@@ -1,3 +1,8 @@
+> **Experimental dev6 preservation:** existing Windows builds, Python distributions,
+> source and recovery records are preserved at [the development prerelease](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases/tag/v0.5.0.dev6-preservation).
+> M4 is partial; setup is not fully automatic. Read its README-FIRST and download
+> LICENSE-NOTICES.zip with the Windows package. No production-readiness claim.
+
 # CODEX ACCESS ENGINE (CAE)
 
 **Windows users:** start with [Download and install](docs/DOWNLOAD_AND_INSTALL.md),
