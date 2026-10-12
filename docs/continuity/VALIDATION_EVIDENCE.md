@@ -1,5 +1,10 @@
 # Continuity mission validation
 
+## M3 local checkpoint
+
+M3 current run: 399 tests passed in 60.17s, 95.92% coverage, 18 critical gates, Ruff and strict mypy passed. Five completed real provider dispatches in the final isolated broker run. [Exact commands, results and NOT_RUN items](../validation/LOCAL-INFERENCE-M3.md).
+
+
 ## Current M2 increment — PASS
 
 393 passed in 59.53s; 95.92%; 18 critical gates; Ruff/strict mypy; six routed

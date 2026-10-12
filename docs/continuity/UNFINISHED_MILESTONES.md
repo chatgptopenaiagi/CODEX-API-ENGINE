@@ -1,5 +1,10 @@
 # Milestone status toward v1.0
 
+## M3 local checkpoint
+
+M3 current state: real routed llama.cpp/Qwen inference and authorization/resource denials PASS. Still PARTIAL: remaining real recovery/packaging acceptance is documented in [LOCAL-INFERENCE-M3](../validation/LOCAL-INFERENCE-M3.md). Do not repeat endpoint discovery or claim that no local inference has occurred.
+
+
 M1 and M2 are COMPLETE within their documented contracts. Next: M3 real
 local-model validation. No live inference is implied by the mock-tested milestones.
 

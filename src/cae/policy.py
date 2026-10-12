@@ -21,7 +21,7 @@ from .security import identifier
 
 OPERATIONS = frozenset({"models", "chat", "embeddings", "health", "diagnostics", "usage"})
 ROUTING_MODES = frozenset({"EXPLICIT_PROVIDER", "LOCAL_ONLY", "LOCAL_FIRST", "CLOUD_ONLY"})
-MODEL = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}\Z")
+MODEL = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:/\\-]{0,127}\Z")
 
 
 @dataclass(frozen=True, slots=True)

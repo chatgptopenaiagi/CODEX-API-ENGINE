@@ -1,5 +1,10 @@
 # Current state
 
+## M3 local checkpoint
+
+M3 real local inference increment: PASS through the authenticated SDK and isolated source broker. Exact Windows model IDs are supported as opaque allowlisted strings. M3 overall remains PARTIAL; see [actual evidence](../validation/LOCAL-INFERENCE-M3.md). Source remains 0.5.0.dev4; existing dev4 artifacts predate this compatibility change. Local checkpoint only, no push.
+
+
 ## Current M2 development increment
 
 Version **0.5.0.dev4**, branch `feat/security-registry`, starting checkpoint

@@ -1,5 +1,10 @@
 # Known limitations
 
+## M3 local checkpoint
+
+M3 update: real Qwen chat inference is now validated through an isolated source broker. Provider restart, cancellation, network-level offline isolation and updated executable acceptance remain NOT_RUN. Existing dev4 binaries lack the Windows model-ID fix. Historical mock-only statements below describe the preceding M2 evidence. [Current report](../validation/LOCAL-INFERENCE-M3.md).
+
+
 - Same Windows account can access its vault and writable configuration. SID and
   executable hashes do not attest loaded code or isolate hostile same-user programs.
 - Interpreter enrollment covers the interpreter image, not every script/module.

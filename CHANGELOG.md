@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased M3 source increment (after 0.5.0.dev4 artifacts)
+
+- Accept bounded exact Windows model identifiers for llama.cpp compatibility.
+- Add isolated real-inference acceptance and reasoning-exclusion regression tests.
+- Existing dev4 packages are preserved; source increment is not packaged yet.
+
+
 ## 0.5.0.dev4 — development
 
 - Add versioned capability discovery and execution through existing broker protocol.

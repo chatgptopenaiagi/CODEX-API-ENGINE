@@ -1,5 +1,10 @@
 # Verified milestone history
 
+## M3 local checkpoint
+
+M3 acceptance increment (2026-10-12): real llama.cpp/Qwen inference, local-only/cloud-mode denial, revocation, quotas, concurrency, client timeout and content/reasoning separation passed. This is not completion of the broader M3 recovery/package acceptance. [Evidence](../validation/LOCAL-INFERENCE-M3.md).
+
+
 ## 0.5.0.dev4 M2 — COMPLETE within documented contract
 
 Implementation `ee1947e7c467ee8de46e9acee7ba0e2176c51688`; 393 tests, 95.92%,

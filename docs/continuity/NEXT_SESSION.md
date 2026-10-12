@@ -13,18 +13,22 @@ Verify actual HEAD; a document cannot embed its own resulting commit hash.
 - Last completed milestone: **M2 COMPLETE** under its documented mock-tested contract.
   393 tests, 95.92%, 18 critical gates, six routed clients, 60 hostile cases and
   independent GitHub/installed-wheel recovery passed. M1 remains complete.
-- Next milestone: **M3 REAL LOCAL-MODEL VALIDATION**. No real inference was tested.
+- Next milestone: **M3 remaining recovery and artifact acceptance**. Real routed Qwen inference passed; M3 overall remains PARTIAL.
 - Actual gate results: [ROUTING-M2](../validation/ROUTING-M2.md).
 
 ## First task
 
-Read AGENTS.md, CURRENT_STATE.md, UNFINISHED_MILESTONES.md, KNOWN_LIMITATIONS.md,
-[capability routing](../CAPABILITY_ROUTING.md) and the M2 report. Verify Git status,
-branch, HEAD, package version and current remote checks. Do not repeat implemented
-M1 storage or M2 routing. First verify current GitHub CI and checkpoint consistency;
-then identify an explicitly available, operator-approved local inference endpoint.
-Do not change that endpoint or other environments. M3 must use an operator-approved
-local model; never download weights or claim real inference from mock tests.
+Read AGENTS.md and the current continuity files, then
+[LOCAL-INFERENCE-M3](../validation/LOCAL-INFERENCE-M3.md). Verify Git status and
+resolve this local checkpoint with `git log -1 --format=%H -- docs/continuity`.
+Starting M3 commit was bf238e2773cc1ea39b0e684faa9ef8ab7b45b176; local source remains
+0.5.0.dev4, but historical dev4 artifacts do not contain the model-ID fix.
+The approved llama.cpp endpoint is 127.0.0.1:8080, exact model identity in the report.
+Do not rediscover or download it. Five real routed calls and denial/timeout checks
+passed; 399 regression tests passed. Preserve the running server and production broker.
+Next address remaining M3 recovery/package acceptance; do not claim M3 complete.
+Any rebuild must use a new development version/directory, preserving old artifacts.
+This checkpoint is local only; no new GitHub synchronization or release is claimed.
 
 ```powershell
 ./scripts/resume-development.ps1
