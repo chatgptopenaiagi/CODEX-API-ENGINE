@@ -2,6 +2,7 @@
 
 import json
 import queue
+import sys
 import threading
 import tkinter as tk
 from collections.abc import Callable
@@ -15,11 +16,12 @@ from .config import load_runtime, parse_config
 from .credential import CredentialManager
 from .engine import CAE
 from .errors import CAEError
+from .operator_view import OperatorView
 from .version import __version__
 
 
 class ControlCenter:
-    def __init__(self, root: tk.Tk) -> None:
+    def __init__(self, root: tk.Tk, *, selection_file: Path | None = None) -> None:
         self.root = root
         self.runtime = AccessRuntime.default()
         self.engine = CAE(runtime=self.runtime)
@@ -28,6 +30,11 @@ class ControlCenter:
         self._worker: threading.Thread | None = None
         self.results: queue.Queue[str] = queue.Queue()
         self.buttons: list[ttk.Button] = []
+        self.operator: OperatorView | None = None
+        self.selection_file = selection_file or (
+            Path(sys.executable).parent / "cae-control-selection.json"
+            if getattr(sys, "frozen", False) else None
+        )
         root.title("CAE Control Center · " + __version__)
         root.geometry("1040x760")
         root.minsize(860, 680)
@@ -44,10 +51,34 @@ class ControlCenter:
         self.notebook = ttk.Notebook(frame)
         self.notebook.pack(fill="both", expand=True)
         pages = {}
-        for name in ("Overview", "Providers", "Credentials", "Audit", "Policies"):
+        for name in ("Broker", "Applications", "Overview", "Providers", "Credentials", "Audit", "Policies", "Help"):
             page = ttk.Frame(self.notebook, padding=16)
             self.notebook.add(page, text=name)
             pages[name] = page
+        self.broker_message = tk.StringVar(value="Welcome. Select an existing broker configuration to begin. No broker is started automatically.")
+        ttk.Label(pages["Broker"], textvariable=self.broker_message, wraplength=760).pack(anchor="w", pady=8)
+        self._button(pages["Broker"], "Choose broker configuration…", self.choose_broker)
+        self._button(pages["Broker"], "Check verified broker status", lambda: self.operator_action("status"))
+        self._button(pages["Broker"], "Remember selection for next launch", self.remember_broker)
+        ttk.Label(pages["Applications"], text="Operator enrollment is required. Registration grants no provider access.\nRevocation affects new connections; accepted work may finish.", wraplength=760).pack(anchor="w", pady=8)
+        self._button(pages["Applications"], "List applications and policy limits", lambda: self.operator_action("applications"))
+        ttk.Label(pages["Applications"], text="Application identifier (lowercase letters, digits, hyphen or underscore)").pack(anchor="w")
+        self.application_id = ttk.Entry(pages["Applications"])
+        self.application_id.pack(fill="x", pady=8)
+        self._button(pages["Applications"], "Register executable…", self.register_application)
+        self._button(pages["Applications"], "Revoke application…", self.revoke_application)
+        ttk.Label(pages["Help"], text=(
+            "1. Choose an operator-provided broker.json; review its executable identity.\n"
+            "2. Check status. Missing broker: ask its operator to start it.\n"
+            "3. Access denied: the exact Control Center image must already be enrolled.\n"
+            "4. Applications lists existing grants, routing modes and quota limits.\n"
+            "Authorization/provider editing still uses the documented administration CLI.\n"
+            "Overview, Providers, Credentials, Audit and Policies retain the separate\n"
+            "trusted in-process interface; they do not administer the selected broker.\n"
+            "No automatic cloud calls, telemetry, enrollment or credential changes.\n"
+            "Closing this window leaves the independent broker running.\n"
+            "Read docs/QUICKSTART_WINDOWS.md in the source distribution."
+        ), wraplength=760, justify="left").pack(anchor="w", pady=8)
         self._button(
             pages["Overview"], "Health snapshot (offline)", lambda: self.submit(self.engine.health)
         )
@@ -124,6 +155,64 @@ class ControlCenter:
         root.report_callback_exception = self.callback_error
         root.protocol("WM_DELETE_WINDOW", self.close)
         self._poll_id = root.after(100, self.poll)
+        if self.selection_file is not None and self.selection_file.exists():
+            try:
+                self.operator = OperatorView.restore(self.selection_file)
+                self.broker_message.set("Saved identity verified offline. Click Check verified broker status to connect.")
+            except Exception:
+                self.broker_message.set("Saved selection is invalid or the executable changed. Choose and review configuration again. No connection was attempted.")
+
+    def choose_broker(self) -> None:
+        selected = filedialog.askopenfilename(filetypes=[("Broker configuration", "*.json")])
+        if not selected:
+            return
+        try:
+            candidate = OperatorView(Path(selected))
+            server = candidate.settings.server
+            if not messagebox.askyesno("Trust this broker configuration?",
+                    f"Only select configuration supplied by your operator.\nExecutable: {server.image}\nSHA-256: {server.sha256}\nThis does not grant this GUI administrative access."):
+                return
+            self.operator = candidate
+            self.broker_message.set("Identity selected. Check status to connect; no broker was started or changed.")
+        except Exception:
+            self.broker_message.set("Configuration is invalid or executable identity does not match. Ask the operator for a current configuration.")
+
+    def operator_action(self, name: str) -> None:
+        if self.operator is None:
+            self.broker_message.set("Choose a broker configuration first. Do not disable identity verification.")
+            return
+        action = self.operator.status if name == "status" else self.operator.applications
+        self.submit(action)
+
+    def remember_broker(self) -> None:
+        if self.operator is None or self.selection_file is None:
+            self.broker_message.set("Select a broker first. Remembered portable selection is available in the packaged application.")
+            return
+        if messagebox.askyesno("Remember this selection?", "Create a non-secret selection beside this portable executable? Existing files are never overwritten."):
+            try:
+                self.operator.remember(self.selection_file)
+                self.broker_message.set("Selection saved. Keep the portable directory private to your Windows account.")
+            except Exception:
+                self.broker_message.set("Selection could not be saved: folder may be read-only or a selection already exists. Nothing was overwritten.")
+
+    def register_application(self) -> None:
+        if self.operator is None or self.busy:
+            self.operator_action("applications")
+            return
+        selected = filedialog.askopenfilename(filetypes=[("Windows executable", "*.exe")])
+        app = self.application_id.get()
+        if selected and messagebox.askyesno("Register application?", "Register this exact executable without provider permissions? Only register code you trust."):
+            operator = self.operator
+            self.submit(lambda: operator.register(app, Path(selected)))
+
+    def revoke_application(self) -> None:
+        if self.operator is None or self.busy:
+            self.operator_action("applications")
+            return
+        app = self.application_id.get()
+        if messagebox.askyesno("Revoke application?", "Revoke the specified application? Accepted work is not cancelled. The result reports whether restart is required."):
+            operator = self.operator
+            self.submit(lambda: operator.revoke(app))
 
     def _button(self, parent: ttk.Frame, label: str, action: Callable[[], None]) -> None:
         button = ttk.Button(parent, text=label, command=action)
@@ -155,7 +244,13 @@ class ControlCenter:
             try:
                 output = json.dumps(action(), indent=2)
             except CAEError as exc:
-                output = json.dumps({"error": exc.code})
+                guidance = {
+                    "access_denied": "This executable is not authorized. Ask the operator to enroll the exact image; do not bypass verification.",
+                    "broker_unavailable": "Broker unavailable or identity mismatch. Ask the operator to verify the selected installation.",
+                    "invalid_configuration": "Configuration or executable identity is invalid. Review with the operator.",
+                    "audit_unavailable": "Audit storage is unavailable. Protected operations remain denied.",
+                }
+                output = json.dumps({"error": exc.code, "guidance": guidance.get(exc.code, "Operation failed. Consult troubleshooting; no automatic retry was made.")})
             except Exception:
                 output = '{"error":"operation_failed"}'
             self.results.put(output)

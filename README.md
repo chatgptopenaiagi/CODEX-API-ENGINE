@@ -1,5 +1,10 @@
 # CODEX ACCESS ENGINE (CAE)
 
+**Windows users:** start with [Download and install](docs/DOWNLOAD_AND_INSTALL.md),
+[Control Center quickstart](docs/QUICKSTART_WINDOWS.md) and
+[troubleshooting](docs/TROUBLESHOOTING_WINDOWS.md). Public v0.3.1 remains available;
+M4 dev6 is an unpublished administration candidate, not a stable release or installer.
+
 Current source: **0.5.0.dev5**, a development local-inference and recovery increment.
 The published foundation remains **v0.3.1**. This is not a v1.0 release.
 
