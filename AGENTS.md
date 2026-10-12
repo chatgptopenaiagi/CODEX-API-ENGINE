@@ -2,6 +2,10 @@
 
 ## CAE DEVELOPMENT CONTINUITY
 
+Every future Codex session must read AGENTS.md and
+`docs/continuity/NEXT_SESSION.md` first. Then inspect `CAE_CHECKPOINT.json`,
+`MILESTONE_HISTORY_M0_M7.md` and `MASTER_ROADMAP_M0_M7.md` in that directory.
+
 Before architectural changes read `docs/continuity/NEXT_SESSION.md`,
 `CURRENT_STATE.md`, `UNFINISHED_MILESTONES.md` and `KNOWN_LIMITATIONS.md` in that
 directory. Verify actual Git HEAD and version; dated evidence is not a substitute
