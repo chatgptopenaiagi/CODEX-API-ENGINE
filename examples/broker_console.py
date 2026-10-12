@@ -16,6 +16,8 @@ def main():
     parser.add_argument("--stop-file", type=Path)
     parser.add_argument("--verify-denial", action="store_true")
     parser.add_argument("--self-test", action="store_true")
+    parser.add_argument("--route-request", type=Path,
+                        help="One bounded capability request JSON; no automatic replay")
     args = parser.parse_args()
     if args.self_test:
         return 0
@@ -23,6 +25,24 @@ def main():
         return 1
     connection = json.loads(args.connection.read_text())
     client = BrokerClient(**connection)
+    if args.route_request:
+        try:
+            if args.route_request.stat().st_size > 65536:
+                return 1
+            request = json.loads(args.route_request.read_text(encoding="utf-8"))
+            status = client.get_status()
+            result = {"status": status, "response": client.request("route", **request)}
+            if args.report:
+                args.report.write_text(json.dumps(result), encoding="utf-8")
+            else:
+                print(json.dumps(result), flush=True)
+            return 0
+        except CAEError as exc:
+            if args.report:
+                args.report.write_text(json.dumps({"error": exc.code}), encoding="utf-8")
+            return 2
+        except Exception:
+            return 1
     count = 0
     try:
         while True:

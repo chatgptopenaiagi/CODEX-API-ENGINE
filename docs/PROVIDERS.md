@@ -43,3 +43,11 @@ Official references consulted:
 - [Ollama chat](https://docs.ollama.com/api/chat) and [embeddings](https://docs.ollama.com/api/embed)
 - [vLLM compatible server](https://docs.vllm.ai/en/latest/serving/openai_compatible_server/)
 - [LM Studio compatibility](https://lmstudio.ai/docs/developer/openai-compat)
+
+## llama.cpp compatibility validation
+
+The existing vLLM OpenAI-compatible wire adapter was tested with llama.cpp/Qwen.
+It is compatibility reuse, not a claim that the server runs vLLM. Exact allowlisted
+model IDs may contain backslashes; they are opaque identifiers, never file access.
+Only message.content becomes assistant text; reasoning_content is ignored.
+See [real M3 evidence](validation/LOCAL-INFERENCE-M3.md).

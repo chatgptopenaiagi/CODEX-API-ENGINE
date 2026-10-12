@@ -1,5 +1,77 @@
 # CAE security model
 
+## M4 selected broker administration
+
+Portable selection records are non-secret private machine configuration and ignored
+by Git. They pin image/hash, pipe and runtime; each use checks current configuration
+and executable identity. Only an explicit operator confirmation selects a new
+identity. Registration grants no provider rights; admin operations still require
+an existing OS-authenticated admin enrollment. No self-enrollment is introduced.
+Same-user writable descriptor/configuration is not an independent trust root.
+Remember never overwrites an existing file. GUI errors use fixed codes/guidance,
+not exception text. Launch/close do not start or stop a broker or make cloud calls.
+
+## M3 provider response integrity
+
+Exact model authorization is case-sensitive and does not resolve filesystem paths. Spaces, Unicode, control characters and IDs over 128 characters remain unsupported. HTTP bodies shorter than their declared length cannot produce success. The tested compatible chat adapter returns only final content, never reasoning_content; a client timeout does not cancel provider work. Real-server restart is not part of isolated recovery acceptance.
+
+
+## M2 routing boundary
+
+Routing requires explicit mode grants intersected with existing provider/model
+allowlists and deny rules. Cloud and local-first cloud fallback require affirmative
+operator permission. LOCAL_ONLY selects only validated loopback adapters. No
+post-dispatch replay; provider failure and incomplete output are conservative
+unknown outcomes. Loopback servers can forward traffic and same-user processes
+remain outside strong isolation. Legacy explicitly granted cloud operations keep
+their permissions. See [threat model and limits](docs/CAPABILITY_ROUTING.md).
+
+## Managed audit storage boundary
+
+Explicit `[audit] mode = "managed"` enables bounded stores; no production migration
+is automatic. Reparse/hard-linked files are rejected, archive ownership is checked
+against a bounded manifest, and failures remain fail-closed before vault/provider
+access. Same-user hostile tampering, power-loss durability and Windows 11 acceptance
+are not established. Legacy opt-out logs remain unbounded. See
+[storage security and failure evidence](docs/validation/AUDIT-M1-RETENTION-ROTATION.md).
+
+Audit correlation adds no identity authority: its broker-generated ID is metadata,
+not a capability. New audit fields reject invalid values on read and do not accept
+arbitrary exception text. Audit write failure returns a fixed error and may follow
+an already completed provider request; never blindly retry generation. Retention,
+rotation and hostile same-account filesystem race protection remain unfinished.
+
+## 0.5.0.dev1 development controls
+
+Administrative registry commands require an existing OS-verified admin executable.
+They are not client protocol capabilities. The broker revalidates enrollment per
+connection and fails closed if the configuration is invalid or changes pinned
+listener/runtime identity. Registration cannot reuse revoked IDs or inherit an
+existing unregistered ID's provider grants. Revocation does not cancel in-flight work.
+
+Atomic file replacement preserves existing DACLs; recovery copies are retained if
+the filesystem cannot restore a failed edit. Private registry metadata/locks and
+recovery files are ignored by Git. Daily and minute quota reservations are atomic;
+concurrency and rate denials precede vault/provider access. Same-account configuration
+tampering and interpreter-wide enrollment remain explicit limitations.
+
+Full validation gates overall Python statement coverage at 90% and 16 runtime trust
+boundary modules at 95%; native SDK coverage percentages are not inferred from this.
+See [executed results](docs/validation/SECURITY-0.5.0-dev1.md).
+
+## Universal client verification
+
+The 0.4.0 client SDKs preserve v1 mutual Windows peer verification. .NET and native
+C++/Node clients check SID, image path and executable hash before writing any request,
+enforce response correlation/PID, reject duplicate keys and bound frames and I/O.
+PowerShell uses the .NET implementation; Python uses the existing public BrokerClient.
+All five have real named-pipe wrong-server, timeout and malformed-response tests.
+Clients do not replay provider operations. See [executed results](docs/validation/CLIENTS-0.4.0.md).
+
+Interpreter enrollment is not application isolation: Python scripts, .NET loaded
+assemblies, PowerShell scripts, Node modules and Electron main-process plugins can
+share an enrolled process identity. No stronger same-user guarantee is introduced.
+
 ## v0.3.1 independent-process boundary
 
 The independent broker verifies the client PID using Windows named-pipe APIs, opens

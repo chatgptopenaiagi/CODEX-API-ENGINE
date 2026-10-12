@@ -27,7 +27,7 @@ def test_control_center_offline_and_masked(tmp_path):
             time.sleep(0.01)
 
     try:
-        assert len(center.notebook.tabs()) == 5
+        assert len(center.notebook.tabs()) == 8
         assert center.key.cget("show")
         center.submit(center.engine.providers)
         drain()
@@ -55,3 +55,84 @@ def test_control_center_offline_and_masked(tmp_path):
         center = None
         root = None
         gc.collect()
+
+
+def test_operator_gui_selection_and_confirmed_admin(tmp_path):
+    import gc
+    import tkinter as tk
+
+    from test_application_registry import image
+    from test_broker_lifecycle import configuration
+
+    from cae.control_center import ControlCenter
+
+    config, _, _ = configuration(tmp_path)
+    selection = tmp_path / "selected.json"
+    root = tk.Tk()
+    root.withdraw()
+    center = ControlCenter(root, selection_file=selection)
+
+    def drain():
+        for _ in range(600):
+            root.update()
+            if not center.busy:
+                return
+            time.sleep(0.01)
+        assert not center.busy
+
+    try:
+        assert "Welcome" in center.broker_message.get()
+        center.operator_action("status")
+        assert "Choose" in center.broker_message.get()
+        center.remember_broker()
+        with patch("cae.control_center.filedialog.askopenfilename", return_value=""):
+            center.choose_broker()
+        with patch("cae.control_center.filedialog.askopenfilename", return_value=str(config)), patch("cae.control_center.messagebox.askyesno", return_value=False):
+            center.choose_broker()
+        assert center.operator is None
+        with patch("cae.control_center.filedialog.askopenfilename", return_value=str(config)), patch("cae.control_center.messagebox.askyesno", return_value=True):
+            center.choose_broker()
+            center.remember_broker()
+        assert selection.exists()
+        with patch("cae.control_center.messagebox.askyesno", return_value=True):
+            center.remember_broker()
+        assert "Nothing was overwritten" in center.broker_message.get()
+        center.operator_action("applications")
+        drain()
+        assert "test-admin" in center.output.get("1.0", "end")
+        center.application_id.insert(0, "sample")
+        executable = image(tmp_path)
+        with patch("cae.control_center.filedialog.askopenfilename", return_value=str(executable)), patch("cae.control_center.messagebox.askyesno", return_value=True):
+            center.register_application()
+            drain()
+            center.revoke_application()
+            drain()
+        assert '"revoked": true' in center.output.get("1.0", "end")
+        center.operator_action("status")  # No broker started: actionable bounded failure.
+        drain()
+        assert "guidance" in center.output.get("1.0", "end")
+        with patch("cae.control_center.filedialog.askopenfilename", return_value=str(tmp_path / "missing.json")):
+            center.choose_broker()
+        assert "invalid" in center.broker_message.get()
+    finally:
+        center.close()
+        center = None
+        root = None
+        gc.collect()
+    root = tk.Tk()
+    root.withdraw()
+    center = ControlCenter(root, selection_file=selection)
+    assert "verified offline" in center.broker_message.get()
+    center.close()
+    center = None
+    root = None
+    gc.collect()
+    selection.write_text("{}")
+    root = tk.Tk()
+    root.withdraw()
+    center = ControlCenter(root, selection_file=selection)
+    assert "No connection was attempted" in center.broker_message.get()
+    center.close()
+    center = None
+    root = None
+    gc.collect()

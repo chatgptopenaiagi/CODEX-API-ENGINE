@@ -47,10 +47,46 @@ def main(argv: Sequence[str] | None = None) -> int:
             command_parser.add_argument("--config", dest="broker_config", type=Path)
     imp = sub.add_parser("import", help="Import without deleting the source file")
     imp.add_argument("path", type=Path)
+    apps = sub.add_parser("apps", help="Operator-only application enrollment and policy")
+    apps.add_argument("action", choices=("list", "register", "inspect", "authorize", "revoke"))
+    apps.add_argument("--broker-config", type=Path, required=True)
+    apps.add_argument("--id", dest="application")
+    apps.add_argument("--image", type=Path)
+    apps.add_argument("--operations", nargs="+", default=[])
+    apps.add_argument("--models", nargs="+", default=[])
+    apps.add_argument("--provider", dest="application_provider", default="openai")
+    apps.add_argument("--profile", dest="application_profile", default="default")
+    apps.add_argument("--max-requests-per-day", type=int, default=1000)
+    apps.add_argument("--max-requests-per-minute", type=int)
+    apps.add_argument("--max-concurrent-requests", type=int)
+    apps.add_argument("--deny", action="store_true")
     args = parser.parse_args(argv)
     admin_runtime: AccessRuntime | None = None
     engine: CAE | None = None
     try:
+        if args.command == "apps":
+            from .registry import ApplicationRegistry
+
+            registry = ApplicationRegistry(args.broker_config)
+            if args.action == "list":
+                app_result: object = registry.list()
+            elif args.application is None:
+                raise ConfigurationError()
+            elif args.action == "register":
+                if args.image is None:
+                    raise ConfigurationError()
+                app_result = registry.register(args.application, args.image)
+            elif args.action == "inspect":
+                app_result = registry.inspect(args.application)
+            elif args.action == "revoke":
+                app_result = registry.revoke(args.application)
+            else:
+                app_result = registry.authorize(args.application, args.application_provider,
+                    args.application_profile, frozenset(args.operations),
+                    models=frozenset(args.models), maximum=args.max_requests_per_day, deny=args.deny,
+                    per_minute=args.max_requests_per_minute, concurrent=args.max_concurrent_requests)
+            print(json.dumps(app_result, indent=2))
+            return 0
         if args.command == "broker" and args.action is not None:
             from .broker_control import control
 

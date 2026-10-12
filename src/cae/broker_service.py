@@ -8,8 +8,9 @@ from pathlib import Path
 from typing import Any
 
 from .access import AccessRuntime
+from .audit import correlated
 from .config import load_runtime
-from .errors import AccessDenied, CAEError
+from .errors import AccessDenied, AuditError, CAEError
 from .ipc_protocol import BrokerSettings, Enrollment, encode, request
 from .pipe_transport import Pipe, ProtocolError, process_peer
 from .security import identifier
@@ -17,8 +18,10 @@ from .version import __version__
 
 
 class BrokerServer:
-    def __init__(self, settings: BrokerSettings, runtime: AccessRuntime) -> None:
+    def __init__(self, settings: BrokerSettings, runtime: AccessRuntime,
+                 *, configuration: Path | None = None) -> None:
         self.settings, self.runtime = settings, runtime
+        self.configuration = configuration
         self.identity = process_peer(os.getpid())
         if not settings.server.matches(self.identity):
             raise AccessDenied()
@@ -44,7 +47,14 @@ class BrokerServer:
             return {"broker": "stopping" if self.stopping.is_set() else "ready",
                     "broker_mode": "named_pipe", "broker_pid": os.getpid(),
                     "version": __version__, "app": app, "max_connections": 8,
+                    "enrollment_reload": self.configuration is not None,
                     "active_connections": self._active, "rejected_connections": self._rejected}
+        if operation == "capabilities":
+            if args:
+                raise ProtocolError()
+            return self.runtime.router.discover(app)
+        if operation == "route":
+            return self.runtime.router.execute(app, args)
         if operation not in {"health", "diagnostics", "models", "chat", "embeddings",
                              "providers", "usage", "audit", "policies"}:
             raise AccessDenied()
@@ -81,6 +91,7 @@ class BrokerServer:
         return self.runtime.execute(app, name, profile, operation, model=model,
                                     text=text, max_tokens=args.get("max_tokens", 256))
 
+    @correlated
     def _session(self, pipe: Pipe) -> None:
         correlation = "0" * 32
         app = "unknown"
@@ -89,7 +100,14 @@ class BrokerServer:
         try:
             value = request(pipe.receive(2))
             correlation = value["id"]
-            client = self.settings.authenticate(pipe.peer(), self.identity.sid)
+            settings = self.settings
+            if self.configuration is not None:
+                settings = BrokerSettings.load(self.configuration)
+                # Enrollment is reloadable; listener/runtime/server identity are pinned until restart.
+                if (settings.pipe != self.settings.pipe or settings.runtime != self.settings.runtime
+                        or settings.server != self.settings.server):
+                    raise AccessDenied()
+            client = settings.authenticate(pipe.peer(), self.identity.sid)
             app = client.app
             self.runtime.audit_log.emit("ipc_authenticated", app=app)
             result = self.dispatch(client, value["op"], value["args"])
@@ -100,7 +118,13 @@ class BrokerServer:
         if error:
             with self._lock:
                 self._rejected += 1
-            self.runtime.audit_log.emit("ipc_denied", app=app)
+        try:
+            self.runtime.audit_log.emit("ipc_denied" if error else "ipc_result",
+                                        app=app, error_code=error or "none")
+        except AuditError:
+            # Return a fixed failure even if the sink cannot record that failure.
+            # A completed provider call is not replayed when its audit write failed.
+            error, result = "audit_unavailable", {}
         envelope = {"v": 1, "id": correlation, "ok": error is None, "result": result,
                     "error": error, "broker_pid": os.getpid()}
         try:
@@ -168,7 +192,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.config is None:
             raise ProtocolError()
         settings = BrokerSettings.load(args.config)
-        BrokerServer(settings, load_runtime(settings.runtime)).serve()
+        BrokerServer(settings, load_runtime(settings.runtime), configuration=args.config).serve()
         return 0
     except (Exception, KeyboardInterrupt):
         # Windowed builds have no terminal; CLI supervisor reports fixed status.

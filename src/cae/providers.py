@@ -35,8 +35,21 @@ class ProviderConfig:
     endpoint: str = ""
     profile: str = "default"
     authenticated: bool = True
+    routing_models: tuple[str, ...] = ()
+    routing_priority: int = 100
+    routing_enabled: bool = True
 
     def __post_init__(self) -> None:
+        if (not isinstance(self.routing_models, (tuple, list))
+                or len(self.routing_models) > 128
+                or any(not isinstance(m, str) or not MODEL.fullmatch(m)
+                       for m in self.routing_models)
+                or len(set(self.routing_models)) != len(self.routing_models)
+                or type(self.routing_priority) is not int
+                or not 0 <= self.routing_priority <= 10000
+                or type(self.routing_enabled) is not bool):
+            raise ConfigurationError()
+        object.__setattr__(self, "routing_models", tuple(self.routing_models))
         identifier(self.name)
         identifier(self.profile)
         endpoint = self.endpoint or CLOUD.get(self.kind, LOCAL.get(self.kind, ""))
@@ -166,7 +179,9 @@ class HTTPProviderTransport:
             )
             response = connection.getresponse()
             data = response.read(4 * 1024 * 1024 + 1)
-            if len(data) > 4 * 1024 * 1024:
+            # read(amount) can return valid JSON on premature EOF without raising
+            # IncompleteRead. An outstanding declared length is never success.
+            if len(data) > 4 * 1024 * 1024 or response.length not in {None, 0}:
                 raise ValueError()
             result = response.status, data
         except Exception:
@@ -242,6 +257,10 @@ class HTTPProvider:
         try:
             value = json.loads(body)
             if not isinstance(value, dict):
+                raise ValueError()
+            if operation != "models" and "model" in value and value["model"] != model:
+                raise ValueError()
+            if operation == "chat" and "status" in value and value["status"] != "completed":
                 raise ValueError()
             result = self._normalize(operation, value)
         except Exception:
@@ -358,17 +377,18 @@ class HTTPProvider:
         usage = data.get("usage", {})
         incoming = usage.get("input_tokens", usage.get("prompt_tokens", 0))
         outgoing = usage.get("output_tokens", usage.get("completion_tokens", 0))
-        reported = bool(usage)
+        reported = (any(k in usage for k in ("input_tokens", "prompt_tokens"))
+                    and (op == "embeddings" or any(k in usage for k in ("output_tokens", "completion_tokens"))))
         if kind == "gemini":
             usage = data.get("usageMetadata", {})
             incoming, outgoing = (
                 usage.get("promptTokenCount", 0),
                 usage.get("candidatesTokenCount", 0),
             )
-            reported = bool(usage)
+            reported = "promptTokenCount" in usage and (op == "embeddings" or "candidatesTokenCount" in usage)
         elif kind == "ollama":
             incoming, outgoing = data.get("prompt_eval_count", 0), data.get("eval_count", 0)
-            reported = "prompt_eval_count" in data
+            reported = "prompt_eval_count" in data and (op == "embeddings" or "eval_count" in data)
         if type(incoming) is not int or type(outgoing) is not int or min(incoming, outgoing) < 0:
             raise ValueError()
         tokens = Usage(incoming, outgoing, reported)

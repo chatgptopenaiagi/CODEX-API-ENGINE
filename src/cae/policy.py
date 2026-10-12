@@ -2,18 +2,26 @@
 
 import re
 import sqlite3
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from threading import RLock
 from typing import Any, Literal
 
-from .errors import AccessDenied, ConfigurationError, QuotaExceeded
+from .errors import (
+    AccessDenied,
+    ConcurrentLimitExceeded,
+    ConfigurationError,
+    QuotaExceeded,
+    RateLimitExceeded,
+)
 from .security import identifier
 
 OPERATIONS = frozenset({"models", "chat", "embeddings", "health", "diagnostics", "usage"})
-MODEL = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}\Z")
+ROUTING_MODES = frozenset({"EXPLICIT_PROVIDER", "LOCAL_ONLY", "LOCAL_FIRST", "CLOUD_ONLY"})
+MODEL = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:/\\-]{0,127}\Z")
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,8 +34,20 @@ class Rule:
     effect: Literal["allow", "deny"] = "allow"
     models: frozenset[str] = frozenset()
     max_requests_per_day: int = 1000
+    max_requests_per_minute: int | None = None
+    max_concurrent_requests: int | None = None
+
+    routing_modes: frozenset[str] = frozenset()
+    allow_cloud: bool = False
+    allow_fallback: bool = False
 
     def __post_init__(self) -> None:
+        if (not isinstance(self.routing_modes, (frozenset, set, list, tuple))
+                or any(not isinstance(v, str) for v in self.routing_modes)
+                or not set(self.routing_modes) <= ROUTING_MODES
+                or type(self.allow_cloud) is not bool or type(self.allow_fallback) is not bool):
+            raise ConfigurationError()
+        object.__setattr__(self, "routing_modes", frozenset(self.routing_modes))
         for value in (self.id, self.app, self.provider, self.profile):
             identifier(value)
         object.__setattr__(self, "operations", frozenset(self.operations))
@@ -45,6 +65,9 @@ class Rule:
             raise ConfigurationError()
         if any(model != "*" and not MODEL.fullmatch(model) for model in self.models):
             raise ConfigurationError()
+        for limit in (self.max_requests_per_minute, self.max_concurrent_requests):
+            if limit is not None and (type(limit) is not int or not 1 <= limit <= 10_000_000):
+                raise ConfigurationError()
         if self.effect == "allow" and self.operations & {"chat", "embeddings"} and not self.models:
             raise ConfigurationError()
 
@@ -69,12 +92,15 @@ class Rule:
         result = asdict(self)
         result["operations"] = sorted(self.operations)
         result["models"] = sorted(self.models)
+        result["routing_modes"] = sorted(self.routing_modes)
         return result
 
 
 class QuotaLedger:
-    def __init__(self, path: Path | None = None, *, day: Callable[[], str] | None = None) -> None:
+    def __init__(self, path: Path | None = None, *, day: Callable[[], str] | None = None,
+                 minute: Callable[[], str] | None = None) -> None:
         self._day = day if day is not None else lambda: datetime.now(UTC).date().isoformat()
+        self._minute = minute or (lambda: datetime.now(UTC).strftime("%Y-%m-%dT%H:%M"))
         self._lock = RLock()
         if path is not None:
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -86,15 +112,20 @@ class QuotaLedger:
         self._db.execute(
             "CREATE TABLE IF NOT EXISTS quotas (rule TEXT, day TEXT, count INTEGER NOT NULL, PRIMARY KEY(rule, day))"
         )
+        self._db.execute(
+            "CREATE TABLE IF NOT EXISTS rates (rule TEXT, minute TEXT, count INTEGER NOT NULL, PRIMARY KEY(rule, minute))"
+        )
         self._db.commit()
 
     def reserve(self, rules: tuple[Rule, ...]) -> None:
         failed = False
         exceeded = False
+        rate_exceeded = False
         with self._lock:
             try:
                 self._db.execute("BEGIN IMMEDIATE")
                 day = self._day()
+                minute = self._minute()
                 for rule in rules:
                     row = self._db.execute(
                         "SELECT count FROM quotas WHERE rule=? AND day=?", (rule.id, day)
@@ -102,7 +133,14 @@ class QuotaLedger:
                     if row is not None and row[0] >= rule.max_requests_per_day:
                         exceeded = True
                         break
-                if exceeded:
+                    rate = self._db.execute(
+                        "SELECT count FROM rates WHERE rule=? AND minute=?", (rule.id, minute)
+                    ).fetchone()
+                    if (rule.max_requests_per_minute is not None and rate is not None
+                            and rate[0] >= rule.max_requests_per_minute):
+                        rate_exceeded = True
+                        break
+                if exceeded or rate_exceeded:
                     self._db.rollback()
                 else:
                     for rule in rules:
@@ -110,6 +148,12 @@ class QuotaLedger:
                             "INSERT INTO quotas VALUES (?, ?, 1) ON CONFLICT(rule, day) DO UPDATE SET count=count+1",
                             (rule.id, day),
                         )
+                        self._db.execute(
+                            "INSERT INTO rates VALUES (?, ?, 1) ON CONFLICT(rule, minute) DO UPDATE SET count=count+1",
+                            (rule.id, minute),
+                        )
+                    # Keep the current and previous UTC date for clock-boundary recovery.
+                    self._db.execute("DELETE FROM rates WHERE minute < date(?, '-1 day')", (day,))
                     self._db.commit()
             except Exception:
                 try:
@@ -119,6 +163,8 @@ class QuotaLedger:
                 failed = True
         if exceeded:
             raise QuotaExceeded()
+        if rate_exceeded:
+            raise RateLimitExceeded()
         if failed:
             raise AccessDenied()
 
@@ -133,6 +179,28 @@ class PolicyEngine:
             raise ConfigurationError()
         self.rules = tuple(rules)
         self.ledger = ledger if ledger is not None else QuotaLedger()
+        self._active: dict[str, int] = {}
+        self._active_lock = RLock()
+
+    @contextmanager
+    def request_slot(self, app: str, provider: str, profile: str, operation: str,
+                     model: str | None = None) -> Iterator[None]:
+        self.authorize(app, provider, profile, operation, model, consume=False)
+        matches = tuple(rule for rule in self.rules
+                        if rule.matches(app, provider, profile, operation, model))
+        with self._active_lock:
+            if any(rule.max_concurrent_requests is not None
+                   and self._active.get(rule.id, 0) >= rule.max_concurrent_requests
+                   for rule in matches):
+                raise ConcurrentLimitExceeded()
+            for rule in matches:
+                self._active[rule.id] = self._active.get(rule.id, 0) + 1
+        try:
+            yield
+        finally:
+            with self._active_lock:
+                for rule in matches:
+                    self._active[rule.id] -= 1
 
     def authorize(
         self,

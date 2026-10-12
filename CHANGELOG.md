@@ -1,5 +1,81 @@
 # Changelog
 
+## 0.5.0.dev6 — partial M4 development
+
+- Add explicit broker selection with image/hash pinning and portable remembered
+  configuration; no implicit discovery scan or administrator grant.
+- Add existing-registry application inspection and confirmed registration/revocation.
+- Add actionable missing/disconnected configuration guidance and preserve separate
+  trusted in-process administration pages.
+- Add M0–M7 history, versioned recovery checkpoint and Windows user instructions.
+- Build distinct local development artifacts; publication remains blocked by the
+  incomplete redistribution inventory and first-run acceptance. No installer/release.
+
+## 0.5.0.dev5 — development
+
+- Package exact Windows model-ID compatibility without changing allowlist semantics.
+- Add a one-shot public-SDK capability request to the independent console client.
+- Reject truncated declared-length HTTP bodies even when the partial body is valid JSON.
+- Add disposable provider outage/recovery and packaged real-inference acceptance.
+- Preserve dev4 artifacts; no stable release or production configuration migration.
+
+
+## Unreleased M3 source increment (after 0.5.0.dev4 artifacts)
+
+- Accept bounded exact Windows model identifiers for llama.cpp compatibility.
+- Add isolated real-inference acceptance and reasoning-exclusion regression tests.
+- Existing dev4 packages are preserved; source increment is not packaged yet.
+
+
+## 0.5.0.dev4 — development
+
+- Add versioned capability discovery and execution through existing broker protocol.
+- Add exact configured routing models, deterministic local/cloud selection and
+  explicit routing/cloud/fallback grants; reuse quotas, concurrency and audit.
+- Never replay ambiguous dispatches; bound output and report missing usage as unknown.
+- Extend six-client mock acceptance while preserving legacy SDK requests/artifacts.
+- Validate returned provider model/completion metadata when supplied; mismatches and
+  incomplete status fail closed. Provider aliases require explicit compatible IDs.
+- No live paid calls, production migration, stable release or main merge.
+
+## 0.5.0.dev3 — managed audit retention
+
+- Opt-in validated audit limits, private store ownership and bounded Windows locks.
+- Persisted rotation/deletion intents, partial-tail recovery and fail-closed errors.
+- Archive-aware audit reads and additive non-secret storage diagnostics.
+- Required audit before credential-presence diagnostics; registry retains audit configuration.
+- Isolated Windows concurrency/process-exit/failure tests and benchmark.
+- Cross-language restart harness rejects fresh files containing stale broker identity.
+- Separate development artifacts; historical releases/configurations preserved.
+
+## 0.5.0.dev2 — partial M1 audit increment
+
+- Broker-generated request correlation shared by nested runtime events; allowlisted
+  decision/status/error metadata and monotonic elapsed time; legacy JSONL compatible.
+- Fixed audit-unavailable response when broker audit recording fails.
+- Supervisor waits for authenticated broker process exit rather than mistaking a
+  transient pipe failure for completed shutdown (observed prior CI failure).
+- POK source-based compatibility analysis; no external application changes.
+- Disk retention/rotation remain unfinished. No stable release or main merge.
+
+## 0.5.0.dev1 — unpublished security development
+
+- Operator-only application list/register/inspect/authorize/revoke commands.
+- Persistent registration metadata, Windows-locked edits, DACL-preserving replacement
+  and fail-closed enrollment reload on each new broker connection.
+- Persistent per-minute quotas and provider concurrency limits; policy edits retain
+  quota identity, and old rules keep their previous behavior by default.
+- Strict Python response field typing and additional native failure/recovery tests.
+- Separate development packages; no production credential migration or public release.
+
+## 0.4.0 client SDKs — local development
+
+- Python facade, native C# and C++ clients, asynchronous Node-API SDK and PowerShell module.
+- Explicit descriptor discovery, mutual Windows peer checks, protocol v1 responses,
+  capability discovery, bounded I/O and fresh-connection recovery without request replay.
+- Independent cross-language applications, hostile-server acceptance tests and isolated packages.
+- Existing engine/broker 0.3.1 binary and published releases retained; no new public release.
+
 ## 0.3.1 — local development, 2026-10-11
 
 - Independent Windows named-pipe broker with kernel-derived peer identity, executable

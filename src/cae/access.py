@@ -6,18 +6,20 @@ from datetime import UTC, datetime
 from threading import RLock
 from typing import Any
 
-from .audit import AuditLog
+from .audit import AuditLog, correlated
 from .credential import CredentialStore, WindowsCredentialStore
 from .errors import (
     AccessDenied,
     APIError,
     CAEError,
+    ConcurrentLimitExceeded,
     ConfigurationError,
     CredentialError,
     UnsupportedOperation,
 )
 from .policy import MODEL, PolicyEngine, Rule
 from .providers import HTTPProvider, ProviderAdapter, ProviderConfig
+from .routing import CapabilityRouter
 from .security import identifier, redact, validate_key
 
 
@@ -41,6 +43,7 @@ class AccessRuntime:
         self._health: dict[tuple[str, str, str], dict[str, Any]] = {}
         self._usage: dict[tuple[str, str, str], dict[str, int]] = {}
         self._lock = RLock()
+        self.router = CapabilityRouter(self, providers)
 
     @classmethod
     def default(cls, profile: str = "default") -> AccessRuntime:
@@ -73,7 +76,7 @@ class AccessRuntime:
             identifier(value)
         try:
             self.policy.authorize(app, name, profile, operation, model, consume=consume)
-        except AccessDenied:
+        except AccessDenied as exc:
             self.audit_log.emit(
                 "policy_denied",
                 app=app,
@@ -82,6 +85,7 @@ class AccessRuntime:
                 operation=operation
                 if operation in {"models", "health", "chat", "embeddings", "diagnostics", "usage"}
                 else "unknown",
+                error_code=exc.code,
             )
             raise
         provider = self._providers.get(name)
@@ -90,7 +94,23 @@ class AccessRuntime:
             raise AccessDenied()
         return provider
 
+    @correlated
     def execute(
+        self, app: str, name: str, profile: str, operation: str, *,
+        model: str | None = None, text: str | None = None, max_tokens: int = 256,
+    ) -> dict[str, Any]:
+        self._provider(app, name, profile, operation, model)
+        try:
+            with self.policy.request_slot(app, name, profile, operation, model):
+                return self._execute(app, name, profile, operation, model=model,
+                                     text=text, max_tokens=max_tokens)
+        except ConcurrentLimitExceeded:
+            self.audit_log.emit("policy_denied", app=app, provider=name,
+                                profile=profile, operation=operation,
+                                error_code=ConcurrentLimitExceeded.code)
+            raise
+
+    def _execute(
         self,
         app: str,
         name: str,
@@ -142,6 +162,8 @@ class AccessRuntime:
         failure: CAEError | None = None
         try:
             safe = redact(provider.request(actual, secret, model, text, max_tokens), secret)
+            if not isinstance(safe, dict):
+                raise APIError("protocol")
         except APIError as exc:
             failure = APIError(exc.kind, exc.status)
         except UnsupportedOperation:
@@ -161,6 +183,7 @@ class AccessRuntime:
                 provider=name,
                 profile=profile,
                 operation=operation,
+                error_code=failure.code,
             )
             self.audit_log.emit(
                 "provider_disconnected",
@@ -214,6 +237,9 @@ class AccessRuntime:
                 self.execute(app, name, profile, "health")
             except CAEError as exc:
                 error = exc.code
+        self.audit_log.emit(
+            "health_read", app=app, provider=name, profile=profile, operation=operation
+        )
         credential = "not_required"
         if provider.config.authenticated:
             try:
@@ -222,9 +248,6 @@ class AccessRuntime:
                 )
             except Exception:
                 credential = "unavailable"
-        self.audit_log.emit(
-            "health_read", app=app, provider=name, profile=profile, operation=operation
-        )
         with self._lock:
             health = dict(
                 self._health.get(
@@ -243,6 +266,7 @@ class AccessRuntime:
             "provider": name,
             "credential": credential,
             "broker": "ready",
+            "audit_storage": self.audit_log.storage_status(),
             "broker_mode": "in_process",
             "policy": "ready",
             "error": error,
@@ -279,7 +303,7 @@ class AccessRuntime:
 
     def audit(self, app: str) -> list[dict[str, Any]]:
         self.audit_log.emit("audit_read", app=app)
-        return self.audit_log.events(app=app)
+        return self.audit_log.events(app=app, include_archives=True)
 
     def close(self) -> None:
         self.policy.ledger.close()

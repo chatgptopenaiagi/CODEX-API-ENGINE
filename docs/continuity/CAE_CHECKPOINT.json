@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "project": "CODEX ACCESS ENGINE",
+  "repository": "https://github.com/chatgptopenaiagi/CODEX-API-ENGINE",
+  "development_branch": "feat/security-registry",
+  "development_version": "0.5.0.dev6",
+  "current_milestone": "M4",
+  "latest_verified_source_commit": "2a300a0d96a0e8f2ad102940e4a9775d5d256608",
+  "published_releases": [
+    "v0.2.0",
+    "v0.3.1",
+    "v0.5.0.dev6-preservation"
+  ],
+  "completed_milestones": [
+    "M0",
+    "M1",
+    "M2",
+    "M3"
+  ],
+  "partial_milestones": [
+    "M4",
+    "M6"
+  ],
+  "planned_milestones": [
+    "M5",
+    "M7"
+  ],
+  "validation_reports": [
+    "docs/validation/LOCAL-INFERENCE-M3-PACKAGED.md",
+    "docs/validation/HUMAN-FIRST-M4.md",
+    "docs/validation/PRESERVATION-0.5.0.dev6.md"
+  ],
+  "artifact_manifests": [
+    {
+      "path": "dist/0.5.0.dev5/SHA256SUMS.json",
+      "availability": "local-only; not part of Git recovery"
+    },
+    {
+      "path": "dist/0.5.0.dev6/portable-candidate/RELEASE_MANIFEST.json",
+      "availability": "local-only blocked candidate; not a Git recovery input"
+    },
+    {
+      "path": "dist/0.5.0.dev6/portable-rc2/RELEASE_MANIFEST.json",
+      "availability": "local-only candidate with current checkpoint; publication blocked"
+    },
+    {
+      "path": "docs/validation/DEV6_ARTIFACT_INVENTORY.json",
+      "availability": "committed inventory; all 17 existing dev6 files preserved among 30 GitHub assets"
+    }
+  ],
+  "next_task": "With development authorization, complete M4 confirmed authorization/routing/quota GUI forms and safe first-run provisioning; preservation does not require milestone completion.",
+  "protocol_versions": {
+    "broker": 1,
+    "capability": 1,
+    "client_sdk": "0.4.0"
+  },
+  "unverified": [
+    "Windows 11",
+    "installer",
+    "signing",
+    "long soak",
+    "provider cancellation",
+    "real Qwen restart",
+    "POK adapter"
+  ],
+  "release_status": "PUBLISHED_EXPERIMENTAL_PRERELEASE: 30 assets; all downloaded hashes verified",
+  "preservation_release_url": "https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases/tag/v0.5.0.dev6-preservation"
+}

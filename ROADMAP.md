@@ -1,5 +1,74 @@
 # Roadmap
 
+## Current M4 — PARTIAL, dev6
+
+Operator-selected pinned broker status, remembered portable selection, application
+inspection and confirmed registration/revocation are implemented. First-run
+provisioning, graphical authorization/provider/routing/quota edits and broker audit
+view remain incomplete. No prerelease: license inventory/publication gates incomplete.
+See [M0–M7 roadmap](docs/continuity/MASTER_ROADMAP_M0_M7.md) and
+[M4 evidence](docs/validation/HUMAN-FIRST-M4.md). M5 installer and M7 adapters are
+planned; M6 long soak/Windows 11/signing remain unverified.
+
+## 0.5.0.dev5 - M3 packaged acceptance
+
+M3 is COMPLETE within its packaged real-inference/isolated-recovery contract.
+Remote recovery and source CI passed; M4 administration follows separately.
+See [M3 evidence](docs/validation/LOCAL-INFERENCE-M3-PACKAGED.md).
+
+
+## 0.5.0.dev4 — M2 development acceptance
+
+Versioned chat/embedding registry, opt-in authorization-aware deterministic routing,
+local/cloud restrictions, conservative fallback, bounded responses and additive
+protocol operations are implemented. Current acceptance is recorded in
+[ROUTING-M2](docs/validation/ROUTING-M2.md). M3 real local-model validation remains
+separate and must not be inferred from mock-provider tests.
+
+## 0.5.0.dev3 — M1 complete within documented contract
+
+Bounded managed retention, rotation and process-crash recovery are implemented.
+Final acceptance is recorded in [the M1 storage report](docs/validation/AUDIT-M1-RETENTION-ROTATION.md).
+M2 capability routing remains the next planned milestone; no M2 implementation is
+part of this mission. The older roadmap entries below describe historical states.
+
+## 0.5.0.dev2 — M1 partial
+
+- [x] Request correlation, validated metadata, legacy audit compatibility and tests
+- [x] Fixed audit-failure responses and process-exit shutdown confirmation
+- [ ] Bounded audit retention, safe rotation and crash/disk/concurrent-writer acceptance
+
+Complete M1 before M2 routing. See [current continuation](docs/continuity/NEXT_SESSION.md).
+
+## 0.5.0.dev1 — security increment (unpublished)
+
+- [x] Authenticated administrative application registry and persistent enrollment metadata
+- [x] Next-connection revocation in the development broker; old-broker restart warning
+- [x] Daily/minute quotas, concurrency limits and model/provider policy restrictions
+- [x] Configuration failure recovery, native identity failures and strict response validation
+- [x] 90% overall / 95% critical-module Python coverage gates
+- [x] Frozen broker, legacy clients and six-application compatibility acceptance
+- [ ] Complete v0.5 audit enrichment/retention and independent security review
+
+The source uses a development version deliberately. v0.6 routing and real local-model
+acceptance, v0.7 central administration UI, v0.8 installer/uninstaller, v0.9 soak and
+recovery hardening, and v1.0 Windows 11/release acceptance remain unfinished.
+
+## v0.4.0 — universal clients (locally validated)
+
+- [x] Python compatibility facade, C#/.NET, C++, Node.js and PowerShell SDKs
+- [x] Six real applications including Electron on one unchanged broker
+- [x] Authenticated access, policy denial, no credential disclosure, crash/restart recovery
+- [x] 60 hostile-server cases; isolated client distributions and checksums
+- [x] Preserve original broker, interfaces and historical release artifacts
+- [ ] Authorized public publication and Windows 11 acceptance
+
+See [measured validation](docs/validation/CLIENTS-0.4.0.md). Client packages use 0.4.0;
+the preserved broker/runtime package remains 0.3.1. Next: persistent administrative
+application registry, revocation and policy resource limits (v0.5). Routing/local-model
+acceptance (v0.6), administrative UI (v0.7), installation (v0.8), long-running reliability
+(v0.9) and Windows 11/stable distribution acceptance (v1.0) remain unfinished.
+
 ## v0.3.1 — independent Windows broker (local development)
 
 - [x] Separate CAE-Broker.exe with local named pipes and explicit DACL

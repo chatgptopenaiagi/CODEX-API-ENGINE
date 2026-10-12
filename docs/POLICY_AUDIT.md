@@ -25,8 +25,10 @@ beside an explicit config file. These are local administrative data, not secrets
 must be protected against untrusted modification. There is no tamper-proof or
 cross-account quota claim.
 
-Audit events contain only UUID, UTC timestamp, fixed event type, app, provider,
-profile and operation. They do not contain prompt text, response text, credentials,
+Audit events contain UUID, UTC timestamp, fixed event type, app, provider, profile
+and operation, plus optional broker-generated request ID, decision/status,
+allowlisted error code and elapsed milliseconds. Legacy rows without the added
+fields remain readable. They do not contain prompt text, response text, credentials,
 authorization headers, endpoints or arbitrary exception messages. Credential events
 distinguish change requests from verified completion. A failed audit write before
 execution prevents the request. An audit failure after a completed operation can
@@ -37,3 +39,11 @@ tail of the JSONL file. Invalid records fail with a fixed error. SDK audit views
 to the current app; the human Control Center can inspect administrative records.
 The log is append-only by CAE convention, not cryptographically tamper-evident and
 not an OS-secured append-only filesystem. Hosts should rotate/archive it as needed.
+
+## Managed disk retention (0.5.0.dev3)
+
+See [configuration, durability and archive reading](validation/AUDIT-M1-RETENTION-ROTATION.md).
+The optional top-level `[audit]` table applies separate limits to broker and registry
+audit stores. Missing configuration preserves legacy logs. `AuditLog.events(include_archives=True)`
+reads retained generations and active records; `storage_status()` reports fixed
+non-secret health metadata. Storage is never the policy or quota database.

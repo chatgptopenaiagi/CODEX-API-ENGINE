@@ -1,16 +1,57 @@
 """Schema-constrained metadata audit; no prompts, results, headers or exception strings."""
 
 import json
+import math
+import time
 from collections import deque
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
+from functools import wraps
 from pathlib import Path
 from threading import RLock
-from typing import Any
+from typing import Any, ParamSpec, TypeVar
 from uuid import uuid4
 
+from .audit_storage import JSONLStorage, Retention
 from .errors import AuditError, ConfigurationError
 from .security import identifier, redact
+
+_REQUEST: ContextVar[tuple[str, float] | None] = ContextVar("cae_audit_request", default=None)
+_P = ParamSpec("_P")
+_T = TypeVar("_T")
+ERROR_CODES = frozenset({"none", "engine_error", "invalid_configuration",
+    "credential_operation_failed", "credential_missing", "credential_already_exists",
+    "access_denied", "unsupported_operation", "daily_request_limit", "request_rate_limit",
+    "concurrent_request_limit", "audit_unavailable", "api_request_failed",
+    "capability_unknown", "routing_policy_denied", "provider_unavailable",
+    "request_outcome_unknown", "provider_response_invalid",
+    "invalid_protocol", "broker_unavailable", "ipc_timeout"})
+
+
+@contextmanager
+def request_scope() -> Iterator[str]:
+    """Broker-generated identity; nested runtime calls share it, threads do not."""
+    existing = _REQUEST.get()
+    token = None
+    if existing is None:
+        existing = (uuid4().hex, time.monotonic())
+        token = _REQUEST.set(existing)
+    try:
+        yield existing[0]
+    finally:
+        if token is not None:
+            _REQUEST.reset(token)
+
+
+def correlated(function: Callable[_P, _T]) -> Callable[_P, _T]:
+    @wraps(function)
+    def wrapped(*args: _P.args, **kwargs: _P.kwargs) -> _T:
+        with request_scope():
+            return function(*args, **kwargs)
+    return wrapped
 
 EVENTS = frozenset(
     {
@@ -39,6 +80,12 @@ EVENTS = frozenset(
         "broker_status",
         "ipc_authenticated",
         "ipc_denied",
+        "application_registered",
+        "application_change_requested",
+        "application_authorized",
+        "application_revoked",
+        "ipc_result", "capabilities_read", "routing_denied", "route_selected",
+        "route_failed", "route_completed",
     }
 )
 
@@ -52,6 +99,47 @@ class AuditEvent:
     provider: str
     profile: str
     operation: str
+    request_id: str = ""
+    decision: str = "none"
+    status: str = "none"
+    error_code: str = "none"
+    latency_ms: float | None = None
+
+    capability: str = "none"
+    routing_mode: str = "none"
+    model: str = "none"
+    outcome: str = "none"
+    fallback: bool = False
+
+    def validate(self) -> None:
+        from .policy import MODEL, ROUTING_MODES
+
+        if (self.capability not in {"none", "chat_generation", "embeddings"}
+                or self.routing_mode not in ROUTING_MODES | {"none"}
+                or not isinstance(self.model, str) or not MODEL.fullmatch(self.model)
+                or self.outcome not in {"none", "NOT_DISPATCHED", "COMPLETED", "DISPATCHED_OUTCOME_UNKNOWN"}
+                or type(self.fallback) is not bool):
+            raise ValueError()
+
+        if self.event not in EVENTS:
+            raise ValueError()
+        for value in (self.app, self.provider, self.profile, self.operation):
+            identifier(value)
+        if not isinstance(self.request_id, str):
+            raise ValueError()
+        for value in (self.event_id, self.request_id or self.event_id):
+            if not isinstance(value, str) or len(value) != 32 or any(
+                c not in "0123456789abcdef" for c in value
+            ):
+                raise ValueError()
+        datetime.fromisoformat(self.timestamp)
+        if (self.decision not in {"none", "allow", "deny"}
+                or self.status not in {"none", "ok", "error"}
+                or self.error_code not in ERROR_CODES
+                or (self.latency_ms is not None and (
+                    type(self.latency_ms) not in {int, float}
+                    or not math.isfinite(self.latency_ms) or self.latency_ms < 0))):
+            raise ValueError()
 
     def to_dict(self) -> dict[str, Any]:
         result: dict[str, Any] = redact(asdict(self))
@@ -61,12 +149,30 @@ class AuditEvent:
 class AuditLog:
     """Optional append-only JSONL sink. Sink failure blocks subsequent execution."""
 
-    def __init__(self, path: Path | None = None, capacity: int = 1000) -> None:
+    def __init__(self, path: Path | None = None, capacity: int = 1000,
+                 *, retention: Retention | None = None) -> None:
         if not 1 <= capacity <= 100_000:
             raise ConfigurationError()
+        if retention is not None and (path is None or path.name != "active.jsonl"):
+            raise ConfigurationError()
+        self._storage = (JSONLStorage(path.parent, retention, self._validate_record)
+                         if retention is not None and path is not None else None)
         self._path = path
         self._events: deque[AuditEvent] = deque(maxlen=capacity)
         self._lock = RLock()
+
+    @contextmanager
+    def _guard(self) -> Iterator[None]:
+        timeout = self._storage.retention.lock_timeout_ms / 1000 if self._storage else -1
+        if not self._lock.acquire(timeout=timeout):
+            if self._storage is not None:
+                self._storage.health, self._storage.failure = "degraded", "lock_timeout"
+                self._storage.rejected += 1
+            raise AuditError()
+        try:
+            yield
+        finally:
+            self._lock.release()
 
     def emit(
         self,
@@ -76,17 +182,39 @@ class AuditLog:
         provider: str = "none",
         profile: str = "default",
         operation: str = "none",
+        error_code: str = "none",
+        capability: str = "none",
+        routing_mode: str = "none",
+        model: str = "none",
+        outcome: str = "none",
+        fallback: bool = False,
     ) -> AuditEvent:
         if event not in EVENTS:
             raise ConfigurationError()
         for value in (app, provider, profile, operation):
             identifier(value)
+        if error_code not in ERROR_CODES:
+            error_code = "engine_error"
+        context = _REQUEST.get()
+        denied = event in {"policy_denied", "ipc_denied", "routing_denied"}
+        failed_event = denied or event.endswith("failed") or error_code != "none"
         entry = AuditEvent(
-            uuid4().hex, datetime.now(UTC).isoformat(), event, app, provider, profile, operation
+            uuid4().hex, datetime.now(UTC).isoformat(), event, app, provider, profile, operation,
+            request_id=context[0] if context else "",
+            decision="deny" if denied else "allow" if event == "policy_granted" else "none",
+            status="error" if failed_event else "ok",
+            error_code=error_code,
+            latency_ms=round(max(0, time.monotonic() - context[1]) * 1000, 3)
+            if context else None,
+            capability=capability, routing_mode=routing_mode, model=model,
+            outcome=outcome, fallback=fallback,
         )
+        entry.validate()
         failed = False
-        with self._lock:
-            if self._path is not None:
+        with self._guard():
+            if self._storage is not None:
+                self._storage.append((json.dumps(entry.to_dict(), allow_nan=False) + "\n").encode())
+            elif self._path is not None:
                 try:
                     if self._path.is_symlink():
                         raise OSError()
@@ -102,8 +230,23 @@ class AuditLog:
             raise AuditError()
         return entry
 
-    def events(self, *, app: str | None = None) -> list[dict[str, Any]]:
-        with self._lock:
+    @staticmethod
+    def _validate_record(data: bytes) -> None:
+        AuditEvent(**json.loads(data)).validate()
+
+    def storage_status(self) -> dict[str, Any]:
+        """Trusted local inspection; managed status remains readable when degraded."""
+        if self._storage is not None:
+            return self._storage.status()
+        return {"mode": "legacy_jsonl" if self._path else "memory", "health": "unmonitored"}
+
+    def events(self, *, app: str | None = None,
+               include_archives: bool = False) -> list[dict[str, Any]]:
+        with self._guard():
+            if self._storage is not None:
+                records = self._storage.records(self._events.maxlen or 1000, archives=include_archives)
+                events = [AuditEvent(**json.loads(record)) for record in records]
+                return [event.to_dict() for event in events if app is None or event.app == app]
             if self._path is None:
                 return [
                     event.to_dict() for event in self._events if app is None or event.app == app
@@ -120,15 +263,7 @@ class AuditLog:
                     lines = stream.read().decode("utf-8").splitlines()
                 for line in lines[-self._events.maxlen :] if self._events.maxlen else lines:
                     event = AuditEvent(**json.loads(line))
-                    if event.event not in EVENTS:
-                        raise ValueError()
-                    for field in (event.app, event.provider, event.profile, event.operation):
-                        identifier(field)
-                    if len(event.event_id) != 32 or not all(
-                        c in "0123456789abcdef" for c in event.event_id
-                    ):
-                        raise ValueError()
-                    datetime.fromisoformat(event.timestamp)
+                    event.validate()
                     if app is None or event.app == app:
                         rows.append(event.to_dict())
             except Exception:

@@ -1,4 +1,73 @@
-# CODEX ACCESS ENGINE (CAE) 0.3.1
+> **Experimental dev6 preservation:** existing Windows builds, Python distributions,
+> source and recovery records are preserved at [the development prerelease](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/releases/tag/v0.5.0.dev6-preservation).
+> M4 is partial; setup is not fully automatic. Read its README-FIRST and download
+> LICENSE-NOTICES.zip with the Windows package. No production-readiness claim.
+
+# CODEX ACCESS ENGINE (CAE)
+
+**Windows users:** start with [Download and install](docs/DOWNLOAD_AND_INSTALL.md),
+[Control Center quickstart](docs/QUICKSTART_WINDOWS.md) and
+[troubleshooting](docs/TROUBLESHOOTING_WINDOWS.md). Public v0.3.1 remains available;
+M4 dev6 is an unpublished administration candidate, not a stable release or installer.
+
+Current source: **0.5.0.dev6**, a partial M4 operator-interface increment.
+The published foundation remains **v0.3.1**. This is not a v1.0 release.
+
+Broker-local audit request IDs now link authentication, policy and result metadata;
+legacy audit records remain readable. Audit storage failures return fixed errors.
+Managed audit storage adds explicit byte/count/age limits, recoverable rotation and
+Windows writer serialization. Enable `[audit] mode = "managed"` explicitly; legacy
+logs are not migrated automatically.
+See [M1 validation](docs/validation/AUDIT-M1-RETENTION-ROTATION.md) and
+[continuation instructions](docs/continuity/NEXT_SESSION.md).
+
+## Capability routing (development)
+
+Authorized applications can request versioned chat or embedding capabilities using
+explicit-provider, local-only, local-first or cloud-only selection. Cloud permission
+and pre-dispatch fallback require operator grants; uncertain requests are never
+replayed. Legacy APIs remain available. See [configuration, SDK examples and limits](docs/CAPABILITY_ROUTING.md)
+and [executed M2 evidence](docs/validation/ROUTING-M2.md). No real-model or POK
+integration claim is implied. New client-lab builds use `.tmp/m2-clients` to preserve
+historical packages.
+
+## Real local inference and isolated recovery (development)
+
+The dev5 packaged console and broker have performed one authorized real Qwen call
+through llama.cpp, using LOCAL_ONLY and an exact Windows model ID. Recovery testing
+uses a separate disposable compatible endpoint; the operator's Qwen server is never
+stopped. See [packaged M3 evidence](docs/validation/LOCAL-INFERENCE-M3-PACKAGED.md).
+A client timeout is not provider cancellation. No POK integration is claimed.
+
+## Application administration and limits
+
+The development broker adds authenticated operator commands: `cae apps list`,
+`register`, `inspect`, `authorize`, and `revoke`, each with an explicit
+`--broker-config` path. Registration grants no provider permissions. Policy updates
+take effect after restart; enrollment revocation takes effect on the next connection
+to the development broker. The older v0.3.1 broker requires a restart for revocation.
+
+Policies can limit daily requests, requests per UTC minute, and concurrent provider
+requests. Limits are checked before credential access and provider communication.
+See [application administration](docs/APPLICATION_REGISTRY.md) and
+[executed security validation](docs/validation/SECURITY-0.5.0-dev1.md).
+
+Development engine artifacts are in `dist/0.5.0.dev5/`; client SDKs are in
+`dist/0.4.0-clients/`. Full local validation requires building both before running
+`scripts/test.ps1`. Historical release artifacts are not overwritten.
+
+## Universal clients: 0.4.0 development
+
+Python, C#/.NET, C++, Node.js and PowerShell clients now connect to the existing
+independent broker through protocol v1. Client packages are versioned 0.4.0;
+the original client acceptance used the preserved 0.3.1 broker and also passes against
+0.5.0.dev1. No new release is published.
+See [SDK installation and examples](docs/CLIENT_SDKS.md) and
+[executed cross-language validation](docs/validation/CLIENTS-0.4.0.md).
+
+Build with `scripts/build_clients.ps1`; test with `scripts/validate_clients.py`
+and `scripts/validate_client_security.py`. New artifacts are isolated in
+`dist/0.4.0-clients/`. Existing broker, credentials and historical releases are retained.
 
 CAE is a capability-based AI connectivity, protected credential and policy platform.
 It is **not an AI agent**. Windows x64 and Python 3.14 are the supported build platform.
@@ -177,7 +246,7 @@ Do not pass secrets on command lines. `cae import <path>` imports an existing UT
 key file without deleting it. Keep such files outside version control.
 
 The package is distributed through GitHub Releases; no PyPI publication is claimed.
-For v0.3.1 development, use `pip install .` or the wheel in `dist/0.3.1/` after building.
+For current development, use `pip install .` or the wheel in `dist/0.5.0.dev1/` after building.
 
 ## Application SDK
 
