@@ -84,3 +84,11 @@ Recovery command: clone the canonical repository into a NEW empty directory,
 NEXT_SESSION.md and CAE_CHECKPOINT.json, run `scripts/resume-development.ps1`
 and `python scripts/check_checkpoint.py`. Use Python >=3.14 and the existing
 RECOVERY_PROCEDURE.md for dependencies/tests/builds. Production keys are unnecessary.
+
+Independent GitHub recovery PASS at 137596d9dfb1955df3440a4eaeb4f7cf2ceb292c:
+fresh clone, clean working tree, correct branch/version, read-only resume script and
+checkpoint validator passed. AGENTS, next-session, machine checkpoint, M0-M7 history,
+roadmap and recovery procedure were read from that checkout. The release reference
+and unfinished M4 task are present. No protected key, private state, repository venv
+or prior conversation is required. Final documentation-only follow-up is fetched
+and the checkpoint validator repeated before the final report.
