@@ -1,5 +1,10 @@
 # Decisions to preserve
 
+## M4 current checkpoint
+
+M4 extends existing GUI and ApplicationRegistry; no new admin IPC. Selection pins server/pipe/runtime, restores offline, rechecks before operations. Remember uses exclusive create and never overwrites unknown files. Portable descriptor is ignored. No automatic provider probes or granting authority. Local candidate is explicitly blocked pending publication gates.
+
+
 ## M3 decisions
 
 Reuse the compatible adapter for llama.cpp; exact model IDs are opaque, with no

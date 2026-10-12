@@ -1,5 +1,10 @@
 # GitHub checkpoint state
 
+## M4 current checkpoint
+
+M4 entry checkpoint 25e3fe8 matched remote and both CI runs passed. Phase C source checkpoint 46472f4 was pushed normally. Final dev6 source synchronization is pending at this document write; verify actual branch HEAD and latest CI. PR #2 must remain open/draft. RELEASE_NOT_PUBLISHED; no tag/release/main change. Source checkpoint remains distinct from blocked portable candidate.
+
+
 ## M3 source synchronization and independent recovery PASS
 
 Verified remote implementation: d222927bc51f2d9677868fcb6e399f6758da56c5.

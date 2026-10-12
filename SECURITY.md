@@ -1,5 +1,16 @@
 # CAE security model
 
+## M4 selected broker administration
+
+Portable selection records are non-secret private machine configuration and ignored
+by Git. They pin image/hash, pipe and runtime; each use checks current configuration
+and executable identity. Only an explicit operator confirmation selects a new
+identity. Registration grants no provider rights; admin operations still require
+an existing OS-authenticated admin enrollment. No self-enrollment is introduced.
+Same-user writable descriptor/configuration is not an independent trust root.
+Remember never overwrites an existing file. GUI errors use fixed codes/guidance,
+not exception text. Launch/close do not start or stop a broker or make cloud calls.
+
 ## M3 provider response integrity
 
 Exact model authorization is case-sensitive and does not resolve filesystem paths. Spaces, Unicode, control characters and IDs over 128 characters remain unsupported. HTTP bodies shorter than their declared length cannot produce success. The tested compatible chat adapter returns only final content, never reasoning_content; a client timeout does not cancel provider work. Real-server restart is not part of isolated recovery acceptance.

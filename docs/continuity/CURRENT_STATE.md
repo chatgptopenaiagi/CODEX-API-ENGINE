@@ -1,5 +1,10 @@
 # Current CAE development state
 
+## M4 current checkpoint
+
+M4 PARTIAL, version 0.5.0.dev6. Explicit pinned broker selection, remembered portable identity, registry inspection and confirmed registration/revocation are implemented. Full local gates: 421 tests, 96.04%, 18 critical gates. Six mock clients and 60 hostile cases passed. Fresh outside-checkout portable GUI startup and independent wheel import passed. No prerelease: exact bundled-runtime notices and complete first-run provisioning are incomplete. Runtime build source 5a0020ca674d157c1213572ac7f7910157805ed5; candidate source archive d36ea832073be86b545e2c182196515f4003a5ba. See ../validation/HUMAN-FIRST-M4.md. Older sections below are historical.
+
+
 Version **0.5.0.dev5**, branch `feat/security-registry`. Checkpoint SHA:
 `git log -1 --format=%H -- docs/continuity`; verify actual HEAD/remote before work.
 Runtime build source: bf6107f; exact-model fix: 9b31d14. Published stable foundation

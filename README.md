@@ -5,7 +5,7 @@
 [troubleshooting](docs/TROUBLESHOOTING_WINDOWS.md). Public v0.3.1 remains available;
 M4 dev6 is an unpublished administration candidate, not a stable release or installer.
 
-Current source: **0.5.0.dev5**, a development local-inference and recovery increment.
+Current source: **0.5.0.dev6**, a partial M4 operator-interface increment.
 The published foundation remains **v0.3.1**. This is not a v1.0 release.
 
 Broker-local audit request IDs now link authentication, policy and result metadata;

@@ -1,5 +1,15 @@
 # Roadmap
 
+## Current M4 — PARTIAL, dev6
+
+Operator-selected pinned broker status, remembered portable selection, application
+inspection and confirmed registration/revocation are implemented. First-run
+provisioning, graphical authorization/provider/routing/quota edits and broker audit
+view remain incomplete. No prerelease: license inventory/publication gates incomplete.
+See [M0–M7 roadmap](docs/continuity/MASTER_ROADMAP_M0_M7.md) and
+[M4 evidence](docs/validation/HUMAN-FIRST-M4.md). M5 installer and M7 adapters are
+planned; M6 long soak/Windows 11/signing remain unverified.
+
 ## 0.5.0.dev5 - M3 packaged acceptance
 
 M3 is COMPLETE within its packaged real-inference/isolated-recovery contract.

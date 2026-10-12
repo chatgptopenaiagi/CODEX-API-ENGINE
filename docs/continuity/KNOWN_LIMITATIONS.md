@@ -1,5 +1,10 @@
 # Known limitations
 
+## M4 current checkpoint
+
+M4 dev6 is not a complete beginner installation. An operator-provided configuration and pre-enrolled administrator image are required. Remembered descriptor is same-account private state, not an OS isolation boundary. No automatic broker start, enrollment or cloud request. Graphical authorization/routing/quota/provider edits and broker audit display remain unfinished. Prerelease withheld: bundled-DLL notices incomplete. No installer, Windows 11 acceptance or GitHub-download evidence.
+
+
 ## M3 current limits
 
 Packaged real Qwen inference and isolated compatible-endpoint recovery passed.

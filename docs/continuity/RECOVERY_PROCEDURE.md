@@ -1,5 +1,10 @@
 # Recover without conversation history
 
+## M4 current checkpoint
+
+Current M4 recovery: read AGENTS.md, NEXT_SESSION.md, CAE_CHECKPOINT.json, MILESTONE_HISTORY_M0_M7.md and MASTER_ROADMAP_M0_M7.md. Verify Git HEAD/remote and version dev6. Artifacts are local-only; rebuild with existing scripts when absent. Routine tests need no production credentials. No public M4 prerelease exists; the portable candidate is blocked, not a release.
+
+
 ## Locate or independently recover source
 
 On the original machine, open `I:\CODEX-API-ENGINE`. First read AGENTS.md and

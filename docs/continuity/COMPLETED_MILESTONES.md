@@ -1,5 +1,10 @@
 # Verified milestone history
 
+## M4 current checkpoint
+
+M4 completed increment (not completed milestone): pinned offline selection/restore, status, authenticated registry inspection and confirmed register/revoke; M0â€“M7 history and machine checkpoint; dev6 local package/fresh-copy acceptance. 421 tests/96.04%. See HUMAN-FIRST-M4.md under docs/validation. M4 remains PARTIAL.
+
+
 ## Dev5 M3 COMPLETE within the verified contract
 
 Packaged real Qwen inference and isolated compatible-endpoint recovery passed.

@@ -3,17 +3,55 @@
   "project": "CODEX ACCESS ENGINE",
   "repository": "https://github.com/chatgptopenaiagi/CODEX-API-ENGINE",
   "development_branch": "feat/security-registry",
-  "development_version": "0.5.0.dev5",
+  "development_version": "0.5.0.dev6",
   "current_milestone": "M4",
-  "latest_verified_source_commit": "25e3fe8161d1d4228231427269169471f0e72ed7",
-  "published_releases": ["v0.2.0", "v0.3.1"],
-  "completed_milestones": ["M0", "M1", "M2", "M3"],
-  "partial_milestones": ["M4", "M6"],
-  "planned_milestones": ["M5", "M7"],
-  "validation_reports": ["docs/validation/LOCAL-INFERENCE-M3-PACKAGED.md"],
-  "artifact_manifests": [{"path": "dist/0.5.0.dev5/SHA256SUMS.json", "availability": "local-only; not part of Git recovery"}],
-  "next_task": "Implement and validate trusted Control Center broker selection and read-only administration before mutations.",
-  "protocol_versions": {"broker": 1, "capability": 1, "client_sdk": "0.4.0"},
-  "unverified": ["Windows 11", "installer", "signing", "long soak", "provider cancellation", "real Qwen restart", "POK adapter"],
-  "release_status": "RELEASE_NOT_PUBLISHED: M4 publication gates not yet executed"
+  "latest_verified_source_commit": "d36ea832073be86b545e2c182196515f4003a5ba",
+  "published_releases": [
+    "v0.2.0",
+    "v0.3.1"
+  ],
+  "completed_milestones": [
+    "M0",
+    "M1",
+    "M2",
+    "M3"
+  ],
+  "partial_milestones": [
+    "M4",
+    "M6"
+  ],
+  "planned_milestones": [
+    "M5",
+    "M7"
+  ],
+  "validation_reports": [
+    "docs/validation/LOCAL-INFERENCE-M3-PACKAGED.md",
+    "docs/validation/HUMAN-FIRST-M4.md"
+  ],
+  "artifact_manifests": [
+    {
+      "path": "dist/0.5.0.dev5/SHA256SUMS.json",
+      "availability": "local-only; not part of Git recovery"
+    },
+    {
+      "path": "dist/0.5.0.dev6/portable-candidate/RELEASE_MANIFEST.json",
+      "availability": "local-only blocked candidate; not a Git recovery input"
+    }
+  ],
+  "next_task": "Complete M4 graphical authorization/routing/quota controls and safe first-run provisioning; finish exact bundled-runtime license inventory before prerelease.",
+  "protocol_versions": {
+    "broker": 1,
+    "capability": 1,
+    "client_sdk": "0.4.0"
+  },
+  "unverified": [
+    "Windows 11",
+    "installer",
+    "signing",
+    "long soak",
+    "provider cancellation",
+    "real Qwen restart",
+    "POK adapter"
+  ],
+  "release_status": "RELEASE_NOT_PUBLISHED: incomplete bundled-runtime notices and first-run provisioning acceptance"
 }

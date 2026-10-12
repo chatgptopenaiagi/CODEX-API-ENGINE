@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0.dev6 — partial M4 development
+
+- Add explicit broker selection with image/hash pinning and portable remembered
+  configuration; no implicit discovery scan or administrator grant.
+- Add existing-registry application inspection and confirmed registration/revocation.
+- Add actionable missing/disconnected configuration guidance and preserve separate
+  trusted in-process administration pages.
+- Add M0–M7 history, versioned recovery checkpoint and Windows user instructions.
+- Build distinct local development artifacts; publication remains blocked by the
+  incomplete redistribution inventory and first-run acceptance. No installer/release.
+
 ## 0.5.0.dev5 — development
 
 - Package exact Windows model-ID compatibility without changing allowlist semantics.

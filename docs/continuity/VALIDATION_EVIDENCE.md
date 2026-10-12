@@ -1,5 +1,10 @@
 # Continuity mission validation
 
+## M4 current checkpoint
+
+M4: scripts/test.ps1 PASS, 421 tests in 82.45s, 96.04%, 18 gates; Ruff and strict mypy PASS. Six-client mock acceptance PASS (broker 25444 then 8872), 60 hostile cases PASS. Four EXE self-tests and runtime-source checks PASS. Independent wheel install/import/CLI and outside-repository no-flag GUI launch/close PASS. Reports .tmp/m4-*. Historical M3 real Qwen evidence was not rerun.
+
+
 ## Dev5 M3 evidence
 
 414 tests in 62.83s, no warnings/skips, 95.95%, 18 critical gates, Ruff/strict mypy.

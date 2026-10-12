@@ -1,5 +1,10 @@
 # Environment and hygiene
 
+## M4 current checkpoint
+
+M4 reused Windows 10 build 19045, Python 3.14.7 and existing local tools. No global installs or persistent changes. Artifacts dist/0.5.0.dev6; ignored evidence .tmp/m4-*. One explicitly authorized fresh-copy directory outside source is recorded locally in .tmp/m4-external-acceptance-path.txt and preserved, not deleted. No production broker or Qwen actions.
+
+
 ## Dev5 M3 environment
 
 Existing Windows 10 build 19045/Python 3.14.7/PowerShell 7.6.6 reused. Outputs:

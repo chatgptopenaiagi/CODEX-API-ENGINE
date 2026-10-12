@@ -13,7 +13,7 @@ for current validation. `scripts/resume-development.ps1` is read-only inspection
 Preserve the operator's running broker and use isolated synthetic test state.
 Source synchronization does not authorize new GitHub releases.
 
-This repository develops CODEX ACCESS ENGINE v0.5.0.dev5, with validated 0.4.0 client
+This repository develops CODEX ACCESS ENGINE v0.5.0.dev6, with validated 0.4.0 client
 SDKs, and preserves published v0.2.0/v0.3.1.
 Read ARCHITECTURE.md, docs/ACCESS_ENGINE.md and SECURITY.md
 before changing trust boundaries. Runtime code belongs in src/cae; root component

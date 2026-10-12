@@ -1,5 +1,10 @@
 # Milestone status toward v1.0
 
+## M4 current checkpoint
+
+M4 remains PARTIAL. Next: graphical authorization/routing/quota/provider administration, broker audit view, guided initial provisioning and complete license inventory. Existing pages are explicitly separate in-process interfaces. M5 installer NOT_STARTED; M6 short recovery only, long soak/Windows 11/signing NOT_VERIFIED; M7 adapters PLANNED. MASTER_ROADMAP_M0_M7.md is the consolidated roadmap.
+
+
 M1/M2/M3 are complete within their documented contracts. M4 is next.
 
 ## 1. Audit correlation and bounded retention — COMPLETE

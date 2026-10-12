@@ -1,5 +1,15 @@
 # CAE architecture
 
+## M4 partial operator interface
+
+`operator_view.py` pins an explicitly selected broker's image/hash, pipe and runtime
+path. Restoring a portable selection is offline; a user action invokes the existing
+mutually verified BrokerClient. Application administration delegates to the existing
+ApplicationRegistry, which authenticates the actual operator executable on each
+operation. No new administrative IPC operation, self-enrollment or provider probe
+is added. The GUI's retained in-process pages are explicitly separate. Missing
+provisioning and graphical authorization/routing controls keep M4 PARTIAL.
+
 ## M3 packaged local inference
 
 The OpenAI-compatible adapter is reused with an exact operator-allowlisted llama.cpp model ID. Windows backslashes are opaque model characters, never filesystem authority. HTTP declared-length truncation fails closed even if partial bytes form valid JSON. The one-shot console probe uses the public SDK and unchanged protocol v1. See [M3 evidence](docs/validation/LOCAL-INFERENCE-M3-PACKAGED.md).
