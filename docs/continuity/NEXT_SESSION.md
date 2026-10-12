@@ -5,6 +5,7 @@ history/roadmap, current state, limitations and HUMAN-FIRST-M4.md under validati
 
 Repository: https://github.com/chatgptopenaiagi/CODEX-API-ENGINE
 Branch: feat/security-registry. Version: 0.5.0.dev6. PR #2 stays open/draft.
+- Next milestone: **M4 PARTIAL — finish administration and publication gates**.
 Latest checkpoint: resolve `git log -1 --format=%H -- docs/continuity` and verify
 remote HEAD. Runtime build commit: 5a0020ca674d157c1213572ac7f7910157805ed5.
 Candidate source archive: d36ea832073be86b545e2c182196515f4003a5ba.

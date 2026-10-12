@@ -1,5 +1,14 @@
 # M4 human-first administration and distribution — PARTIAL
 
+Final preservation: d97e9cf017442c34116cef791d12003f5310c68e was pushed and recovered
+in a fresh GitHub clone. Six primary entry-point documents matched; checkpoint
+version/history/reference checks and read-only resume passed without production
+credentials. All 90 pre-existing artifact hashes, release identities and original
+production broker/Qwen process identities remain unchanged. Final source/history
+scans passed with zero findings (194 eligible files); five user files remain
+untracked. The subsequent evidence-only checkpoint has its own CI; verify it rather
+than treating local tests as CI. No release, stable promotion or main merge occurred.
+
 Starting commit: 25e3fe8161d1d4228231427269169471f0e72ed7.
 Branch: feat/security-registry. Entry version: 0.5.0.dev5.
 

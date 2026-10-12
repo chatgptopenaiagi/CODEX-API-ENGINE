@@ -2,6 +2,15 @@
 
 ## M4 current checkpoint
 
+Remote d97e9cf017442c34116cef791d12003f5310c68e was verified through ls-remote and
+a fresh independent GitHub clone. Machine checkpoint, six primary entry-point
+documents, version and read-only resume script passed; no production credentials
+or private state were present. The recovery checkout is clean. Source/history
+Gitleaks passed (194 eligible files, zero findings); 90 prior artifact hashes and
+historical release identities were unchanged. Final evidence-only commit follows;
+query its exact HEAD and CI separately. PR #2 stays open/draft; no release/main merge.
+The pending-at-write observation below is superseded by this recovery evidence.
+
 M4 entry checkpoint 25e3fe8 matched remote and both CI runs passed. Phase C source checkpoint 46472f4 was pushed normally. Final dev6 source synchronization is pending at this document write; verify actual branch HEAD and latest CI. PR #2 must remain open/draft. RELEASE_NOT_PUBLISHED; no tag/release/main change. Source checkpoint remains distinct from blocked portable candidate.
 
 
