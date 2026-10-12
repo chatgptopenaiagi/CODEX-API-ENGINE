@@ -58,6 +58,7 @@ def test_control_center_offline_and_masked(tmp_path):
 
 
 def test_operator_gui_selection_and_confirmed_admin(tmp_path):
+    import gc
     import tkinter as tk
 
     from test_application_registry import image
@@ -115,14 +116,23 @@ def test_operator_gui_selection_and_confirmed_admin(tmp_path):
         assert "invalid" in center.broker_message.get()
     finally:
         center.close()
+        center = None
+        root = None
+        gc.collect()
     root = tk.Tk()
     root.withdraw()
     center = ControlCenter(root, selection_file=selection)
     assert "verified offline" in center.broker_message.get()
     center.close()
+    center = None
+    root = None
+    gc.collect()
     selection.write_text("{}")
     root = tk.Tk()
     root.withdraw()
     center = ControlCenter(root, selection_file=selection)
     assert "No connection was attempted" in center.broker_message.get()
     center.close()
+    center = None
+    root = None
+    gc.collect()

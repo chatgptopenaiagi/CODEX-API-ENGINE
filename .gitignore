@@ -32,3 +32,4 @@ clients/python/build/
 *.apps.json
 *.apps.lock
 .cae-edit-*
+cae-control-selection.json

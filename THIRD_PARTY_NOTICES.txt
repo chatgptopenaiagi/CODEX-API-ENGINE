@@ -1,0 +1,21 @@
+CAE development redistribution review — PARTIAL, NOT PUBLICATION CLEARANCE
+
+CAE source: MIT; retain LICENSE.
+Python runtime: Python Software Foundation license and incorporated components.
+Use the exact installed runtime LICENSE.txt, not only a link to current web terms.
+PyInstaller 6.22.3: GPL exception permits application bundling, subject to dependency
+licenses; some runtime files use Apache-2.0. Preserve installed COPYING.txt.
+
+References reviewed:
+https://pyinstaller.org/en/stable/license.html
+https://docs.python.org/3.14/license.html
+
+The M4 candidate includes Python and PyInstaller notices copied from the actual
+build environment under notices/. This is not a completed bundled-DLL inventory.
+Tcl/Tk, OpenSSL, SQLite, libffi, libtommath, compression libraries and Microsoft
+runtime/API-set redistribution terms must be mapped to the exact packaged binaries
+and their applicable notices before public binary publication. Do not infer that
+the CAE MIT license relicenses those components.
+
+Publication remains BLOCKED pending that complete review. No license model change
+is authorized. Do not publish this incomplete notice as a completed attribution set.
