@@ -179,7 +179,9 @@ class HTTPProviderTransport:
             )
             response = connection.getresponse()
             data = response.read(4 * 1024 * 1024 + 1)
-            if len(data) > 4 * 1024 * 1024:
+            # read(amount) can return valid JSON on premature EOF without raising
+            # IncompleteRead. An outstanding declared length is never success.
+            if len(data) > 4 * 1024 * 1024 or response.length not in {None, 0}:
                 raise ValueError()
             result = response.status, data
         except Exception:

@@ -210,6 +210,7 @@ def test_http_boundary():
     with patch("cae.providers.http.client.HTTPSConnection") as cls:
         response = cls.return_value.getresponse.return_value
         response.status, response.read.return_value = 200, b"{}"
+        response.length = 0  # Real HTTPResponse decrements declared bytes as they are read.
         assert HTTPProviderTransport().send(config("openai"), "GET", "/v1/models", {}, None) == (
             200,
             b"{}",

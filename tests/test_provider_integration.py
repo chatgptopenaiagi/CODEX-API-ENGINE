@@ -109,3 +109,31 @@ def test_trickling_provider_body_has_deadline():
         server.shutdown()
         server.server_close()
         thread.join(2)
+
+
+def test_truncated_http_body_with_valid_json_is_not_success():
+    class TruncatedHandler(BaseHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+
+        def do_GET(self):
+            body = b'{"data": [{"id": "model"}]}'
+            self.send_response(200)
+            self.send_header("Content-Length", str(len(body) + 50))
+            self.end_headers()
+            self.wfile.write(body)
+            self.wfile.flush()
+            self.close_connection = True
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), TruncatedHandler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    spec = ProviderConfig("local", "vllm", f"http://127.0.0.1:{server.server_port}",
+                          authenticated=False)
+    try:
+        with pytest.raises(APIError, match="api_request_failed"):
+            HTTPProvider(spec).request("models", "")
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(2)
