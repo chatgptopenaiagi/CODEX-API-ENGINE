@@ -84,6 +84,11 @@ SHA256SUMS.txt/json and RELEASE_MANIFEST.json are under `portable-candidate/`.
 The latter records immutable runtime/archive commits and is explicitly
 BLOCKED_NOT_FOR_PUBLICATION. Later documentation checkpoints do not relabel binaries.
 
+A second candidate `portable-rc2/` includes the current M4 checkpoint/source tree;
+the original `portable-candidate/` is preserved as a pre-checkpoint candidate with
+older continuity metadata. RC2 reuses the exact verified runtime binaries and records
+its own immutable source archive commit. It remains blocked, not a public release.
+
 Broker SHA256: `20bab41df2d27baa12edf8dff0d1b91a81ef8647e8a3eddfdf19612783f917be`.
 Control Center SHA256: `6f710e6d861f708c10a8816062610b0499e43a2794b5fdfd596fc877f9592c03`.
 No installer placeholder, signing claim or overwritten historical package.

@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import platform
+import re
 import subprocess
 import sys
 import tomllib
@@ -16,12 +17,15 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--build-source", required=True)
+    parser.add_argument("--candidate-directory", default="portable-candidate")
     args = parser.parse_args()
+    if not re.fullmatch(r"[a-z][a-z0-9-]{0,40}", args.candidate_directory):
+        parser.error("Candidate directory must be one safe relative name")
     build_source = subprocess.check_output(["git", "rev-parse", args.build_source + "^{commit}"],
                                            cwd=ROOT, text=True).strip()
     version = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
     dist = ROOT / "dist" / version
-    output = dist / "portable-candidate"
+    output = dist / args.candidate_directory
     output.mkdir()  # Never replace an earlier candidate.
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     source = output / f"CAE-Source-{version}.zip"
