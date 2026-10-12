@@ -1,0 +1,104 @@
+[
+  {
+    "original": "CAE-Broker.exe",
+    "asset": "CAE-Broker.exe",
+    "size": 11243670,
+    "sha256": "20bab41df2d27baa12edf8dff0d1b91a81ef8647e8a3eddfdf19612783f917be"
+  },
+  {
+    "original": "CAE-Console-Client.exe",
+    "asset": "CAE-Console-Client.exe",
+    "size": 11242319,
+    "sha256": "65bc652d9e275cc6a0a4cb56dace78ffbbd531ae94534327a0c7e2358e15344c"
+  },
+  {
+    "original": "CAE-Control-Center.exe",
+    "asset": "CAE-Control-Center.exe",
+    "size": 14762114,
+    "sha256": "6f710e6d861f708c10a8816062610b0499e43a2794b5fdfd596fc877f9592c03"
+  },
+  {
+    "original": "CAE-Desktop-Client.exe",
+    "asset": "CAE-Desktop-Client.exe",
+    "size": 14711045,
+    "sha256": "fc99aadf7931bb07f93b79822fa5ca6cdda8d291c7bbcd12882392c093b88bbf"
+  },
+  {
+    "original": "codex_api_engine-0.5.0.dev6-py3-none-any.whl",
+    "asset": "codex_api_engine-0.5.0.dev6-py3-none-any.whl",
+    "size": 66903,
+    "sha256": "d254d304bbe08137aa6bb4ff2f43b15e8626aacf4c2bb40e549fab06a1da65cf"
+  },
+  {
+    "original": "codex_api_engine-0.5.0.dev6.tar.gz",
+    "asset": "codex_api_engine-0.5.0.dev6.tar.gz",
+    "size": 89591,
+    "sha256": "6f9e93871a40c7580dab2b7cbdee21fb2100dfeacd5d5ade331a041e1c20e106"
+  },
+  {
+    "original": "portable-candidate\\CAE-Portable-0.5.0.dev6-win-x64.zip",
+    "asset": "portable-candidate-CAE-Portable-0.5.0.dev6-win-x64.zip",
+    "size": 51237097,
+    "sha256": "0e8607e6401f40be19fecf5587d178b27f3c1955f8ac923e2e0da3d4c30056b7"
+  },
+  {
+    "original": "portable-candidate\\CAE-Source-0.5.0.dev6.zip",
+    "asset": "portable-candidate-CAE-Source-0.5.0.dev6.zip",
+    "size": 321818,
+    "sha256": "14601bb7560435f7c50d918c6da4f9c17430f8e778432046051938bb7035738c"
+  },
+  {
+    "original": "portable-candidate\\RELEASE_MANIFEST.json",
+    "asset": "portable-candidate-RELEASE_MANIFEST.json",
+    "size": 2009,
+    "sha256": "13783f7b61fcade04e3582fdba5fccb3d024abc21f338ccafa6055bf8bfe70d2"
+  },
+  {
+    "original": "portable-candidate\\SHA256SUMS.json",
+    "asset": "portable-candidate-SHA256SUMS.json",
+    "size": 1317,
+    "sha256": "4a8f69e81e641a2bab4f2b70639a341342be51729fb5aef90aeb3e7c73d82b17"
+  },
+  {
+    "original": "portable-candidate\\SHA256SUMS.txt",
+    "asset": "portable-candidate-SHA256SUMS.txt",
+    "size": 800,
+    "sha256": "678e9a73608d8c6be92a8aafa0a350bce6cf00300f0f9656542208abbcbf07f1"
+  },
+  {
+    "original": "portable-rc2\\CAE-Portable-0.5.0.dev6-win-x64.zip",
+    "asset": "CAE-Portable-0.5.0.dev6-win-x64.zip",
+    "size": 51237097,
+    "sha256": "1d320c2a967fb2f8013896210cc790540637a6cc97e510744c793c5709e6a876"
+  },
+  {
+    "original": "portable-rc2\\CAE-Source-0.5.0.dev6.zip",
+    "asset": "CAE-Source-0.5.0.dev6.zip",
+    "size": 329325,
+    "sha256": "e43f569cd18b59b5fe498b9cb1a1d02b071c563aa830f89af89f9dd13d245e8b"
+  },
+  {
+    "original": "portable-rc2\\RELEASE_MANIFEST.json",
+    "asset": "portable-rc2-RELEASE_MANIFEST.json",
+    "size": 1997,
+    "sha256": "51fcb74d628935e1e4e1fb7ed66b48b039aeda3f4a3e828e8c3992eb1d33edc9"
+  },
+  {
+    "original": "portable-rc2\\SHA256SUMS.json",
+    "asset": "portable-rc2-SHA256SUMS.json",
+    "size": 1305,
+    "sha256": "3ccff99e5a43dfd11c8e55ac5b8cf03436225e639e3eb53820baa36d10385921"
+  },
+  {
+    "original": "portable-rc2\\SHA256SUMS.txt",
+    "asset": "portable-rc2-SHA256SUMS.txt",
+    "size": 788,
+    "sha256": "5643daeabb6ac8e92a0ffb5913f3005680e548f4cf97e875b3ec4acf1f50fcc0"
+  },
+  {
+    "original": "SHA256SUMS.json",
+    "asset": "build-SHA256SUMS.json",
+    "size": 811,
+    "sha256": "14174fa796b5601565ae4d9921af9c135ba656cfc6ecd086f0fc20d90a7cc6bc"
+  }
+]
