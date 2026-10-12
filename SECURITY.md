@@ -1,5 +1,10 @@
 # CAE security model
 
+## M3 provider response integrity
+
+Exact model authorization is case-sensitive and does not resolve filesystem paths. Spaces, Unicode, control characters and IDs over 128 characters remain unsupported. HTTP bodies shorter than their declared length cannot produce success. The tested compatible chat adapter returns only final content, never reasoning_content; a client timeout does not cancel provider work. Real-server restart is not part of isolated recovery acceptance.
+
+
 ## M2 routing boundary
 
 Routing requires explicit mode grants intersected with existing provider/model

@@ -1,5 +1,14 @@
 # GitHub checkpoint state
 
+## M3 Phase A preservation verified
+
+9b31d1460c64b255287e0a9cd7cdbf26b6e2bfee was pushed normally to feat/security-registry
+under verified account chatgptopenaiagi. Fresh clone, 13 checkpoint/report files and
+exact-model source smoke passed without credentials. Push CI 38205362464 and PR CI
+38205364681 passed. Dev5 is locally validated; final synchronization/recovery is
+pending. PR #2 stays draft/open. No release/main merge. Older records follow.
+
+
 ## M2 implementation synchronized and recovery verified
 
 0.5.0.dev4 is locally validated: 393 tests, 95.92%, 18 critical gates, six routed

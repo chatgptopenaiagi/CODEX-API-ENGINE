@@ -77,5 +77,9 @@ def test_explicit_model_deny_overrides_allow():
     from cae.policy import PolicyEngine
     rules = tuple(Rule(effect, "app", "local", "default", frozenset({"chat"}),
                        effect=effect, models=frozenset({MODEL})) for effect in ("allow", "deny"))
-    with pytest.raises(AccessDenied):
-        PolicyEngine(rules).authorize("app", "local", "default", "chat", MODEL)
+    policy = PolicyEngine(rules)
+    try:
+        with pytest.raises(AccessDenied):
+            policy.authorize("app", "local", "default", "chat", MODEL)
+    finally:
+        policy.ledger.close()

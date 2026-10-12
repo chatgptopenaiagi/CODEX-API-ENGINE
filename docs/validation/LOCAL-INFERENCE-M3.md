@@ -109,3 +109,9 @@ recovery scenarios without interrupting this operator-managed inference server,
 then build distinct artifacts and test their exact-model path.
 
 Publication-safety scan: `scripts/audit_publication.py --gitleaks .tmp/gitleaks/gitleaks.exe` exited 0; 177 Git-eligible files scanned, zero findings (redacted scanner output). Only reviewed mission files are staged; five existing untracked user files remain outside the commit.
+
+## Subsequent packaged acceptance
+
+The source-only results above are historical. Follow-up dev5 packaged real inference
+and isolated outage/recovery evidence is in [LOCAL-INFERENCE-M3-PACKAGED](LOCAL-INFERENCE-M3-PACKAGED.md).
+The operator-managed real Qwen server was not restarted or reconfigured.

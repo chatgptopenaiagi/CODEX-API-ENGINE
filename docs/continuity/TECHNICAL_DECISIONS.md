@@ -1,5 +1,14 @@
 # Decisions to preserve
 
+## M3 decisions
+
+Reuse the compatible adapter for llama.cpp; exact model IDs are opaque, with no
+filesystem authority. Do not widen to arbitrary Unicode/spaces. Reject incomplete
+declared HTTP lengths even when bytes parse. Real Qwen is read-only; faults use
+disposable subprocess endpoints. Client timeout is not cancellation. Dev5 artifacts
+are separate; no production migration.
+
+
 ## Managed audit storage decisions
 
 Opt in explicitly to a fresh private store; never automatically migrate legacy

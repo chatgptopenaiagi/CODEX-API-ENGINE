@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0.dev5 — development
+
+- Package exact Windows model-ID compatibility without changing allowlist semantics.
+- Add a one-shot public-SDK capability request to the independent console client.
+- Reject truncated declared-length HTTP bodies even when the partial body is valid JSON.
+- Add disposable provider outage/recovery and packaged real-inference acceptance.
+- Preserve dev4 artifacts; no stable release or production configuration migration.
+
+
 ## Unreleased M3 source increment (after 0.5.0.dev4 artifacts)
 
 - Accept bounded exact Windows model identifiers for llama.cpp compatibility.

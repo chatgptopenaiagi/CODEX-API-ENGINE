@@ -28,6 +28,12 @@ jobs:
       - name: Installed wheel and independent client validation (no live API)
         shell: pwsh
         run: ./scripts/test_broker_apps.ps1
+      - name: Packaged broker isolated provider recovery (no live inference)
+        shell: pwsh
+        run: |
+          $version = & ./.venv/Scripts/python.exe -c "import cae; print(cae.__version__)"
+          ./.venv/Scripts/python.exe scripts/validate_m3_packaged.py --broker-directory "dist/$version"
+          if ($LASTEXITCODE) { throw 'Packaged provider recovery failed' }
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.401'

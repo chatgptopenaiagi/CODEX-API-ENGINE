@@ -1,12 +1,7 @@
 # Milestone status toward v1.0
 
-## M3 local checkpoint
-
-M3 current state: real routed llama.cpp/Qwen inference and authorization/resource denials PASS. Still PARTIAL: remaining real recovery/packaging acceptance is documented in [LOCAL-INFERENCE-M3](../validation/LOCAL-INFERENCE-M3.md). Do not repeat endpoint discovery or claim that no local inference has occurred.
-
-
-M1 and M2 are COMPLETE within their documented contracts. Next: M3 real
-local-model validation. No live inference is implied by the mock-tested milestones.
+M1/M2 are complete. M3 local packaged acceptance passed; final remote checkpoint
+verification remains. M4 is the next engineering milestone.
 
 ## 1. Audit correlation and bounded retention — COMPLETE
 
@@ -26,15 +21,12 @@ and audit integration. Six real applications and mock providers exercise the new
 protocol operations. See [M2 acceptance](../validation/ROUTING-M2.md) for final gates
 and publication/recovery status. No real inference or POK integration is implied.
 
-## 3. Real local-model validation
+## 3. Real local-model validation - local acceptance PASS
 
-Current: Ollama/vLLM/LM Studio adapters are mock-tested, no real inference evidenced.
-Default local ports did not respond in the previous development session; this is
-not a full machine inventory. Depends on an available user-approved local runtime
-and model. Use `providers.py` and existing SDK/lab interfaces. Acceptance: actual
-model discovery, health and inference through broker with recorded runtime/model,
-offline verification and permission denial. Clearly distinguish mock from live
-results; do not install large runtimes or redirect workloads silently.
+Dev5 broker/client EXEs ran real llama.cpp Qwen inference. A separate mock endpoint
+verified outage/restart/timeout/malformed-response recovery, quotas and revocation.
+Finish remote checkpoint/recovery verification. Real Qwen restart remains NOT_RUN
+and is not authorized or required under this scoped contract. [Evidence](../validation/LOCAL-INFERENCE-M3-PACKAGED.md).
 
 ## 4. Centralized administration
 

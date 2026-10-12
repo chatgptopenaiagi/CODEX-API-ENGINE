@@ -1,5 +1,13 @@
 # Environment and hygiene
 
+## Dev5 M3 environment
+
+Existing Windows 10 build 19045/Python 3.14.7/PowerShell 7.6.6 reused. Outputs:
+dist/0.5.0.dev5 and .tmp/m3-*. No global installs, persistent PATH/security changes,
+CUDA/PyTorch changes or Qwen reconfiguration. Existing .tmp/m2-clients implements
+unchanged 0.4.0 client contracts. Keep DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=false.
+
+
 ## 0.5.0.dev3 environment
 
 Reused existing Windows 10 build 19045/Python 3.14.7/PowerShell 7.6.6 toolchain.

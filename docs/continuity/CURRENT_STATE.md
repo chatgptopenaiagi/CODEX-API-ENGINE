@@ -1,59 +1,30 @@
-# Current state
+# Current CAE development state
 
-## M3 local checkpoint
+Version **0.5.0.dev5**, branch `feat/security-registry`. Checkpoint SHA:
+`git log -1 --format=%H -- docs/continuity`; verify actual HEAD/remote before work.
+Runtime build source: bf6107f; exact-model fix: 9b31d14. Published stable foundation
+remains v0.3.1; v0.2.0 is preserved. M1/M2 are complete within their contracts.
+**M3 local packaged acceptance PASS; final remote checkpoint verification pending.**
+[Packaged M3 evidence](../validation/LOCAL-INFERENCE-M3-PACKAGED.md).
 
-M3 real local inference increment: PASS through the authenticated SDK and isolated source broker. Exact Windows model IDs are supported as opaque allowlisted strings. M3 overall remains PARTIAL; see [actual evidence](../validation/LOCAL-INFERENCE-M3.md). Source remains 0.5.0.dev4; existing dev4 artifacts predate this compatibility change. Local checkpoint only, no push.
-
-
-## Current M2 development increment
-
-Version **0.5.0.dev4**, branch `feat/security-registry`, starting checkpoint
-`ac55a2fc29ed3d6e3b55e9afea7eea1e7f1440a1`. M2 is COMPLETE under its documented mock-tested contract;
-final gates/synchronization are recorded in [ROUTING-M2](../validation/ROUTING-M2.md).
-Resolve current implementation with `git log -1 --format=%H -- src/cae/routing.py`.
-Verified implementation: `ee1947e7c467ee8de46e9acee7ba0e2176c51688`; independent remote/wheel recovery passed.
-No real local/cloud inference, POK adapter, installer or stable release is claimed.
-The older M1 synchronization evidence below remains historical.
-
-Verified implementation: `9768e4aa40f1242895c4bfa320703375b8716a63`. Local M1 acceptance and
-fresh remote recovery passed. Later checkpoint-only commits do not change runtime
-artifacts. Current PR #2 remains a development draft; query live CI separately.
-
-
-CODEX ACCESS ENGINE (CAE), repository/package names CODEX-API-ENGINE /
-codex-api-engine. Snapshot: 2026-10-12, branch `feat/security-registry`, implementation
-starting checkpoint `02153a7c5a8374c4e438fd7fd43e96c8778d9d03`, version **0.5.0.dev4**.
-Resolve current implementation with `git log -1 --format=%H -- src/cae`.
-Published stable foundation: **v0.3.1**. Resolve the latest checkpoint commit as
-described in [NEXT_SESSION](NEXT_SESSION.md); verify live GitHub state separately.
-
-| Component | Evidence category and state |
+| Component | Current evidence |
 |---|---|
-| Independent broker | IMPLEMENTED / TESTED: Windows local named pipes, explicit DACL, OS peer identity, enrollment, bounded connections, independent lifecycle |
-| Clients | IMPLEMENTED / TESTED: Python, C#, C++, Node.js, PowerShell; Electron uses Node SDK. Six actual processes, shared broker PID, denial and restart recovery |
-| Vault | IMPLEMENTED / TESTED: Windows Credential Manager abstraction and profiles; synthetic destructive tests only |
-| Policy / registry | IMPLEMENTED / TESTED: default deny, explicit deny precedence, provider/model restrictions, operator registration/authorization/revocation, persistent day/minute quotas and per-rule concurrency |
-| Providers | IMPLEMENTED / MOCK-TESTED: OpenAI, Azure OpenAI, Anthropic, Gemini, Ollama, vLLM, LM Studio; actual capabilities differ, inspect providers.py |
-| Cloud/local validation | Historical OpenAI authentication is documented; no new live call here. Real local-model inference NOT VALIDATED |
-| Audit | IMPLEMENTED / TESTED: request correlation plus opt-in bounded managed JSONL, Windows locks, rotation/recovery and legacy reads; see current acceptance report |
-| Control Center | IMPLEMENTED: existing trusted in-process administration GUI; independent registry management GUI NOT IMPLEMENTED |
-| Routing | IMPLEMENTED / MOCK-TESTED: versioned chat/embedding contracts, explicit/local-only/local-first/cloud-only selection, opt-in cloud/fallback; see M2 report |
-| Installation | Windows installer/uninstaller NOT IMPLEMENTED |
+| Broker | Independent Windows Named Pipe EXE, OS peer identity, exact enrollment, eight workers |
+| Policy/registry | Default deny, exact provider/model allowlists, next-connection revocation, durable day/minute quotas, concurrency limits |
+| Audit | Correlation plus managed JSONL rotation/retention, crash recovery, legacy compatibility |
+| Routing | Versioned chat/embedding contracts, authorized local/cloud selection, no post-dispatch replay |
+| Clients | Python/C#/C++/Node/PowerShell/Electron, six actual mock-provider clients passed against dev5 |
+| Real local inference | PASS: dev5 console EXE to dev5 broker EXE to approved llama.cpp Qwen, one bounded LOCAL_ONLY call |
+| Recovery | PASS: disposable compatible endpoint refusal/termination/reset/timeout/malformed reply/restart; isolated broker restart |
+| Providers | Seven adapters preserved; llama.cpp reuses existing vLLM-compatible wire implementation |
+| Vault | Windows Credential Manager architecture preserved; production credentials not used in M3 |
+| GUI/install | Existing Control Center preserved; centralized registry GUI and installer remain unfinished |
 
-The broker owns policy, vault and provider communication. Client protocol v1 returns
-results, never provider keys. `CAE()` remains the compatible trusted in-process SDK;
-`BrokerClient` and the language SDKs reach the independent broker. Control Center
-and Codex are not broker runtime dependencies. Same-account process separation is
-not an OS boundary against hostile code running as that account.
-
-Local `dist/0.5.0.dev4/` contains CAE-Broker.exe, CAE-Control-Center.exe,
-CAE-Console-Client.exe, CAE-Desktop-Client.exe, the engine wheel/source distribution
-and SHA256SUMS.json. `dist/0.4.0-clients/` contains C++ executable, .NET package/app,
-Node package/native binding, PowerShell module and Python client wheel/source.
-These are ignored local development outputs, **not remote downloadable releases**.
-Python >=3.14 and Windows x64 are required; native SDK/build prerequisites are in
-[ENVIRONMENT_STATE](ENVIRONMENT_STATE.md). New version-specific artifacts were built for changed source; prior versions remain intact.
-
-Current audit acceptance: [M1 storage report](../validation/AUDIT-M1-RETENTION-ROTATION.md).
-Legacy audit files remain unchanged/unbounded until an operator explicitly enables
-a new managed store. Development binaries are local only, not GitHub release assets.
+Artifacts: `dist/0.5.0.dev5/` (four EXEs, wheel, sdist, checksums). Historical dev4
+outputs lack the fix and remain untouched. Client contracts remain 0.4.0; local
+lab packages `.tmp/m2-clients` are unchanged. No new downloadable GitHub Release.
+Final local gates: 414 tests, 95.95%, 18 critical gates, Ruff/strict mypy, six mock
+clients, 60 hostile cases, independent wheel and legacy executable acceptance.
+Windows 10 build 19045 tested; Windows 11, signing and long soak remain unverified.
+Real Qwen restart/outage NOT_RUN. No POK adapter, moderation, trusted roles,
+cancellation or hostile same-user isolation claim. M4 follows final M3 preservation.

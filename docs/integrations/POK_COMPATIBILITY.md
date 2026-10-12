@@ -75,3 +75,14 @@ and its own budget limits. Do not concatenate trusted educational instructions i
 CAE's single user-text field. Proposed POK acceptance above remains NOT_RUN; no
 POK source was modified or a working integration advertised. No new live POK source
 inspection is claimed beyond the pinned evidence above.
+
+## M3 local inference evidence
+
+The dev5 packaged CAE broker and console client have executed a bounded real Qwen
+request through llama.cpp with LOCAL_ONLY routing and exact model authorization.
+Compatible-endpoint failures/restarts are tested in a separate synthetic lab.
+This supports evaluating a future local explanation transport, not a working POK
+adapter. No POK code or workspace was changed. Moderation, trusted instruction
+separation, cancellation, request provenance and POK's own consent/budget controls
+remain required. Offline poker mathematics and gameplay remain independent of CAE.
+See [M3 acceptance and limits](../validation/LOCAL-INFERENCE-M3-PACKAGED.md).

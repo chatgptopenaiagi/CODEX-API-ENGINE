@@ -1,9 +1,13 @@
 # Known limitations
 
-## M3 local checkpoint
+## M3 current limits
 
-M3 update: real Qwen chat inference is now validated through an isolated source broker. Provider restart, cancellation, network-level offline isolation and updated executable acceptance remain NOT_RUN. Existing dev4 binaries lack the Windows model-ID fix. Historical mock-only statements below describe the preceding M2 evidence. [Current report](../validation/LOCAL-INFERENCE-M3.md).
-
+Packaged real Qwen inference and isolated compatible-endpoint recovery passed.
+Real Qwen restart/outage, cancellation, network-level offline isolation, Windows 11
+and long soak remain NOT_RUN. Dev5 packages contain the exact-model and truncated-
+HTTP fixes; dev4 is preserved. Only the packaged Python console used real Qwen;
+six-language acceptance used mocks. Normalized results do not expose provider
+fingerprint/finish reason. [Evidence](../validation/LOCAL-INFERENCE-M3-PACKAGED.md).
 
 - Same Windows account can access its vault and writable configuration. SID and
   executable hashes do not attest loaded code or isolate hostile same-user programs.
@@ -19,7 +23,7 @@ M3 update: real Qwen chat inference is now validated through an isolated source 
   Complete corruption fails closed; process-crash recovery is not power-loss proof.
   Filesystem I/O itself has no hard deadline; lock waits are bounded.
 - Seven adapters are implemented, but all-provider live validation is not claimed.
-  Local inference has not been validated. Current acceptance uses a mock HTTP provider.
+  Real dev5 Qwen chat passed; recovery injection uses a mock HTTP provider.
 - Actual host is Windows 10 build 19045; Windows 11 acceptance remains unverified.
   Current executables are unsigned. Python coverage is not native SDK coverage or
   an independent security assessment.
@@ -43,5 +47,5 @@ Locality constrains CAE's endpoint, not forwarding by a local server. Availabili
 is a five-second observation, not guaranteed reachability. Provider aliases may be
 rejected by exact returned-model validation. Unknown token usage is not zero.
 Moderation, privileged instructions, streaming, provider cancellation and end-to-end
-application provenance remain unsupported. No POK adapter or live-model acceptance.
+application provenance remain unsupported. No POK adapter; real Qwen chat does not validate all providers.
 See [M2 limits and evidence](../validation/ROUTING-M2.md).

@@ -37,7 +37,7 @@ $env:DOTNET_GENERATE_ASPNET_CERTIFICATE = 'false'
 ./scripts/build.ps1 -Executable
 ./scripts/build_clients.ps1
 ./scripts/test.ps1
-./.venv/Scripts/python.exe scripts/check_release.py --directory dist/0.5.0.dev4
+./.venv/Scripts/python.exe scripts/check_release.py --directory dist/0.5.0.dev5
 ```
 
 Setup creates `.venv` and installs editable engine/dev dependencies; client build
@@ -86,3 +86,7 @@ credentials or running production broker are needed. Retain historical artifacts
 
 Current routed six-client acceptance uses `--routing --managed-audit`; see ROUTING-M2.md
 under docs/validation for the complete command and isolated artifact paths.
+
+M3 packaged recovery: `scripts/validate_m3_packaged.py --broker-directory dist/0.5.0.dev5`.
+This is mock-only. `--real-qwen` makes one specifically approved local call; it never
+starts/restarts/discovers servers. See the packaged M3 report.

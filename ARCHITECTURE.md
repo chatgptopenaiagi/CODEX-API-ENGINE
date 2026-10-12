@@ -1,5 +1,10 @@
 # CAE architecture
 
+## M3 packaged local inference
+
+The OpenAI-compatible adapter is reused with an exact operator-allowlisted llama.cpp model ID. Windows backslashes are opaque model characters, never filesystem authority. HTTP declared-length truncation fails closed even if partial bytes form valid JSON. The one-shot console probe uses the public SDK and unchanged protocol v1. See [M3 evidence](docs/validation/LOCAL-INFERENCE-M3-PACKAGED.md).
+
+
 ## 0.5.0.dev4 capability routing
 
 `routing.py` provides a versioned registry and deterministic selector over existing

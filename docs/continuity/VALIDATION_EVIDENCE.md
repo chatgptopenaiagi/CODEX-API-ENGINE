@@ -1,5 +1,13 @@
 # Continuity mission validation
 
+## Dev5 M3 evidence
+
+414 tests in 62.83s, no warnings/skips, 95.95%, 18 critical gates, Ruff/strict mypy.
+One packaged real Qwen request; six mock clients, 60 hostile cases, legacy wheel/EXE
+acceptance, 18 isolated recovery scenario groups passed. [Full evidence](../validation/LOCAL-INFERENCE-M3-PACKAGED.md).
+Older entries below retain their historical results.
+
+
 ## M3 local checkpoint
 
 M3 current run: 399 tests passed in 60.17s, 95.92% coverage, 18 critical gates, Ruff and strict mypy passed. Five completed real provider dispatches in the final isolated broker run. [Exact commands, results and NOT_RUN items](../validation/LOCAL-INFERENCE-M3.md).

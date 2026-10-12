@@ -1,5 +1,14 @@
 # Verified milestone history
 
+## Dev5 M3 local acceptance
+
+Packaged real Qwen inference and isolated compatible-endpoint recovery passed.
+414 tests, 95.95%, 18 critical gates; six mock clients and 60 hostile cases passed.
+Runtime commits ea6add6/bf6107f package/harden the prior 9b31d14 fix. Final remote
+verification pending; real Qwen restart NOT_RUN. [Evidence](../validation/LOCAL-INFERENCE-M3-PACKAGED.md).
+The following local-only M3 and older entries are historical snapshots.
+
+
 ## M3 local checkpoint
 
 M3 acceptance increment (2026-10-12): real llama.cpp/Qwen inference, local-only/cloud-mode denial, revocation, quotas, concurrency, client timeout and content/reasoning separation passed. This is not completion of the broader M3 recovery/package acceptance. [Evidence](../validation/LOCAL-INFERENCE-M3.md).

@@ -1,6 +1,6 @@
 # CODEX ACCESS ENGINE (CAE)
 
-Current source: **0.5.0.dev4**, a development capability-routing increment.
+Current source: **0.5.0.dev5**, a development local-inference and recovery increment.
 The published foundation remains **v0.3.1**. This is not a v1.0 release.
 
 Broker-local audit request IDs now link authentication, policy and result metadata;
@@ -21,6 +21,14 @@ and [executed M2 evidence](docs/validation/ROUTING-M2.md). No real-model or POK
 integration claim is implied. New client-lab builds use `.tmp/m2-clients` to preserve
 historical packages.
 
+## Real local inference and isolated recovery (development)
+
+The dev5 packaged console and broker have performed one authorized real Qwen call
+through llama.cpp, using LOCAL_ONLY and an exact Windows model ID. Recovery testing
+uses a separate disposable compatible endpoint; the operator's Qwen server is never
+stopped. See [packaged M3 evidence](docs/validation/LOCAL-INFERENCE-M3-PACKAGED.md).
+A client timeout is not provider cancellation. No POK integration is claimed.
+
 ## Application administration and limits
 
 The development broker adds authenticated operator commands: `cae apps list`,
@@ -34,7 +42,7 @@ requests. Limits are checked before credential access and provider communication
 See [application administration](docs/APPLICATION_REGISTRY.md) and
 [executed security validation](docs/validation/SECURITY-0.5.0-dev1.md).
 
-Development engine artifacts are in `dist/0.5.0.dev4/`; client SDKs are in
+Development engine artifacts are in `dist/0.5.0.dev5/`; client SDKs are in
 `dist/0.4.0-clients/`. Full local validation requires building both before running
 `scripts/test.ps1`. Historical release artifacts are not overwritten.
 
