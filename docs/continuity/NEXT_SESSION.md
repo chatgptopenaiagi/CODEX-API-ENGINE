@@ -8,8 +8,8 @@ Latest checkpoint: resolve `git log -1 --format=%H -- docs/continuity`, then com
 HEAD and remote. Preserve later commits and unknown files. Runtime build source:
 bf6107f; original exact-model fix: 9b31d1460c64b255287e0a9cd7cdbf26b6e2bfee.
 
-- Last completed milestones: M1/M2; M3 local packaged acceptance PASS.
-- Next milestone: finish M3 remote checkpoint verification, then M4 centralized administration.
+- Last completed milestone: **M3 COMPLETE** within its packaged/isolated-recovery contract.
+- Next milestone: **M4 CENTRALIZED ADMINISTRATION**. Do not repeat M1/M2/M3.
 - Evidence: [packaged M3 report](../validation/LOCAL-INFERENCE-M3-PACKAGED.md).
 
 Read AGENTS.md, CURRENT_STATE.md, UNFINISHED_MILESTONES.md and KNOWN_LIMITATIONS.md.
@@ -41,3 +41,8 @@ installer, signing and long-soak acceptance remain unverified.
 Continuation directive: verify source/tests; implement only the next unfinished
 authorized milestone; test, document actual evidence, commit reviewed work. Never
 publish releases without separate authorization.
+
+First M4 task: inspect existing Control Center, registry and administrative trust
+contracts; implement a read-only operator application-registry/broker-status view
+with an isolated test broker before introducing security-sensitive GUI mutations.
+M4 was not implemented in the M3 mission. Verify current GitHub checks before edits.

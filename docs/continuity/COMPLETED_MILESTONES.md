@@ -1,11 +1,10 @@
 # Verified milestone history
 
-## Dev5 M3 local acceptance
+## Dev5 M3 COMPLETE within the verified contract
 
 Packaged real Qwen inference and isolated compatible-endpoint recovery passed.
 414 tests, 95.95%, 18 critical gates; six mock clients and 60 hostile cases passed.
-Runtime commits ea6add6/bf6107f package/harden the prior 9b31d14 fix. Final remote
-verification pending; real Qwen restart NOT_RUN. [Evidence](../validation/LOCAL-INFERENCE-M3-PACKAGED.md).
+Runtime commits ea6add6/bf6107f package/harden the prior 9b31d14 fix. Remote synchronization/recovery and both source CI runs passed; real Qwen restart NOT_RUN. [Evidence](../validation/LOCAL-INFERENCE-M3-PACKAGED.md).
 The following local-only M3 and older entries are historical snapshots.
 
 

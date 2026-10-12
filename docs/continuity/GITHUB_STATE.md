@@ -1,5 +1,20 @@
 # GitHub checkpoint state
 
+## M3 source synchronization and independent recovery PASS
+
+Verified remote implementation: d222927bc51f2d9677868fcb6e399f6758da56c5.
+Normal push preserved all earlier commits; a separate remote checkout recovered
+version dev5, all checkpoint/report/harness files and exact runtime source matching
+the final wheel. Fresh installed-wheel smoke passed with -I, without credentials.
+Source CI passed: [push](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/actions/runs/38206992228)
+and [PR](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/actions/runs/38206996230).
+M3 is complete within the packaged real-inference/isolated-recovery contract;
+REAL_QWEN_RESTART_NOT_RUN. PR #2 is open/draft, no main merge or new release.
+The final documentation checkpoint follows this implementation. Resolve its own
+SHA through Git and verify live checks; its new CI runs are pending at write time.
+Older Phase A/pending records below are historical observations.
+
+
 ## M3 Phase A preservation verified
 
 9b31d1460c64b255287e0a9cd7cdbf26b6e2bfee was pushed normally to feat/security-registry

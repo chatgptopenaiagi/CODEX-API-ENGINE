@@ -4,7 +4,7 @@ Version **0.5.0.dev5**, branch `feat/security-registry`. Checkpoint SHA:
 `git log -1 --format=%H -- docs/continuity`; verify actual HEAD/remote before work.
 Runtime build source: bf6107f; exact-model fix: 9b31d14. Published stable foundation
 remains v0.3.1; v0.2.0 is preserved. M1/M2 are complete within their contracts.
-**M3 local packaged acceptance PASS; final remote checkpoint verification pending.**
+**M3 COMPLETE within the packaged-inference and isolated-recovery contract.**
 [Packaged M3 evidence](../validation/LOCAL-INFERENCE-M3-PACKAGED.md).
 
 | Component | Current evidence |
@@ -27,4 +27,4 @@ Final local gates: 414 tests, 95.95%, 18 critical gates, Ruff/strict mypy, six m
 clients, 60 hostile cases, independent wheel and legacy executable acceptance.
 Windows 10 build 19045 tested; Windows 11, signing and long soak remain unverified.
 Real Qwen restart/outage NOT_RUN. No POK adapter, moderation, trusted roles,
-cancellation or hostile same-user isolation claim. M4 follows final M3 preservation.
+cancellation or hostile same-user isolation claim. M4 is next; do not repeat completed M3 acceptance.

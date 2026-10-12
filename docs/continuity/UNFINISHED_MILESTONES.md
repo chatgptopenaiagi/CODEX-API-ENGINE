@@ -1,7 +1,6 @@
 # Milestone status toward v1.0
 
-M1/M2 are complete. M3 local packaged acceptance passed; final remote checkpoint
-verification remains. M4 is the next engineering milestone.
+M1/M2/M3 are complete within their documented contracts. M4 is next.
 
 ## 1. Audit correlation and bounded retention — COMPLETE
 
@@ -21,11 +20,11 @@ and audit integration. Six real applications and mock providers exercise the new
 protocol operations. See [M2 acceptance](../validation/ROUTING-M2.md) for final gates
 and publication/recovery status. No real inference or POK integration is implied.
 
-## 3. Real local-model validation - local acceptance PASS
+## 3. Real local-model validation - COMPLETE within scoped contract
 
 Dev5 broker/client EXEs ran real llama.cpp Qwen inference. A separate mock endpoint
 verified outage/restart/timeout/malformed-response recovery, quotas and revocation.
-Finish remote checkpoint/recovery verification. Real Qwen restart remains NOT_RUN
+Remote checkpoint/recovery and source CI passed. Real Qwen restart remains NOT_RUN
 and is not authorized or required under this scoped contract. [Evidence](../validation/LOCAL-INFERENCE-M3-PACKAGED.md).
 
 ## 4. Centralized administration

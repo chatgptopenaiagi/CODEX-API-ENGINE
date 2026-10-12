@@ -1,6 +1,6 @@
 # M3 packaged inference and isolated recovery
 
-Status: **LOCAL ACCEPTANCE PASS; remote final checkpoint pending** (2026-10-12).
+Status: **M3 COMPLETE within the packaged-inference and isolated-recovery contract** (2026-10-12).
 M3 is scoped to packaged real inference plus disposable compatible-endpoint recovery.
 **REAL_QWEN_RESTART_NOT_RUN**; no operator-managed server outage was injected.
 
@@ -54,7 +54,9 @@ llama.cpp compatibility, not a claim that the server runs vLLM.
 
 Synthetic input: “Reply with exactly: Local AI inference is operational.”
 Final response: **Local AI inference is operational.**
-Selected exact model matched the advertised/configured/requested/returned identity.
+Advertised, configured, requested and selected model IDs match exactly. The adapter
+rejects a differing returned model when supplied; the normalized response records
+the selected model, not the raw provider envelope or a weight-file attestation.
 Mode: **LOCAL_ONLY**; fallback: **false**; dispatches: **1**; status: **COMPLETED**.
 Provider-reported usage: **18 input / 81 output tokens**, CONFIRMED_USAGE. This is
 not independently verified billing; output token counts may include reasoning.
@@ -216,3 +218,16 @@ venv. `python -I` imported site-packages, verified dev5/exact model syntax and
 synthetic content/usage normalization with reasoning exclusion: PASS, no credentials.
 Publication audit: 180 Git-eligible files, zero Gitleaks findings. Only reviewed
 mission files are staged; five existing untracked user files remain excluded.
+
+## Final preservation acceptance
+
+Implementation d222927bc51f2d9677868fcb6e399f6758da56c5 was pushed normally and
+recovered in the independent checkout. All 13 required instruction/report/harness
+files were read; the runtime matches the final wheel, and no production input is
+present. Four frozen entrypoint code objects independently match their source.
+Source CI passed: [push 38206992228](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/actions/runs/38206992228)
+and [PR 38206996230](https://github.com/chatgptopenaiagi/CODEX-API-ENGINE/actions/runs/38206996230).
+This final documentation checkpoint marks M3 COMPLETE in the agreed scope and
+sets M4 next. Its SHA is `git log -1 --format=%H -- docs/continuity`; its own CI
+runs are newly triggered and must be checked separately. No M4 implementation,
+real Qwen restart, main merge or new release was performed.

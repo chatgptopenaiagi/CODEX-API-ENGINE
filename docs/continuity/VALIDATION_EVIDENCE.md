@@ -100,3 +100,5 @@ The preexisting v0.3.1 operator broker remained running. Protected input is igno
 and untracked. Secret scanning detects known patterns; it is not a proof against
 every possible undiscovered secret. CI and remote recovery are recorded separately
 in GITHUB_STATE.md and RECOVERY_PROCEDURE.md.
+
+M3 remote implementation d222927 independently recovered and wheel-matched; source push/PR runs 38206992228/38206996230 both passed. Four EXE entrypoint code objects also match source. Final checkpoint CI is separately queryable; no unexecuted real-server restart is claimed.

@@ -2,8 +2,8 @@
 
 ## 0.5.0.dev5 - M3 packaged acceptance
 
-Packaged real local Qwen inference and isolated recovery passed. Final remote
-checkpoint verification precedes completion; M4 administration follows separately.
+M3 is COMPLETE within its packaged real-inference/isolated-recovery contract.
+Remote recovery and source CI passed; M4 administration follows separately.
 See [M3 evidence](docs/validation/LOCAL-INFERENCE-M3-PACKAGED.md).
 
 
